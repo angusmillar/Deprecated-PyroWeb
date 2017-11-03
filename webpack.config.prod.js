@@ -2,12 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const pkg = require('./package.json');
-const _ = require('lodash');
+const lo_keys = require('lodash/keys');
 
 module.exports = {
     entry: {
         js: './src/index',
-        vendor: _.keys(pkg.dependencies)
+        vendor: lo_keys(pkg.dependencies)
     },
     output: {
         path: path.join(__dirname, 'dist'),
