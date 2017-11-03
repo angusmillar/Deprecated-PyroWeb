@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     devtool: 'cheap-module-source-map',
@@ -23,21 +24,43 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'index.html', // Load a custom template
             inject: 'body' // Inject all scripts into the body
-        })
+        }),
+        new ExtractTextPlugin({
+            filename: '[name].[contenthash].css',
+          })
     ],
     module: {
-        rules: [{
-            test: /\.jsx?$/,
-            use: [{
-                loader: 'babel-loader'
-            }]
-        }]
+        rules: [
+            {
+                test: /\.jsx?$/,
+                use: [{
+                    loader: 'babel-loader'
+                }]
+            },
+            {
+                test: /\.less$/,
+                use: ExtractTextPlugin.extract({
+                    use: ['css-loader', 'less-loader']
+                })                
+            },
+            {
+                test: /\.jpe?g$|\.gif$|\.png$|\.ttf$|\.eot$|\.svg$/,
+                use: 'file-loader?name=[name].[ext]?[hash]'            
+            },
+            {
+                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: 'url-loader?limit=10000&mimetype=application/fontwoff'
+            }
+        ]
     },
     resolve: {
         modules: [
             path.join(__dirname, 'src'),
             'node_modules'
         ],
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
+        alias: {
+            '../../theme.config$': path.join(__dirname, 'semantic-theme/theme.config')  
+        }
     }
 };
