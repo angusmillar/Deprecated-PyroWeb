@@ -58,12 +58,16 @@ module.exports = {
                 })                
             },
             {
-                test: /\.jpe?g$|\.gif$|\.png$|\.ttf$|\.eot$|\.svg$/,
-                use: 'file-loader?name=[name].[ext]?[hash]'            
+                test: /\.(ttf|eot|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: 'file-loader'
             },
             {
+                test: /\.otf(\?.*)?$/,
+                use: 'file-loader?name=/fonts/[name].[ext]&mimetype=application/font-otf'
+            },            
+            {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: 'url-loader?limit=10000&mimetype=application/fontwoff'
+                loader: 'url-loader?limit=10000&mimetype=application/font-woff'
             }
         ]
     },
