@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types';
 import { Container, Header } from 'semantic-ui-react'
 
 class Home extends React.Component{
@@ -7,23 +8,32 @@ class Home extends React.Component{
         return (              
             <Container text style={{ marginTop: '7em' }}>            
                 <Header as='h1'>Home Page Template</Header>
+                <button onClick={(event) => { this.props.setCurrentPage(event, { page: 'dunnyContent' }); }}>Dummy Page</button>
                 <p>This is a basic fixed menu template using fixed size containers.</p>            
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>
-                <p>A text container is used for the main container, which is useful for single column layouts.</p>                            
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>
+                <p>A text container on the HOME page is used for the main container</p>                  
             </Container>         
         )
     }
 
 }
  
+Home.propTypes = {
+    setCurrentPage: PropTypes.func,
+  };
+
 export default Home
