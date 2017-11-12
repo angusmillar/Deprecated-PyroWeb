@@ -42,7 +42,6 @@ class MainMenu extends React.Component{
             </Menu>                
         )
     }
-
 }
 
 //Type Checking
