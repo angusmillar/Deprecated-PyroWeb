@@ -9,7 +9,7 @@ class Home extends React.Component{
         return (              
             <Container text style={{ marginTop: '7em' }}>            
                 <Header as='h1'>Home Page Template</Header>
-                <Button positive as={Link} to='/dunny-content'>Dummy Content</Button>
+                <Button positive as={Link} to='/FluxTest-content'>Dummy Content</Button>
                 <p>This is a basic fixed menu template using fixed size containers.</p>            
                 <p>A text container on the HOME page is used for the main container</p>
                 <p>A text container on the HOME page is used for the main container</p>
