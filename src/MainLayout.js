@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import MainMenu from 'MainMenu';
 import MainFooter from 'MainFooter';
 import Home from 'Home';
-//import DunnyContent from 'DunnyContent';
 import FluxTest from 'FluxTest';
+import MetadataComponent from 'Componets/Conformance/MetadataComponent';
+
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 class MainLayoutTwo extends React.Component {
@@ -14,9 +15,9 @@ class MainLayoutTwo extends React.Component {
             <Router>
                 <div>
                     <MainMenu siteIconProp={this.props.siteIconProp} />
-                    <Route exact path="/" component={Home} />
-                    
+                    <Route exact path="/" component={Home} />                    
                     <Route path="/FluxTest-content" component={FluxTest} />
+                    <Route path="/metadata-content" component={MetadataComponent} />
                     <MainFooter siteIconProp={this.props.siteIconProp} />
                 </div>
             </Router>

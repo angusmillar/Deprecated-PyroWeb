@@ -4,7 +4,7 @@ import AppStore from 'Store/AppStore';
 import { Container, Header, Button } from 'semantic-ui-react'
 
 function getItemsState() {
-    return {
+    return {        
         appState: AppStore.getState()
     };
 }
@@ -13,6 +13,7 @@ class FluxTest extends React.Component {
 
     constructor(props) {
         super(props);
+        this.initialise();
         this.state = getItemsState();
         this._onChange = this._onChange.bind(this);
     }
@@ -29,28 +30,38 @@ class FluxTest extends React.Component {
         AppStore.removeChangeListener(this._onChange);
     }
 
-    handleClick() {
-        AppActions.addItem({ given: 'Angus', family: 'Millar' });
+    initialise() {
+        AppActions.initialiseStore();
+    }
+    
+    handleClickGetAPIData() {
+        AppActions.getPatient();
     }
 
     _onChange() {        
         this.setState(getItemsState());        
     }
 
+    totalCount(Resource)
+    {
+        if (typeof (Resource) != 'undefined' && Resource != null) {
+            return Resource.total
+        }
+    }
 
     render() {
-        const items = this.state.appState;
-
-         //const itemHtml = items.given;
-
+        //const items = this.state.appState;
+       
+       
         return (
             <Container text style={{ marginTop: '7em' }}>
-                <Header as='h1'>Home Page Template</Header>
-                <Button positive onClick={this.handleClick} >Test Me</Button>
-
-                <p>This is a basic fixed menu template using fixed size containers.</p>
-                <p>{items.given}</p>
-                <p>{items.family}</p>
+                <Header as='h1'>Home Page Template</Header>               
+                <Button positive onClick={this.handleClickGetAPIData} >Get Date From API</Button>
+                <p>This is a basic fixed menu template using fixed size containers.</p>     
+                {this.totalCount(this.state.appState.Resource) > 0 && 
+                <h2>Count: {this.totalCount(this.state.appState.Resource)}</h2>                
+                }
+                
                 <p>A text container on the HOME page is used for the main container</p>
                 <p>A text container on the HOME page is used for the main container</p>
                 <p>A text container on the HOME page is used for the main container</p>
@@ -60,7 +71,5 @@ class FluxTest extends React.Component {
     }
 
 }
-
-
 
 export default FluxTest;  

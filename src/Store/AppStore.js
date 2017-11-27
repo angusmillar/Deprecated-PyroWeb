@@ -2,49 +2,42 @@ import FluxStore from './Store';
 import AppDispatcher from '../Dispatcher/AppDispatcher';
 import AppConstants from '../Constants/AppConstants';
 
-let appState = { given: 'John', family: 'Dow' };
+let appState = {};
 
 function reset() {
-    appState = {};
+    appState = { HttpStatus: '0', Resource: null };
 }
 
 
 class AppStore extends FluxStore {
-
     constructor() {
         super();
     }
-
     getState() {
         return appState;
     }
-
 }
 
 const appStoreInstance = new AppStore();
 
-appStoreInstance.dispatchToken = AppDispatcher.register((action) => {
-
-    switch (action.source) {
+appStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
+    const action = payload.action;
+    switch (action.actionType) {
         case AppConstants.APP_INITIALIZED:
             reset();
-            appState.given = 'Unkown';
-            appState.family = 'Person'
             break;
-        /* falls through */
         case AppConstants.ADD_ITEM:
-            appState = action.action.data;
-            //appState.family = action.action.given;
+            appState = action.data;
             break;
-
-        // case ActionTypes.APP_RESET:
-        //   reset();
-        //   break;
-
-        // case ActionTypes.POUCH_ERROR:
-        //   appState.message = 'Local database error: ' + action.error.message;
-        //   break;
-
+        case AppConstants.APP_RESET:
+            reset();
+            break;
+        case AppConstants.App_GetPatient:
+            reset();
+            break;
+        case AppConstants.App_SetPatient:
+            appState = action.data;
+            break;
         default:
             return;
     }

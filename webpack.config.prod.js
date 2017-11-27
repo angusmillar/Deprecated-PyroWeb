@@ -58,7 +58,7 @@ module.exports = {
                 })                
             },
             {
-                test: /\.(ttf|eot|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                test: /\.(ttf|eot|png|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'file-loader'
             },
             {

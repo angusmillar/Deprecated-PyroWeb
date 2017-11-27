@@ -1,11 +1,17 @@
 import { Dispatcher } from 'flux';
-import AppConstants from '../Constants/AppConstants';
 
 class DispatcherClass extends Dispatcher {
 
     handleViewAction(action) {
         this.dispatch({
-            source: AppConstants.ADD_ITEM,
+            source: 'VIEW_ACTION',
+            action,
+        });        
+    }
+
+    handleApiAction(action) {
+        this.dispatch({
+            source: 'API_ACTION',
             action,
         });
     }
