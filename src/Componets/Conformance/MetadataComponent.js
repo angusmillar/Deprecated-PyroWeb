@@ -4,7 +4,7 @@ import AppStoreMetadata from 'Store/AppStoreMetadata';
 import AppConstants from 'Constants/AppConstants';
 import MetadataHeader from './MetadataHeader';
 import PropTypes from 'prop-types';
-import { Icon, Divider, Container, Header, Button, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
+import { Icon, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
 
 function getItemsState() {
     return {
@@ -63,8 +63,8 @@ class MetadataComponent extends React.Component {
         }
         else if (this.state.MetadataState.AjaxState === AppConstants.AjaxState.Call_Complete) {
             if (typeof (this.state.MetadataState.Resource) != 'undefined' && this.state.MetadataState.Resource != null) {
-                return <MetadataHeader                    
-                    Date={this.state.MetadataState.Resource.date}    
+                return <MetadataHeader
+                    Date={this.state.MetadataState.Resource.date}
                     Name={this.state.MetadataState.Resource.name}
                     Version={this.state.MetadataState.Resource.version}
                     FhirVersion={this.state.MetadataState.Resource.fhirVersion}
@@ -75,9 +75,9 @@ class MetadataComponent extends React.Component {
                     Url={this.state.MetadataState.Resource.url}
                     Purpose={this.state.MetadataState.Resource.purpose}
                     Copyright={this.state.MetadataState.Resource.copyright}
-                    Kind={this.state.MetadataState.Resource.kind}>
+                    Kind={this.state.MetadataState.Resource.kind}
+                    Contact={this.state.MetadataState.Resource.contact}>
                 </MetadataHeader>
-                //return <h2>Name: {this.state.MetadataState.Resource.name}</h2>
             }
             else {
                 return <h2>Error in loading</h2>
@@ -90,30 +90,30 @@ class MetadataComponent extends React.Component {
 
 
         return (
-            <Container text style={{ marginTop: '7em' }}>                
+            <Container text style={{ marginTop: '7em' }}>
                 {/* <Button positive onClick={this.handleClickGetMetadata} >Load Conformance Statment</Button>                 */}
                 <div>
-                <Divider hidden />
-                <Header as='h2'>
-                    <Icon name='settings' />
-                    <Header.Content>
-                        FHIR Server Conformance Statement
+                    <Divider hidden />
+                    <Header as='h2'>
+                        <Icon name='settings' />
+                        <Header.Content>
+                            FHIR Server Conformance Statement
                     </Header.Content>
-                </Header>
-                <Segment raised >
-                  {this.conformanceStatement()}
-                </Segment>
-            </div>                
+                    </Header>
+                    <Segment raised padded >
+                        {this.conformanceStatement()}
+                    </Segment>
+                </div>
             </Container>
         )
     }
 
 }
 //Type Checking
-MetadataComponent.propTypes = {    
-    wireframeParagraphImage: PropTypes.string,     
+MetadataComponent.propTypes = {
+    wireframeParagraphImage: PropTypes.string,
 }
- 
+
 MetadataComponent.defaultProps = {
     wireframeParagraphImage: require('../../Images/wireframe/paragraph.png')
 }
