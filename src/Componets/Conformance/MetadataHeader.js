@@ -1,24 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment'
-import { Table, Label, Segment } from 'semantic-ui-react'
+import { Table, Label, Segment, Divider } from 'semantic-ui-react'
 import map from 'lodash/map';
+import isNil from 'lodash/isNil';
+import upperFirst from 'lodash/upperFirst';
+
 
 import MetadataHeaderTableRow from './MetadataHeaderTableRow'
-// import FhirContactPoint_Card from '../FhirComponent/ComplexType/ContactPoint/ContactPoint_Card'
-import ContactPoint_CardGroup from '../FhirComponent/ComplexType/ContactPoint/ContactPoint_CardGroup'
+//import ContactDetails_CardGroup from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_CardGroup'
+import ContactDetails_Table from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_Table'
 
 class MetadataHeader extends React.Component {
     constructor(props) {
         super(props);
     }
-
-    angus(Contact) {
-        return (
-            <ContactPoint_CardGroup Contact={Contact} />
-        )
-    }
-
 
     render() {
 
@@ -29,66 +25,86 @@ class MetadataHeader extends React.Component {
             )
         };
 
-
         const tableRow = (Label, Value) => {
-            return (
-                Value &&
-                <MetadataHeaderTableRow RowLabel={Label} RowValue={Value} />
-            )
+            if (isNil(Value)) {
+                return null
+            }
+            else {
+                return <MetadataHeaderTableRow RowLabel={upperFirst(Label)} RowValue={Value} />                
+            }    
         };
 
-        const contactPointList = (ContactList) => {
-            return (                
-                    map(ContactList, this.angus)                
-               )
+        const renderContact = () => {
+            if (isNil(this.props.Contact)) {
+                return null
+            }
+            else {                
+                return (                    
+                    map(this.props.Contact, (Contact, Index) => {
+                        
+                        const line = (length) => {
+                            if (Index !== length - 1) {
+                                return <Divider />
+                            }
+                        } 
+
+                        return (
+                            <div key={Index}>
+                                <ContactDetails_Table Telecom={Contact.telecom} Name={Contact.name} />                                
+                                {/* Put a divider between each verticaly, if there are many and not on the last one */}
+                                {line(this.props.Contact.length)}                                   
+                            </div>
+                        )
+                    }                    
+                ))                
+            }
         };
-        
 
-
-            return (
-                <div>
-                    <Label as='a' color='black' ribbon><h4>Server Name</h4></Label>
-                    <span><b>{this.props.Name}</b></span>
-                    <Table singleLine >
-                        <Table.Body>
-                            {tableRow('Description', this.props.Description)}
-                            {tableRow('Publisher', this.props.Publisher)}
-                            {tableRow('Copyright', this.props.Copyright)}
-                            {tableRow('URL', this.props.Url)}
-                            {tableRow('Date', dateTimeFormated(this.props.Date))}
-                            {tableRow('Server Version', this.props.Version)}
-                            {tableRow('FHIR Version', this.props.FhirVersion)}
-                            {tableRow('Status', this.props.Status)}
-                            {tableRow('Experimental', this.props.Experimental.toString())}
-                            {tableRow('Purpose', this.props.Purpose)}
-                            {tableRow('Kind', this.props.Kind)}                                  
-                        </Table.Body>
-                    </Table>
-                    <Segment>                        
-                      {contactPointList(this.props.Contact)}
-                    </Segment>                   
-                </div>
-            )
-        }
-
-    }
-    //Type Checking
-    MetadataHeader.propTypes = {
-        Name: PropTypes.string.isRequired,
-        Date: PropTypes.string,
-        Version: PropTypes.string.isRequired,
-        FhirVersion: PropTypes.string.isRequired,
-        Publisher: PropTypes.string,
-        Description: PropTypes.string,
-        Status: PropTypes.string,
-        Experimental: PropTypes.bool,
-        Url: PropTypes.string,
-        Purpose: PropTypes.string,
-        Copyright: PropTypes.string,
-        Kind: PropTypes.string,
-        Contact: PropTypes.array,
+        return (
+            <div>
+                <Label as='a' color='black' ribbon><h4>Server Name</h4></Label>
+                <span><b>{this.props.Name}</b></span>
+                <Table singleLine >
+                    <Table.Body>
+                        {tableRow('Description', this.props.Description)}                        
+                        {tableRow('Publisher', this.props.Publisher)}
+                        {tableRow('Copyright', this.props.Copyright)}
+                        {tableRow('URL', this.props.Url)}
+                        {tableRow('Date', dateTimeFormated(this.props.Date))}
+                        {tableRow('Server Version', this.props.Version)}
+                        {tableRow('FHIR Version', this.props.FhirVersion)}
+                        {tableRow('Status', this.props.Status)}
+                        {tableRow('Experimental', this.props.Experimental.toString())}
+                        {tableRow('Purpose', this.props.Purpose)}
+                        {tableRow('Kind', this.props.Kind)}
+                    </Table.Body>
+                </Table>
+                <Segment>
+                    {renderContact()}
+                    {/* {renderContact()} */}
+                </Segment>
+            </div>
+        )
     }
 
+}
+//Type Checking
+MetadataHeader.propTypes = {
+    Name: PropTypes.string.isRequired,
+    Date: PropTypes.string,
+    Version: PropTypes.string.isRequired,
+    FhirVersion: PropTypes.string.isRequired,
+    Publisher: PropTypes.string,
+    Description: PropTypes.string,
+    Status: PropTypes.string,
+    Experimental: PropTypes.bool,
+    Url: PropTypes.string,
+    Purpose: PropTypes.string,
+    Copyright: PropTypes.string,
+    Kind: PropTypes.string,
+    Contact: PropTypes.array,
+}
 
 
-    export default MetadataHeader;  
+
+export default MetadataHeader;  

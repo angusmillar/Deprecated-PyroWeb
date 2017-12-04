@@ -23,7 +23,7 @@ class ContactPoint_Card extends React.Component {
 
         return (
             <div>
-                <Card color='teal' two doubling stackable>
+                <Card color='teal'>
                     <Card.Content>
                         <Icon bordered color='teal' name='teletype' />
                         Contact <Rank_Label number={this.props.rank}/>
@@ -52,7 +52,5 @@ ContactPoint_Card.propTypes = {
     rank: PropTypes.string,
     period: PropTypes.string,
 }
-
-
 
 export default ContactPoint_Card

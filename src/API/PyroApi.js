@@ -32,7 +32,7 @@ class PyroApi {
     // }
 
     getMetaData() {
-        axios.get('metadata', this.RequestConfig)
+        axios.get('CapabilityStatement/PyroTest', this.RequestConfig)
             .then(function (response) {
                 AppActionsMetadata.setMetadata({ HttpStatus: response.status, Resource: response.data });
             })

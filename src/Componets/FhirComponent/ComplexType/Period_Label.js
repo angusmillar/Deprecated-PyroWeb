@@ -37,38 +37,40 @@ class Period_Label extends React.Component {
              }
         };
 
-        const avaliable = { color: 'green', text: 'Avaliable' }
+        const avaliable = { color: 'olive', text: 'Avaliable' }
         const unavailable = { color: 'red', text: 'Unavailable' }
         
 
 
-        if (isUndefined(this.props.start) && isUndefined(this.props.end)) {
+        if (isUndefined(this.props.period)) {
             return null
         } else {
+            const start = this.props.period.start;
+            const end = this.props.period.end;
             let IsAvailable = null;            
-            if (!isUndefined(this.props.start) && !isUndefined(this.props.end)) {
-                IsAvailable = avaliableToContactRange(this.props.start, this.props.end);                                
+            if (!isUndefined(start) && !isUndefined(end)) {
+                IsAvailable = avaliableToContactRange(start, end);                                
                 return (
                     <Period_Popup
                         triggerComponent={<Label size='mini'color={IsAvailable.color} content={IsAvailable.text} />}
-                        start={this.props.start}
-                        end={this.props.end} />
+                        start={start}
+                        end={end} />
                 )
                 
-            } else if (!isUndefined(this.props.start)) {
-                IsAvailable = avaliableToContactStart(this.props.start);                
+            } else if (!isUndefined(start)) {
+                IsAvailable = avaliableToContactStart(start);                
                 return (
                     <Period_Popup
                         triggerComponent={<Label size='mini'color={IsAvailable.color} content={IsAvailable.text} />}
-                        start={this.props.start} />
+                        start={start} />
                 )
                 
-            } else if (!isUndefined(this.props.end)) {
-                IsAvailable = avaliableToContactEnd(this.props.end);                
+            } else if (!isUndefined(end)) {
+                IsAvailable = avaliableToContactEnd(end);                
                 return (
                     <Period_Popup
                         triggerComponent={<Label size='mini'color={IsAvailable.color} content={IsAvailable.text} />}
-                        end={this.props.end} />
+                        end={end} />
                 )
             }
             
@@ -77,8 +79,9 @@ class Period_Label extends React.Component {
 }
 
 Period_Label.propTypes = {
-    start: PropTypes.string,
-    end: PropTypes.string,
+    // start: PropTypes.string,
+    // end: PropTypes.string,
+    period: PropTypes.object
 }
 
 export default Period_Label;  
