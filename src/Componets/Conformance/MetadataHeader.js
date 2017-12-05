@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment'
-import { Table, Label, Segment, Divider } from 'semantic-ui-react'
+import { Table, Label } from 'semantic-ui-react'
 import map from 'lodash/map';
 import isNil from 'lodash/isNil';
 import upperFirst from 'lodash/upperFirst';
 
 
 import MetadataHeaderTableRow from './MetadataHeaderTableRow'
-//import ContactDetails_CardGroup from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_CardGroup'
 import ContactDetails_Table from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_Table'
 
 class MetadataHeader extends React.Component {
@@ -40,20 +39,9 @@ class MetadataHeader extends React.Component {
             }
             else {                
                 return (                    
-                    map(this.props.Contact, (Contact, Index) => {
-                        
-                        const line = (length) => {
-                            if (Index !== length - 1) {
-                                return <Divider />
-                            }
-                        } 
-
-                        return (
-                            <div key={Index}>
-                                <ContactDetails_Table Telecom={Contact.telecom} Name={Contact.name} />                                
-                                {/* Put a divider between each verticaly, if there are many and not on the last one */}
-                                {line(this.props.Contact.length)}                                   
-                            </div>
+                    map(this.props.Contact, (Contact, Index) => {                        
+                        return (                           
+                                <ContactDetails_Table key={Index} Telecom={Contact.telecom} Name={Contact.name} />                                                            
                         )
                     }                    
                 ))                
@@ -78,11 +66,8 @@ class MetadataHeader extends React.Component {
                         {tableRow('Purpose', this.props.Purpose)}
                         {tableRow('Kind', this.props.Kind)}
                     </Table.Body>
-                </Table>
-                <Segment>
-                    {renderContact()}
-                    {/* {renderContact()} */}
-                </Segment>
+                </Table>               
+                {renderContact()}                                  
             </div>
         )
     }

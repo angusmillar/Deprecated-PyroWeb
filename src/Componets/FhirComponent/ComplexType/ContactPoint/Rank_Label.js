@@ -4,6 +4,8 @@ import { Label } from 'semantic-ui-react'
 import isNil from 'lodash/isNil';
 import isUndefined from 'lodash/isUndefined';
 
+import ColorConstant from '../../../../Constants/ColorConstant';
+
 class Rank_Label extends React.Component {
     constructor(props) {
         super(props);
@@ -15,7 +17,7 @@ class Rank_Label extends React.Component {
             if (!isNil(rank)) {
                 if (rank === 1) {
                     return (
-                        <Label color='olive' size='mini'>
+                        <Label color={ColorConstant.TrafficLight.Green} size='mini'>
                             rank    
                             <Label.Detail>{this.props.number.toString()}</Label.Detail>
                         </Label>

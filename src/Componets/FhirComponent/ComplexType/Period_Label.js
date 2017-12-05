@@ -4,6 +4,7 @@ import { Label } from 'semantic-ui-react'
 import moment from 'moment';
 import isUndefined from 'lodash/isUndefined';
 
+import ColorConstant from '../../../Constants/ColorConstant';
 import Period_Popup from './Period_Popup';
 
 class Period_Label extends React.Component {
@@ -37,8 +38,8 @@ class Period_Label extends React.Component {
              }
         };
 
-        const avaliable = { color: 'olive', text: 'Avaliable' }
-        const unavailable = { color: 'red', text: 'Unavailable' }
+        const avaliable = { color: ColorConstant.TrafficLight.Green, text: 'Avaliable' }
+        const unavailable = { color: ColorConstant.TrafficLight.Red, text: 'Unavailable' }
         
 
 
@@ -79,8 +80,6 @@ class Period_Label extends React.Component {
 }
 
 Period_Label.propTypes = {
-    // start: PropTypes.string,
-    // end: PropTypes.string,
     period: PropTypes.object
 }
 
