@@ -76,7 +76,8 @@ class MetadataComponent extends React.Component {
                     Purpose={this.state.MetadataState.Resource.purpose}
                     Copyright={this.state.MetadataState.Resource.copyright}
                     Kind={this.state.MetadataState.Resource.kind}
-                    Contact={this.state.MetadataState.Resource.contact}>
+                    Contact={this.state.MetadataState.Resource.contact}
+                    Jurisdiction={this.state.MetadataState.Resource.jurisdiction}>
                 </MetadataHeader>
             }
             else {
