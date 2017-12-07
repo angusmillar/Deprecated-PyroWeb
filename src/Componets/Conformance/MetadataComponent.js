@@ -1,10 +1,12 @@
 import React from 'react';
 import AppActionsMetadata from 'Actions/AppActionsMetadata';
 import AppStoreMetadata from 'Store/AppStoreMetadata';
-import AppConstants from 'Constants/AppConstants';
+import AjaxConstant from 'Constants/AjaxConstant';
 import MetadataHeader from './MetadataHeader';
 import PropTypes from 'prop-types';
 import { Icon, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
+
+import Rest_Table from './Rest_Table'
 
 function getItemsState() {
     return {
@@ -46,10 +48,10 @@ class MetadataComponent extends React.Component {
     }
 
     conformanceStatement() {
-        if (this.state.MetadataState.AjaxState === AppConstants.AjaxState.Call_None) {
+        if (this.state.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_None) {
             return null;
         }
-        else if (this.state.MetadataState.AjaxState === AppConstants.AjaxState.Call_Pending) {
+        else if (this.state.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Pending) {
             return (
                 <div>
                     <Segment>
@@ -61,28 +63,43 @@ class MetadataComponent extends React.Component {
                 </div>
             );
         }
-        else if (this.state.MetadataState.AjaxState === AppConstants.AjaxState.Call_Complete) {
-            if (typeof (this.state.MetadataState.Resource) != 'undefined' && this.state.MetadataState.Resource != null) {
+        else if (this.state.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
+            if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_Ok) {
+                const FhirResource = this.state.MetadataState.AjaxOutcome.FhirResource;
                 return <MetadataHeader
-                    Date={this.state.MetadataState.Resource.date}
-                    Name={this.state.MetadataState.Resource.name}
-                    Version={this.state.MetadataState.Resource.version}
-                    FhirVersion={this.state.MetadataState.Resource.fhirVersion}
-                    Publisher={this.state.MetadataState.Resource.publisher}
-                    Description={this.state.MetadataState.Resource.description}
-                    Status={this.state.MetadataState.Resource.status}
-                    Experimental={this.state.MetadataState.Resource.experimental}
-                    Url={this.state.MetadataState.Resource.url}
-                    Purpose={this.state.MetadataState.Resource.purpose}
-                    Copyright={this.state.MetadataState.Resource.copyright}
-                    Kind={this.state.MetadataState.Resource.kind}
-                    Contact={this.state.MetadataState.Resource.contact}
-                    Jurisdiction={this.state.MetadataState.Resource.jurisdiction}>
+                    Date={FhirResource.date}
+                    Name={FhirResource.name}
+                    Version={FhirResource.version}
+                    FhirVersion={FhirResource.fhirVersion}
+                    Publisher={FhirResource.publisher}
+                    Description={FhirResource.description}
+                    Status={FhirResource.status}
+                    Experimental={FhirResource.experimental}
+                    Url={FhirResource.url}
+                    Purpose={FhirResource.purpose}
+                    Copyright={FhirResource.copyright}
+                    Kind={FhirResource.kind}
+                    AcceptUnknown={FhirResource.acceptUnknown}
+                    Contact={FhirResource.contact}
+                    Jurisdiction={FhirResource.jurisdiction}
+                    Software={FhirResource.software}
+                    Implementation={FhirResource.implementation}
+                    Format={FhirResource.format}>
                 </MetadataHeader>
             }
-            else {
-                return <h2>Error in loading</h2>
+            else if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
+                return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
             }
+            else if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {
+                return <h2>We got no response from the Ajax call, work to do here!</h2>
+            }
+            else if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_CallSetupFailed) {
+                return <h2>Call Setup failed in Ajax call, work to do here!</h2>
+            }
+            else {
+                return <h2>Unkown AjaxConstant.CallCompletedState</h2>
+            }
+
         }
     }
 
@@ -103,7 +120,10 @@ class MetadataComponent extends React.Component {
                     </Header>
                     <Segment raised padded >
                         {this.conformanceStatement()}
+                        <Divider hidden />
+                        <Rest_Table />
                     </Segment>
+
                 </div>
             </Container>
         )

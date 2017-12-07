@@ -10,6 +10,7 @@ import isNil from 'lodash/isNil';
 import { Icon, Table, Transition } from 'semantic-ui-react'
 
 import ContactPoint_Row from './ContactPoint_Row'
+import ColorConstant from '../../../../Constants/ColorConstant'
 
 class ContactDetails_Table extends React.Component {
     constructor(props) {
@@ -105,7 +106,7 @@ class ContactDetails_Table extends React.Component {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan='2' singleLine>
-                                <Icon bordered color='teal' name='teletype' /> Contacts for: {this.props.Name}
+                                <Icon bordered color={ColorConstant.IconBackground} name='teletype' /> Contacts for: {this.props.Name}
                             </Table.HeaderCell>
                             <Table.HeaderCell colSpan='1' singleLine textAlign='right'>
                                 <Transition animation={this.state.animation} duration={this.state.duration} visible={this.state.visible}>

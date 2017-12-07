@@ -12,6 +12,10 @@ import toLower from 'lodash/toLower';
 import MetadataHeaderTableRow from './MetadataHeaderTableRow'
 import ContactDetails_Table from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_Table'
 import FhirCodeableConcept from '../FhirComponent/ComplexType/CodeableConcept/CodeableConcept'
+import Formats_Table from './Formats_Table'
+import Implementation_Table from './Implementation_Table'
+import Software_Table from './Software_Table'
+
 
 class MetadataHeader extends React.Component {
     constructor(props) {
@@ -51,8 +55,8 @@ class MetadataHeader extends React.Component {
                             }
                             else {
                                 return null;
-                            }                            
-                        }                        
+                            }
+                        }
                         const getJurisdictionText = CodeableConcept.getText;
 
                         return (
@@ -81,6 +85,7 @@ class MetadataHeader extends React.Component {
             }
         };
 
+
         return (
             <div>
                 <Label as='a' color='black' ribbon><h4>Server Name</h4></Label>
@@ -98,10 +103,14 @@ class MetadataHeader extends React.Component {
                         {tableRow('Experimental', this.props.Experimental.toString())}
                         {tableRow('Purpose', this.props.Purpose)}
                         {tableRow('Kind', this.props.Kind)}
+                        {tableRow('AcceptUnknown', this.props.AcceptUnknown)}
                         {jurisdictionRows(this.props.Jurisdiction)}
                     </Table.Body>
                 </Table>
-                {renderContact()}
+                {renderContact()}                
+                <Software_Table software={this.props.Software} />
+                <Implementation_Table Implementation={this.props.Implementation} />
+                <Formats_Table Format={this.props.Format} />                
             </div>
         )
     }
@@ -121,8 +130,12 @@ MetadataHeader.propTypes = {
     Purpose: PropTypes.string,
     Copyright: PropTypes.string,
     Kind: PropTypes.string,
+    AcceptUnknown: PropTypes.string,
     Contact: PropTypes.array,
     Jurisdiction: PropTypes.array,
+    Software: PropTypes.object,
+    Implementation: PropTypes.object,
+    Format: PropTypes.array
 }
 
 

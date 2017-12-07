@@ -1,32 +1,33 @@
 import FluxStore from './Store';
 import AppDispatcher from '../Dispatcher/AppDispatcher';
 import AppConstants from '../Constants/AppConstants';
+import AjaxConstant from '../Constants/AjaxConstant';
+
 
 let MetadataState = reset();
 
 function reset() {
     MetadataState = {
-        AjaxState: AppConstants.AjaxState.Call_None,
-        HttpStatus: null,
-        Resource: null
+        AjaxCallState: AjaxConstant.CallState.Call_None,
+        AjaxOutcome: null
     };
 }
 
 function pendingCall() {
     MetadataState = {
-        AjaxState: AppConstants.AjaxState.Call_Pending,
-        HttpStatus: null,
-        Resource: null
+        AjaxCallState: AjaxConstant.CallState.Call_Pending,
+        AjaxOutcome: null
     };
 }
 
-function completeCall(data) {
+function completeCall(item) {
     MetadataState = {
-        AjaxState: AppConstants.AjaxState.Call_Complete,
-        HttpStatus: data.HttpStatus,
-        Resource: data.Resource
-    };
+        AjaxCallState: AjaxConstant.CallState.Call_Complete,
+        AjaxOutcome: item
+    }
 }
+
+
 
 class AppStoreMetadata extends FluxStore {
     constructor() {
