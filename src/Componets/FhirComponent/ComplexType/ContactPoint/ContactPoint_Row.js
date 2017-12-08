@@ -25,7 +25,7 @@ class ContactPoint_Row extends React.Component {
                 case 'pager':
                     return <p>{Value}</p>
                 case 'url':
-                    return <a href={'http:'.concat(Value)}>{Value}</a>                
+                    return <a href={'http://'.concat(Value)}>{Value}</a>                
                 case 'sms':
                     return <a href={'sms:'.concat(Value)}>{Value}</a>                
                 case 'other':

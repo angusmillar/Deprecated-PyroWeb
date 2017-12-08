@@ -6,7 +6,6 @@ import MetadataHeader from './MetadataHeader';
 import PropTypes from 'prop-types';
 import { Icon, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
 
-import Rest_Table from './Rest_Table'
 
 function getItemsState() {
     return {
@@ -84,7 +83,8 @@ class MetadataComponent extends React.Component {
                     Jurisdiction={FhirResource.jurisdiction}
                     Software={FhirResource.software}
                     Implementation={FhirResource.implementation}
-                    Format={FhirResource.format}>
+                    Format={FhirResource.format}
+                    Rest={FhirResource.rest}>
                 </MetadataHeader>
             }
             else if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
@@ -119,9 +119,7 @@ class MetadataComponent extends React.Component {
                     </Header.Content>
                     </Header>
                     <Segment raised padded >
-                        {this.conformanceStatement()}
-                        <Divider hidden />
-                        <Rest_Table />
+                        {this.conformanceStatement()}                                                
                     </Segment>
 
                 </div>

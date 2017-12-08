@@ -7,13 +7,18 @@ class Expandable_Table extends React.Component {
     constructor(props) {
         super(props);
         this.mouseOverExpandEvent = this.mouseOverExpandEvent.bind(this);
+        this.mouseOutRowEvent = this.mouseOutRowEvent.bind(this);
         this.onClickExpand = this.onClickExpand.bind(this);
 
-        this.state = { animation: 'jiggle', duration: 800, visible: true, expandRows: false, expandIconType: 'plus square outline' };
+        this.state = { animation: 'jiggle', duration: 800, visible: true, expandRows: false, expandIconType: 'plus square outline', rowActive: false };
     }
 
     mouseOverExpandEvent() {
-        this.setState({ visible: !this.state.visible })
+        this.setState({ visible: !this.state.visible, rowActive: !this.state.rowActive})
+    }
+
+    mouseOutRowEvent() {
+        this.setState({ rowActive: !this.state.rowActive})
     }
 
     onClickExpand() {
@@ -38,24 +43,24 @@ class Expandable_Table extends React.Component {
         };
 
 
-
+        
         return (
-            <Table padded >
+            <Table padded color={this.props.tableColorType} inverted={this.props.tableColorInverted} >
                 <Table.Header>
-                    <Table.Row>
+                    <Table.Row positive={this.state.rowActive} onMouseOver={this.mouseOverExpandEvent} onMouseOut={this.mouseOutRowEvent} onClick={this.onClickExpand}>
                         <Table.HeaderCell colSpan='2' singleLine>
-                            <Icon bordered color={ColorConstant.IconBackground} name={this.props.tableHeadingIconType} /> {this.props.tableHeadingTitle}
+                            <Icon bordered color={this.props.tableColorType} name={this.props.tableHeadingIconType} /> {this.props.tableHeadingTitle}
                         </Table.HeaderCell>
                         <Table.HeaderCell colSpan='1' singleLine textAlign='right'>
                             <Transition animation={this.state.animation} duration={this.state.duration} visible={this.state.visible}>
-                                <Icon name={this.state.expandIconType} size='large' color='grey' onMouseOver={this.mouseOverExpandEvent} onClick={this.onClickExpand} />
+                                <Icon name={this.state.expandIconType} size='large' color='grey' />
                             </Transition>
                         </Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
-                
-                    {renderFormats()}
-                
+
+                {renderFormats()}
+
             </Table>
         )
 
@@ -70,6 +75,14 @@ Expandable_Table.propTypes = {
     tableHeadingIconType: PropTypes.string.isRequired,
     //must be a funtion that returns <Table.Body> and takes a bolean to expand, where true retuns that expneded state. 
     tableRowsFunction: PropTypes.func.isRequired,
+    //Color for the table, default if not set
+    tableColorType: PropTypes.string,
+    //Inverted the table color, so whole table has color if True
+    tableColorInverted: PropTypes.bool
 }
+
+Expandable_Table.defaultProps = {
+    tableColorInverted: false,
+};
 
 export default Expandable_Table

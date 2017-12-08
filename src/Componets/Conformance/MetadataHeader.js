@@ -15,6 +15,7 @@ import FhirCodeableConcept from '../FhirComponent/ComplexType/CodeableConcept/Co
 import Formats_Table from './Formats_Table'
 import Implementation_Table from './Implementation_Table'
 import Software_Table from './Software_Table'
+import Rest_Table from './Rest_Table'
 
 
 class MetadataHeader extends React.Component {
@@ -70,13 +71,13 @@ class MetadataHeader extends React.Component {
             }
         };
 
-        const renderContact = () => {
-            if (isNil(this.props.Contact)) {
+        const renderContact = (Contacts) => {
+            if (isNil(Contacts)) {
                 return null
             }
             else {
                 return (
-                    map(this.props.Contact, (Contact, Index) => {
+                    map(Contacts, (Contact, Index) => {
                         return (
                             <ContactDetails_Table key={Index} Telecom={Contact.telecom} Name={Contact.name} />
                         )
@@ -85,6 +86,19 @@ class MetadataHeader extends React.Component {
             }
         };
 
+        const renderRest = (Rest) => {
+            if (isNil(Rest)) {
+                return null;
+            } else {
+                return (
+                    map(Rest, (RestItem, Index) => {
+                        return (
+                            <Rest_Table key={Index} rest={RestItem} />
+                        )
+                    })
+                )
+            }
+        };
 
         return (
             <div>
@@ -107,10 +121,11 @@ class MetadataHeader extends React.Component {
                         {jurisdictionRows(this.props.Jurisdiction)}
                     </Table.Body>
                 </Table>
-                {renderContact()}                
+                {renderContact(this.props.Contact)}                
                 <Software_Table software={this.props.Software} />
                 <Implementation_Table Implementation={this.props.Implementation} />
                 <Formats_Table Format={this.props.Format} />                
+                {renderRest(this.props.Rest)}                
             </div>
         )
     }
@@ -135,7 +150,8 @@ MetadataHeader.propTypes = {
     Jurisdiction: PropTypes.array,
     Software: PropTypes.object,
     Implementation: PropTypes.object,
-    Format: PropTypes.array
+    Format: PropTypes.array,
+    Rest: PropTypes.array
 }
 
 
