@@ -30,6 +30,8 @@ A front-end UI for the Pyro FHIR Server project
 *   <kbd>CTRL</kbd>+<kbd>SHIFT</kbd>+<kbd>T</kbd> to run eslint
 
 ## Website installation / depolyment 
+First build the production website files by running the VS Code task named release. Then take all the files output to the dist folder of the project. Take these files to the web server e.g IIS8
+
 ### Windows Server IIS8
 1.   Create a new windows account on the server for the new website application pool to use. Add this account to the IIS_IUSRS acount group.
 2.   Create a new folder under the IIS directory C:\inetpub\wwwroot\[MyNewWebsite]
