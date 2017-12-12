@@ -47,7 +47,7 @@ class Resource_Table extends React.Component {
                 </Table.Row>
             )
         };
-
+        
         const renderRows = (Expand) => {
             if (Expand) {
                 //The user has expanded the full list so show all soretd by Rank if found
@@ -55,11 +55,11 @@ class Resource_Table extends React.Component {
                 return (
                     <Table.Body>
                         <MetadataHeaderTableRow RowLabel='Versioning' RowValue={Resource.versioning} />
-                        <MetadataHeaderTableRow RowLabel='Read History' RowValue={Resource.readHistory.toString()} />
-                        <MetadataHeaderTableRow RowLabel='Update Create' RowValue={Resource.updateCreate.toString()} />
-                        <MetadataHeaderTableRow RowLabel='Conditional Create' RowValue={Resource.conditionalCreate.toString()} />
+                        <MetadataHeaderTableRow RowLabel='Read History' RowValue={Resource.readHistory} />
+                        <MetadataHeaderTableRow RowLabel='Update Create' RowValue={Resource.updateCreate} />
+                        <MetadataHeaderTableRow RowLabel='Conditional Create' RowValue={Resource.conditionalCreate} />
                         <MetadataHeaderTableRow RowLabel='Conditional Read' RowValue={Resource.conditionalRead} />
-                        <MetadataHeaderTableRow RowLabel='Conditional Update' RowValue={Resource.conditionalUpdate.toString()} />
+                        <MetadataHeaderTableRow RowLabel='Conditional Update' RowValue={Resource.conditionalUpdate} />
                         <MetadataHeaderTableRow RowLabel='Conditional Delete' RowValue={Resource.conditionalDelete} />
                         {renderTables(Resource.interaction, Resource.searchInclude, Resource.searchRevInclude, Resource.searchParam )}
                     </Table.Body>

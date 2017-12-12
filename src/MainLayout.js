@@ -16,8 +16,8 @@ class MainLayoutTwo extends React.Component {
                 <div>
                     <MainMenu siteIconProp={this.props.siteIconProp} />
                     <Route exact path="/" component={Home} />                    
-                    <Route path="/FluxTest-content" component={FluxTest} />
-                    <Route path="/metadata-content" component={MetadataComponent} />
+                    <Route exact path="/FluxTest-content" component={FluxTest} />
+                    <Route exact path="/metadata-content" component={MetadataComponent} />
                     <MainFooter siteIconProp={this.props.siteIconProp} />
                 </div>
             </Router>

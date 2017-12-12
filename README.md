@@ -38,5 +38,6 @@ First build the production website files by running the VS Code task named relea
 3.   Assign access to this new folder to the new windows acount you created
 4.   Open IIS Manager and create a new Aplication pool, set .NET CLR version to be No Managed Code and Mananged pipline mode to intergrated and tick start application pool immediately
 5.   Now add a new wesite under sites, select the application pool you just created. Set the Physical path to the folder you put the website content in. Click Connect As and enter the windows account name you created and it's password. Enter you domian/subdomain in Host Name, Click OK.
-6.   Ensure your Bindings are correct http or https and cetrificates if required.
-7.   Hit restat just to ensure everything it set and navigate to your site to test.
+6.   Configure the defalt page for 404 errors to be the websites main index.html file. To do this go to the Error Pages option and configure 404 to Execute a URL on this site and in URL (relative to site root) enter \index.html and click OK. This is required to ensure ReactRouter works correctly for browser refreashes and bookmarks.  
+7.   Ensure your Bindings are correct http or https and cetrificates if required.
+8.   Hit restat just to ensure everything it set and navigate to your site to test.

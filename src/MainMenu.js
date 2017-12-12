@@ -11,7 +11,7 @@ class MainMenu extends React.Component{
                     <Menu.Item as={Link} to='/' header>
                         <Image
                             size='mini'
-                            shape={'circular'}
+                            circular
                             src={this.props.siteIconProp}
                             style={{ marginRight: '1.5em' }}
                         />
@@ -20,14 +20,14 @@ class MainMenu extends React.Component{
     
                     <Menu.Item as={Link} to='/'>Home</Menu.Item>
     
-                    <Dropdown item simple text='Dropdown'>
+                    <Dropdown item simple text='Server Information'>
                         <Dropdown.Menu>
-                            <Dropdown.Item>List Item1</Dropdown.Item>
-                            <Dropdown.Item as={Link} to='/dunny-content'>Dumy Content</Dropdown.Item>
+                            {/* <Dropdown.Item>List Item1</Dropdown.Item> */}
+                            {/* <Dropdown.Item as={Link} to='/dunny-content'>Dumy Content</Dropdown.Item> */}
                             <Dropdown.Item as={Link} to='/metadata-content'>FHIR Conformance Statment</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Header>Header Item</Dropdown.Header>
-                            <Dropdown.Item>
+                            {/* <Dropdown.Divider /> */}
+                            {/* <Dropdown.Header>Header Item</Dropdown.Header> */}
+                            {/* <Dropdown.Item>
                                 <i className='dropdown icon' />
                                 <span className='text'>Submenu</span>
                                 <Dropdown.Menu>
@@ -35,7 +35,7 @@ class MainMenu extends React.Component{
                                     <Dropdown.Item>List Item2</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown.Item>
-                            <Dropdown.Item>List Item</Dropdown.Item>
+                            <Dropdown.Item>List Item</Dropdown.Item> */}
                         </Dropdown.Menu>
                     </Dropdown>
                 </Container>                

@@ -8,8 +8,10 @@ import AjaxOutcome from '../Ajax/AjaxOutcome';
 class PyroApi {
 
     constructor() {
-        //const ServerBaseUrl = 'http://localhost:8888/test/stu3/fhir/';
-        const ServerBaseUrl = 'http://pyrohealth.net/test/stu3/fhir/';
+        //GG's Server
+        //const ServerBaseUrl = 'http://test.fhir.org/r3/';
+        //Pyro Server
+        const ServerBaseUrl = 'https://pyrohealth.net/test/stu3/fhir/';
         this.RequestConfig = {
             headers: {
                 'Accept': 'application/fhir+json',
@@ -42,9 +44,9 @@ class PyroApi {
                 AppActionsMetadata.setMetadata({ HttpStatus: error.status, Resource: '' });
             });
     }
-
+//Test 'CapabilityStatement/PyroTest'
     getMetaData() {
-        axios.get('CapabilityStatement/PyroTest', this.RequestConfig)
+        axios.get('metadata', this.RequestConfig)
             .then(function (response) {
                 const OutCome = new AjaxOutcome(response.status, AjaxConstants.CallCompletedState.Completed_Ok, response.data, null);
                 AppActionsMetadata.setMetadata(OutCome);

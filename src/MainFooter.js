@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types';
-import { Container, Divider, Grid, Header, Image, List, Segment } from 'semantic-ui-react'
+import { Container, Divider, Grid, Header, Image, List, Segment, Item } from 'semantic-ui-react'
 
 class MainFooter extends React.Component{
     
@@ -15,35 +15,38 @@ class MainFooter extends React.Component{
                     <Grid divided inverted stackable>
                         <Grid.Row>
                             <Grid.Column width={3}>
-                                <Header inverted as='h4' content='Group 1' />
-                                <List link inverted>
-                                    <List.Item as='a'>Link One</List.Item>
-                                    <List.Item as='a'>Link Two</List.Item>
-                                    <List.Item as='a'>Link Three</List.Item>
-                                    <List.Item as='a'>Link Four</List.Item>
+                                <Header inverted as='h4' content='FHIR Resources' />
+                                <List link inverted>                                                                                                                                        
+                                    <List.Item as='a' href='http://hl7.org/fhir/STU3/index.html'>FHIR Specification STU3</List.Item>
+                                    <List.Item as='a' href='http://ewoutkramer.github.io/fhir-net-api/'>.Net FHIR API</List.Item>
+                                    <List.Item as='a' href='http://fhir-drills.github.io/'>FHIR-Drills Tutorials</List.Item>
+                                    <List.Item as='a' href='http://fhir.hl7.org.au/fhir/base2017Dec/'>Australian FHIR Base Profiles</List.Item>                                    
                                 </List>
                             </Grid.Column>
                             <Grid.Column width={3}>
-                                <Header inverted as='h4' content='Group 2' />
+                                <Header inverted as='h4' content='FHIR Blogs' />
                                 <List link inverted>
-                                    <List.Item as='a'>Link One</List.Item>
-                                    <List.Item as='a'>Link Two</List.Item>
-                                    <List.Item as='a'>Link Three</List.Item>
-                                    <List.Item as='a'>Link Four</List.Item>
+                                    <List.Item as='a' href='http://www.healthintersections.com.au/'>Health Intersections</List.Item>
+                                    <List.Item as='a' href='https://fhirblog.com/'>Hay on FHIR</List.Item>
+                                    <List.Item as='a' href='https://thefhirplace.com/'>The FHIR Place</List.Item>   
+                                    <List.Item as='a' href='http://motorcycleguy.blogspot.com.au/search/label/FHIR'>Motor Cycle Guy</List.Item>
                                 </List>
                             </Grid.Column>
                             <Grid.Column width={3}>
-                                <Header inverted as='h4' content='Group 3' />
+                                <Header inverted as='h4' content='FHIR Testing' />
                                 <List link inverted>
-                                    <List.Item as='a'>Link One</List.Item>
-                                    <List.Item as='a'>Link Two</List.Item>
-                                    <List.Item as='a'>Link Three</List.Item>
-                                    <List.Item as='a'>Link Four</List.Item>
+                                    <List.Item as='a' href='http://wiki.hl7.org/index.php?title=Publicly_Available_FHIR_Servers_for_testing'>Public FHIR Test Servers</List.Item>
+                                    <List.Item as='a' href='http://www.aegis.net/touchstone.html'>AEGIS FHIR testing Service</List.Item>    
+                                    <List.Item as='a' href='https://projectcrucible.org/'>Project Crucible</List.Item>    
+                                    <List.Item as='a' href='http://hapifhir.io/doc_server_tester.html'>HAPI FHIR Testing</List.Item>                                        
                                 </List>
                             </Grid.Column>
                             <Grid.Column width={3}>
-                                <Header inverted as='h4' content='Footer Header' />
-                                <p>Extra space for a call to action inside the footer that could help re-engage users.</p>
+                                <Header inverted as='h4' content='Give me more FHIR' />
+                                <p>There is an active community of FHIR implmenters from around the globe at: </p>                                
+                                <List link inverted>
+                                    <List.Item as='a' href='https://chat.fhir.org/'>Chat FHIR</List.Item>
+                                </List>
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
@@ -52,14 +55,14 @@ class MainFooter extends React.Component{
                     <Image
                         centered
                         size='mini'
-                        shape={'circular'}
+                        circular
                         src={this.props.siteIconProp}
                     />
                     <List horizontal inverted divided link>
                         <List.Item as='a' href='#'>Site Map</List.Item>
                         <List.Item as='a' href='#'>Contact Us</List.Item>
-                        <List.Item as='a' href='#'>Terms and Conditions</List.Item>
-                        <List.Item as='a' href='#'>Privacy Policy</List.Item>
+                        {/* <List.Item as='a' href='#'>Terms and Conditions</List.Item> */}
+                        {/* <List.Item as='a' href='#'>Privacy Policy</List.Item> */}
                     </List>
                 </Container>
             </Segment>           

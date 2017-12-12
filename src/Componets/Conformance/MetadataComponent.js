@@ -52,14 +52,12 @@ class MetadataComponent extends React.Component {
         }
         else if (this.state.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Pending) {
             return (
-                <div>
-                    <Segment>
-                        <Dimmer active inverted>
-                            <Loader size='large'>Loading</Loader>
-                        </Dimmer>
-                        <Image src={this.props.wireframeParagraphImage} />
-                    </Segment>
-                </div>
+                <Segment>
+                    <Dimmer active inverted>
+                        <Loader size='large'>Loading</Loader>
+                    </Dimmer>
+                    <Image src={this.props.wireframeParagraphImage} />
+                </Segment>
             );
         }
         else if (this.state.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
@@ -119,7 +117,7 @@ class MetadataComponent extends React.Component {
                     </Header.Content>
                     </Header>
                     <Segment raised padded >
-                        {this.conformanceStatement()}                                                
+                        {this.conformanceStatement()}
                     </Segment>
 
                 </div>

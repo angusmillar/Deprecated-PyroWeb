@@ -8,14 +8,32 @@ class MetadataHeaderTableRow extends React.Component {
         super(props);
     }
 
+    
+
     render() {
+    
+        const detectType = (value) => {
+            switch (typeof value) {
+                case 'string':
+                    return value;          
+                case 'number':
+                    return value.toString();          
+                case 'object':
+                    return value;          
+                case 'boolean':
+                    return value.toString();          
+                default:
+                    return value;
+            }
+        };
+    
         if (isNil(this.props.RowValue)) {
             return null;
         } else {
             return (
                 <Table.Row>
                     <Table.Cell colSpan='1'><b>{this.props.RowLabel}</b></Table.Cell>
-                    <Table.Cell colSpan='2' textAlign='left' >{this.props.RowValue}</Table.Cell>
+                    <Table.Cell colSpan='2' textAlign='left' >{detectType(this.props.RowValue)}</Table.Cell>
                 </Table.Row>
             )
         }    
@@ -25,7 +43,7 @@ class MetadataHeaderTableRow extends React.Component {
 //Type Checking
 MetadataHeaderTableRow.propTypes = {
     RowLabel: PropTypes.string.isRequired,
-    RowValue: PropTypes.any.isRequired,
+    RowValue: PropTypes.any,
     
 }
 

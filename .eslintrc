@@ -11,9 +11,9 @@
         "browser": true,
         "node": true
     },
-    "ignore": [
-        "node_modules"
-    ],
+    // "ignore": [
+    //     "node_modules"
+    // ],
     "extends": [
         "eslint:recommended",
         "plugin:import/errors",
