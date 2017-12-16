@@ -106,7 +106,7 @@ class ContactDetails_Table extends React.Component {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan='2' singleLine>
-                                <Icon bordered color={ColorConstant.IconBackground} name='teletype' /> Contacts for: {this.props.Name}
+                                <Icon bordered color={ColorConstant.IconBackground} name='teletype' /> {this.props.Name}
                             </Table.HeaderCell>
                             <Table.HeaderCell colSpan='1' singleLine textAlign='right'>
                                 <Transition animation={this.state.animation} duration={this.state.duration} visible={this.state.visible}>

@@ -4,8 +4,8 @@ import MainMenu from 'MainMenu';
 import MainFooter from 'MainFooter';
 import Home from 'Home';
 import FluxTest from 'FluxTest';
-import MetadataComponent from 'Componets/Conformance/MetadataComponent';
-import PyroServerApi from 'Componets/PyroFhirApi/PyroServerApi';
+import MetadataComponent from './Componets/Conformance/MetadataComponent';
+import PyroServerApi from './Componets/PyroFhirApi/PyroServerApi';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 

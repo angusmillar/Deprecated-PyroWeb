@@ -79,7 +79,7 @@ class MetadataHeader extends React.Component {
                 return (
                     map(Contacts, (Contact, Index) => {
                         return (
-                            <ContactDetails_Table key={Index} Telecom={Contact.telecom} Name={Contact.name} />
+                            <ContactDetails_Table key={Index} Telecom={Contact.telecom} Name={`Contact: ${Contact.name}`} />
                         )
                     }
                     ))

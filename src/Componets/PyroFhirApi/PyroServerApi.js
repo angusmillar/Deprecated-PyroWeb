@@ -5,9 +5,11 @@ import AjaxConstant from 'Constants/AjaxConstant';
 import PropTypes from 'prop-types';
 import isNil from 'lodash/isNil';
 import find from 'lodash/find'
-import { List, Dropdown, Icon, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
+import map from 'lodash/map';
+import { List, Dropdown, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
 
 import RestAPIComponent from './RestAPIComponent'
+import ContactDetails_Table from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_Table'
 
 function getItemsState() {
     return {
@@ -50,9 +52,9 @@ class PyroServerApi extends React.Component {
         this.setState({ store: getItemsState() });
     }
 
-    handleSchemaChange(e, { value }) {        
+    handleSchemaChange(e, { value }) {
         const x = find(this.props.apiSchema, ['value', value])
-        this.setState({ selectedSchema: x })        
+        this.setState({ selectedSchema: x })
     }
 
 
@@ -72,7 +74,97 @@ class PyroServerApi extends React.Component {
         }
         else if (this.state.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
             if (this.state.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_Ok) {
-                return <RestAPIComponent />
+                //We have the ConformanceStatment FHIR Resource
+
+                const renderContact = (Contacts) => {
+                    if (isNil(Contacts)) {
+                        return null
+                    }
+                    else {
+                        return (
+                            map(Contacts, (Contact, Index) => {
+                                return (
+                                    <ContactDetails_Table key={Index} Telecom={Contact.telecom} Name={Contact.name} />
+                                )
+                            }
+                            ))
+                    }
+                };
+
+                const renderFullURL = (ServiceRootUrl) => {
+                    if (isNil(this.props.apiSchema) || isNil(ServiceRootUrl)) {
+                        return null
+                    }
+                    else {
+                        const FullUrl = `${this.state.selectedSchema.value}://${ServiceRootUrl}`;
+                        return FullUrl;
+                    }
+                };
+
+                const renderResources = (Resources) => {
+                    if (isNil(Resources)) {
+                        return null
+                    }
+                    else {
+                        return (
+                            map(Resources, (Resource, Index) => {
+                                return (
+                                    <RestAPIComponent key={Index} resource={Resource} />
+                                )
+                            }
+                            ))
+                    }
+                };
+
+
+                const FhirResource = this.state.store.MetadataState.AjaxOutcome.FhirResource;
+                const currentValue = this.state.selectedSchema.value;
+                const HeadingSize = 'medium';
+                const apiTitle = `${FhirResource.name} FHIR API `;                                
+                const serviceRootUrl = FhirResource.implementation.url;
+                const apiDescription = FhirResource.implementation.description;
+                const apiContacts = FhirResource.contact;
+                const apiResources = FhirResource.rest[0].resource;
+                return (
+                    <Container text style={{ marginTop: '7em' }}>
+                        <div>
+                            <Divider hidden />
+                            <Header size='large'>{apiTitle}</Header>
+                            <Segment padded>
+                                <List relaxed='very'>
+                                    <List.Item>
+                                        <List.Content>
+                                            <Header color='teal' dividing size={HeadingSize} >FHIR endpoint</Header><br />
+                                        </List.Content>
+                                        <span>
+                                            <b>Schema: </b> {' '}
+                                            <Dropdown inline
+                                                options={this.props.apiSchema}
+                                                defaultValue={currentValue}
+                                                onChange={this.handleSchemaChange} />
+                                        </span>
+                                    </List.Item>
+                                    <List.Item>
+                                        <code><b>Endpoint URL: </b>     {renderFullURL(serviceRootUrl)}</code><br />
+                                    </List.Item>
+                                    <List.Item>
+                                        <code><b>Service Base URL: </b>{serviceRootUrl}</code>
+                                    </List.Item>
+                                    <List.Item>
+                                        <Header color='teal' dividing size={HeadingSize}>Description</Header>
+                                        <p>{apiDescription}</p>
+                                    </List.Item>
+                                    <List.Item>                                        
+                                        <Header color='teal' dividing size={HeadingSize}>Contact Developer</Header>
+                                        {renderContact(apiContacts)}                                        
+                                    </List.Item>
+                                </List>
+                            </Segment>
+                            {renderResources(apiResources)}                            
+                        </div>
+                    </Container>
+                )
+                
             }
             else if (this.state.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
                 return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
@@ -93,88 +185,23 @@ class PyroServerApi extends React.Component {
 
 
     render() {
-
-        const renderFullURL = () => {
-            if (isNil(this.props.apiSchema) || isNil(this.props.serviceRootUrl)) {
-                return null
-            }
-            else {
-                const FullUrl = `${this.state.selectedSchema.value}://${this.props.serviceRootUrl}`;
-                return (
-                    <List.Content>
-                        <List.Description as='a' href={FullUrl}>{FullUrl}</List.Description>
-                    </List.Content>
-                )
-            }
-        };
-
-        const currentValue = this.state.selectedSchema.value;
         return (
-            <Container text style={{ marginTop: '7em' }}>
-                {/* <Button positive onClick={this.handleClickGetMetadata} >Load Conformance Statment</Button>                 */}
-                <div>
-                    <Divider hidden />
-                    <Header size='large'>{this.props.apiTitle}</Header>
-                    <Segment padded>
-                        <List relaxed='very'>
-                            <List.Content>
-                                <code>[<b>Base URL: </b>{this.props.serviceRootUrl}]</code>
-                            </List.Content>
-                            <List.Item>{renderFullURL()}</List.Item>
-                            <List.Item>
-                                <Header size='tiny'>Description</Header>
-                                <p>{this.props.apiDescription}</p>
-                            </List.Item>
-                            <List.Item>
-
-                                <Header size='tiny'>Contact Developer</Header>
-                                <List.Description as='a' href={'mailto:'.concat(this.props.apiContactEmail)}>{this.props.apiContactEmail}</List.Description>
-
-                            </List.Item>
-                            <Header size='tiny'>Schema</Header>
-                            <List.Content>
-                                <Dropdown
-                                    placeholder='schema'
-                                    value={currentValue}                                   
-                                    selection
-                                    options={this.props.apiSchema}
-                                    onChange={this.handleSchemaChange} />
-                            </List.Content>
-                        </List>
-
-
-
-                    </Segment>
-
-                    <Segment raised padded >
-                        {this.renderApiDocumentation()}
-                    </Segment>
-
-                </div>
-            </Container>
+            <div>
+                {this.renderApiDocumentation()})
+            </div>
         )
     }
 
 }
 //Type Checking
 PyroServerApi.propTypes = {
-    wireframeParagraphImage: PropTypes.string,
-    apiTitle: PropTypes.string.isRequired,
-    apiServerName: PropTypes.string.isRequired,
-    apiSchema: PropTypes.array.isRequired,
-    serviceRootUrl: PropTypes.string.isRequired,
-    apiDescription: PropTypes.string.isRequired,
-    apiContactEmail: PropTypes.string.isRequired,
+    wireframeParagraphImage: PropTypes.string,        
+    apiSchema: PropTypes.array.isRequired,            
 }
 
 PyroServerApi.defaultProps = {
-    wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),
-    apiTitle: 'Pyro Server FHRI API ',
-    apiServerName: 'Pyro FHIR Server',
-    apiSchema: [{ key: 'https', text: 'https', value: 'https' }, { key: 'http', text: 'http', value: 'http' }],
-    serviceRootUrl: 'stu3.test.pyrohealth.net/fhir',
-    apiDescription: 'The is the API docuemntation for the Pyro FHIR Server which is an implmentation based to the HL7 FHIR specification.',
-    apiContactEmail: 'angusbmillar@gmail.com'
+    wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),        
+    apiSchema: [{ key: 'https', text: 'https', value: 'https' }, { key: 'http', text: 'http', value: 'http' }],            
 }
 
 export default PyroServerApi;  
