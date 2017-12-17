@@ -23,7 +23,7 @@ class RestAPIComponent extends React.Component {
 
         const renderGetTableBody = (Expand) => {
             if (Expand) {
-                const description = `This will return all ${_resourceName} resources as a search Bundle resource`;   
+                const description = `Return all ${_resourceName} resources as a search Bundle resource`;   
                 return (
                     <Table.Body>
                         <Table.Row>

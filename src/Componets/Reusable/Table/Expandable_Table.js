@@ -68,6 +68,16 @@ class Expandable_Table extends React.Component {
             }
         };
 
+        //A second header under the expandable header if required
+        const renderSubHeaderRow = () => {
+            if (!isNil(this.props.tableSubHeadingComponent)) {
+                if (this.state.expandRows) {
+                    return this.props.tableSubHeadingComponent();                                        
+                }    
+            } 
+            return null;                        
+        };
+
 
         return (
             <Table padded color={this.props.tableColorType} inverted={this.props.tableColorInverted} >
@@ -82,10 +92,9 @@ class Expandable_Table extends React.Component {
                             </Transition>
                         </Table.HeaderCell>
                     </Table.Row>
+                    {renderSubHeaderRow()}
                 </Table.Header>
-
                 {renderFormats()}
-
             </Table>
         )
 
@@ -98,9 +107,11 @@ Expandable_Table.propTypes = {
     tableHeadingTitle: PropTypes.string.isRequired,
     //The string for the icon requires e.g (<Icon bordered color='teal' name='tableHeadingIconType' />)
     tableHeadingIconType: PropTypes.string,
-    //must be a funtion that returns <Table.Body> and takes a bolean to expand, where true retuns that expneded state. 
+    //must be a funtion that returns a react componet which will be placed in the Expandable header cell.
     tableHeadingComponent: PropTypes.element,
-    //must be a funtion that returns <Table.Body> and takes a bolean to expand, where true retuns that expneded state. 
+    //must be a funtion that returns a react componet that renders a <Table.Row> which will be placed under the expandable header row.
+    tableSubHeadingComponent: PropTypes.func,    
+    //must be a funtion that returns <Table.Body> and takes a bolean to expand, where true retuns that expneded state.
     tableRowsFunction: PropTypes.func.isRequired,
     //Color for the table, default if not set
     tableColorType: PropTypes.string,

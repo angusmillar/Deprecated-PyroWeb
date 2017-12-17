@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 import map from 'lodash/map';
 
 import FhirConstant from '../../Constants/FhirConstant';
+import Expandable_Table from '../Reusable/Table/Expandable_Table'
 
 class RestParametersComponent extends React.Component {
     constructor(props) {
@@ -13,8 +14,17 @@ class RestParametersComponent extends React.Component {
 
     render() {
 
+        const renderSubHeading = () => {
+            return(
+                <Table.Row>
+                    <Table.HeaderCell width='4'>Name</Table.HeaderCell>
+                    <Table.HeaderCell width='4'>FHIR Type</Table.HeaderCell>
+                    <Table.HeaderCell width='8'>Description</Table.HeaderCell>
+                </Table.Row>
+            )
+        };
 
-        const renderParameters = () => {
+        const renderParameterRows = () => {
             if (isNil(this.props.parameters)) {
                 return null;
             } else {
@@ -30,7 +40,7 @@ class RestParametersComponent extends React.Component {
                                     <span><code>{name}</code></span>
                                 </Table.Cell>
                                 <Table.Cell width='4' verticalAlign='top' >
-                                    <code><a as='a' href={FhirTypeWebLink} rel="noopener noreferrer" target='_blank'>{type}</a></code>                                    
+                                    <code><a as='a' href={FhirTypeWebLink} rel="noopener noreferrer" target='_blank'>{type}</a></code>
                                 </Table.Cell>
                                 <Table.Cell width='8' verticalAlign='top' >
                                     <p>{documentation}</p>
@@ -43,25 +53,50 @@ class RestParametersComponent extends React.Component {
             }
         };
 
-
+        const renderParametersRowsBody = (Expand) => {
+            if (isNil(this.props.parameters)) {
+                return null;
+            } else {
+                if (Expand) {
+                    return (
+                        <Table.Body>
+                          {renderParameterRows()}
+                        </Table.Body>
+                    )
+                } else {
+                    return null;
+                }                                    
+            }
+        };
 
         return (
-            <Table color={this.props.color}>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan='3' size='tiny'>Parameters</Table.HeaderCell>
-                    </Table.Row>
-                    <Table.Row>
-                        <Table.HeaderCell width='4'>Name</Table.HeaderCell>
-                        <Table.HeaderCell width='4'>FHIR Type</Table.HeaderCell>
-                        <Table.HeaderCell width='8'>Description</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {renderParameters()}
-                </Table.Body>
-            </Table>
+            <Expandable_Table
+                tableHeadingTitle='Parameters'
+                tableHeadingIconType='search'
+                tableSubHeadingComponent={renderSubHeading}
+                tableRowsFunction={renderParametersRowsBody}
+                tableColorType={this.props.color}
+            />
+
+
         )
+        // return (
+        //     <Table color={this.props.color}>
+        //         <Table.Header>
+        //             <Table.Row>
+        //                 <Table.HeaderCell colSpan='3' size='tiny'>Parameters</Table.HeaderCell>
+        //             </Table.Row>
+        //             <Table.Row>
+        //                 <Table.HeaderCell width='4'>Name</Table.HeaderCell>
+        //                 <Table.HeaderCell width='4'>FHIR Type</Table.HeaderCell>
+        //                 <Table.HeaderCell width='8'>Description</Table.HeaderCell>
+        //             </Table.Row>
+        //         </Table.Header>
+        //         <Table.Body>
+        //             {renderParameters()}
+        //         </Table.Body>
+        //     </Table>
+        // )
     }
 }
 
