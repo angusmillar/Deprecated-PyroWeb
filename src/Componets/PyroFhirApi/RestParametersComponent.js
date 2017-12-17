@@ -71,32 +71,14 @@ class RestParametersComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingTitle='Parameters'
+                tableHeadingTitle='Search Parameters'
                 tableHeadingIconType='search'
                 tableSubHeadingComponent={renderSubHeading}
                 tableRowsFunction={renderParametersRowsBody}
                 tableColorType={this.props.color}
             />
-
-
-        )
-        // return (
-        //     <Table color={this.props.color}>
-        //         <Table.Header>
-        //             <Table.Row>
-        //                 <Table.HeaderCell colSpan='3' size='tiny'>Parameters</Table.HeaderCell>
-        //             </Table.Row>
-        //             <Table.Row>
-        //                 <Table.HeaderCell width='4'>Name</Table.HeaderCell>
-        //                 <Table.HeaderCell width='4'>FHIR Type</Table.HeaderCell>
-        //                 <Table.HeaderCell width='8'>Description</Table.HeaderCell>
-        //             </Table.Row>
-        //         </Table.Header>
-        //         <Table.Body>
-        //             {renderParameters()}
-        //         </Table.Body>
-        //     </Table>
-        // )
+        )     
+        
     }
 }
 
