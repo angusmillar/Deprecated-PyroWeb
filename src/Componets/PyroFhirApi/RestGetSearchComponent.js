@@ -7,6 +7,7 @@ import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
 import RestRequestComponent from './RestRequestComponent';
 import RestResponsesComponent from './RestResponsesComponent';
+import FhirConstant from '../../Constants/FhirConstant';
 
 class RestGetSearchComponent extends React.Component {
     constructor(props) {
@@ -16,12 +17,19 @@ class RestGetSearchComponent extends React.Component {
     render() {    
         const VerbGetName = 'GET';
         const _VerbGetColor = 'blue';
-        
-        const _VerbGetHttpHeaders = []
+        //Example string must be post the Resource Name
+        const _exampleRequests = [
+            '?searchParameterName=value&searchParameterName=value',
+            ' '
+        ];        
+        const _RequestHttpHeaders = [
+            { name: 'Content-Type', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
+            { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` }
+        ];
 
         const renderGetSearchTableBody = (Expand) => {
             if (Expand) {
-                const description = `Return all ${this.props.resourceName} resources as a search Bundle resource`;
+                const description = `Return all ${this.props.resourceName} resources or filter ${this.props.resourceName} resources by a set of serach parameters. A search Bundle resource will be retunred with ${this.props.resourceName} resources as its entries.`;
                 return (
                     <Table.Body>
                         <Table.Row>
@@ -29,7 +37,12 @@ class RestGetSearchComponent extends React.Component {
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestRequestComponent httpHeaders={_VerbGetHttpHeaders} searchParameters={this.props.searchParameters} color={_VerbGetColor} />
+                                <RestRequestComponent
+                                    resourceName={this.props.resourceName}
+                                    exampleRequests={_exampleRequests}
+                                    httpHeaders={_RequestHttpHeaders}
+                                    searchParameters={this.props.searchParameters}
+                                    color={_VerbGetColor} />
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>

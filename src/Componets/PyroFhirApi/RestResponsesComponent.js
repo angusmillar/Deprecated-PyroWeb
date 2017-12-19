@@ -31,12 +31,12 @@ class RestResponsesComponent extends React.Component {
             return (
                 <Table.Row key='1'>
                     <Table.Cell width='4' verticalAlign='top'>
-                        <span><code>{HttpCodeOk}</code></span>
+                        <span><p>{HttpCodeOk}</p></span>
                     </Table.Cell>
                     <Table.Cell width='12' verticalAlign='top' >
                         Headers <br />
-                        <code><b>ETag: </b>{HeaderETagExample}</code><br />
-                        <code><b>LastModified: </b>{HeaderLastModifiedExample}</code>
+                        <p><b>ETag: </b>{HeaderETagExample}</p><br />
+                        <p><b>LastModified: </b>{HeaderLastModifiedExample}</p>
                     </Table.Cell>
                 </Table.Row>
             )

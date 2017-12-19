@@ -7,26 +7,27 @@ import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
 import RestRequestComponent from './RestRequestComponent';
 import RestResponsesComponent from './RestResponsesComponent';
-import RestRequestBodyComponent from './RestRequestBodyComponent'
 import FhirConstant from '../../Constants/FhirConstant';
 
-class RestPostComponent extends React.Component {
+class RestGetVReadComponent extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {    
-        const VerbGetName = 'POST';
-        const _VerbColor = 'green';
-        const _Description = `Add a ${this.props.resourceName} resource to the server`;
-        const _Path = this.props.resourceName;
-        const _VerbGetHttpHeaders = [
+        const VerbGetName = 'GET';
+        const _VerbGetColor = 'blue';                
+        const _Description = `Return all history instances for the ${this.props.resourceName} resource with the given resource id. 
+        A history Bundle resource will be retunred with historic ${this.props.resourceName} resources as its entries.`;                
+        const _RequestHttpHeaders = [
             { name: 'Content-Type', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
-            { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
-            { name: 'If-None-Exist', value: '[search parameters]', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#ccreate` }            
+            { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` }
         ];
-        
-        const renderGetSearchTableBody = (Expand) => {
+        const _exampleRequests = [
+            '/[id]/_history'
+        ];
+
+        const renderGetByIdTableBody = (Expand) => {
             if (Expand) {                
                 return (
                     <Table.Body>
@@ -35,19 +36,19 @@ class RestPostComponent extends React.Component {
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestRequestComponent resourceName={this.props.resourceName} httpHeaders={_VerbGetHttpHeaders} searchParameters={this.props.searchParameters} color={_VerbColor} />
+                                <RestRequestComponent
+                                    resourceName={this.props.resourceName}
+                                    httpHeaders={_RequestHttpHeaders}
+                                    searchParameters={this.props.searchParameters}
+                                    exampleRequests={_exampleRequests}
+                                    color={_VerbGetColor} />
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestResponsesComponent color={_VerbColor} />
+                                <RestResponsesComponent color={_VerbGetColor} />
                             </Table.Cell>
                         </Table.Row>
-                        <Table.Row>
-                            <Table.Cell colSpan='16'>
-                                <RestRequestBodyComponent  resourceName={this.props.resourceName} color={_VerbColor} />
-                            </Table.Cell>
-                        </Table.Row>                        
                     </Table.Body>
                 )
             } else {
@@ -67,23 +68,23 @@ class RestPostComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingComponent={renderTableHeader(VerbGetName, _VerbColor, _Path)}
+                tableHeadingComponent={renderTableHeader(VerbGetName, _VerbGetColor, `${this.props.resourceName}/[id]/_history`)}
                 tableHeadingTitle={VerbGetName}
-                tableColorType={_VerbColor}
+                tableColorType={_VerbGetColor}
                 tableColorInverted={false}
-                tableRowsFunction={renderGetSearchTableBody}
+                tableRowsFunction={renderGetByIdTableBody}
             />
         )
     }
-
 }
+
 //Type Checking
-RestPostComponent.propTypes = {    
+RestGetVReadComponent.propTypes = {    
     resourceName: PropTypes.string.isRequired,
     searchParameters: PropTypes.array
 }
 
-RestPostComponent.defaultProps = {
+RestGetVReadComponent.defaultProps = {
 }
 
-export default RestPostComponent;  
+export default RestGetVReadComponent;  

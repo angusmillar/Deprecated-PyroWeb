@@ -7,6 +7,7 @@ import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
 import RestRequestComponent from './RestRequestComponent';
 import RestResponsesComponent from './RestResponsesComponent';
+import FhirConstant from '../../Constants/FhirConstant';
 
 class RestGetVReadByVidComponent extends React.Component {
     constructor(props) {
@@ -15,10 +16,15 @@ class RestGetVReadByVidComponent extends React.Component {
 
     render() {    
         const VerbGetName = 'GET';
-        const _VerbGetColor = 'blue';        
-        const _VerbGetHttpHeaders = [];
-        const _Description = `Return a ${this.props.resourceName} resource history instance by resource id of [id] and version of [vid]`;        
-
+        const _VerbGetColor = 'blue';                
+        const _Description = `Return a ${this.props.resourceName} resource history instance by resource id of [id] and version of [vid]`;                
+        const _RequestHttpHeaders = [
+            { name: 'Content-Type', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
+            { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` }
+        ];
+        const _exampleRequests = [
+            '/[id]/_history/[vid]'
+        ];
         const renderGetByIdTableBody = (Expand) => {
             if (Expand) {                
                 return (
@@ -28,7 +34,12 @@ class RestGetVReadByVidComponent extends React.Component {
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestRequestComponent httpHeaders={_VerbGetHttpHeaders} searchParameters={this.props.searchParameters} color={_VerbGetColor} />
+                                <RestRequestComponent
+                                    resourceName={this.props.resourceName}
+                                    httpHeaders={_RequestHttpHeaders}
+                                    searchParameters={this.props.searchParameters}
+                                    exampleRequests={_exampleRequests}
+                                    color={_VerbGetColor} />
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>

@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 import map from 'lodash/map';
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
+import FhirConstant from '../../Constants/FhirConstant';
 
 class RestHttpHeadersComponent extends React.Component {
     constructor(props) {
@@ -17,7 +18,8 @@ class RestHttpHeadersComponent extends React.Component {
             return (
                 <Table.Row>
                     <Table.HeaderCell colSpan='1' width='4'>Name</Table.HeaderCell>
-                    <Table.HeaderCell colSpan='2' width='12'>Value</Table.HeaderCell>
+                    <Table.HeaderCell colSpan='1' width='8'>Value</Table.HeaderCell>
+                    <Table.HeaderCell colSpan='1' width='4'>More Info</Table.HeaderCell>
                 </Table.Row>
             )
         };
@@ -29,14 +31,17 @@ class RestHttpHeadersComponent extends React.Component {
                 return (
                     map(this.props.httpHeaders, (Header, Index) => {
                         const name = Header.name;
-                        const value = Header.value;
+                        const value = Header.value;                        
                         return (
                             <Table.Row colSpan='3' key={Index}>
                                 <Table.Cell colSpan='1' width='4' verticalAlign='top'>
-                                    <code>{name}:</code>
+                                    <p>{name}:</p>
                                 </Table.Cell>
-                                <Table.Cell colSpan='2' width='12' verticalAlign='top' >
-                                    <code>{value}</code>
+                                <Table.Cell colSpan='1' width='8' verticalAlign='top' >
+                                    <p>{value}</p>
+                                </Table.Cell>
+                                <Table.Cell colSpan='1' width='4' verticalAlign='top' >
+                                  <p><a as='a' href={Header.moreInfo} rel="noopener noreferrer" target='_blank'>More Info</a></p>
                                 </Table.Cell>
                             </Table.Row>
                         )

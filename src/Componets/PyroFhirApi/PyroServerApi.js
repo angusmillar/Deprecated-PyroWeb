@@ -125,6 +125,9 @@ class PyroServerApi extends React.Component {
                 const apiDescription = FhirResource.implementation.description;
                 const apiContacts = FhirResource.contact;
                 const apiResources = FhirResource.rest[0].resource;
+
+
+                
                 return (
                     <Container text style={{ marginTop: '7em' }}>
                         <div>
@@ -145,10 +148,10 @@ class PyroServerApi extends React.Component {
                                         </span>
                                     </List.Item>
                                     <List.Item>
-                                        <code><b>Endpoint URL: </b>     {renderFullURL(serviceRootUrl)}</code><br />
+                                        <p><b>Endpoint URL: </b>     {renderFullURL(serviceRootUrl)}</p><br />
                                     </List.Item>
                                     <List.Item>
-                                        <code><b>Service Base URL: </b>{serviceRootUrl}</code>
+                                        <p><b>Service Base URL: </b>{serviceRootUrl}</p>
                                     </List.Item>
                                     <List.Item>
                                         <Header color='teal' dividing size={HeadingSize}>Description</Header>

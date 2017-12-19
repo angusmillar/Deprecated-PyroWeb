@@ -37,10 +37,10 @@ class RestParametersComponent extends React.Component {
                         return (
                             <Table.Row key={Index}>
                                 <Table.Cell width='4' verticalAlign='top'>
-                                    <span><code>{name}</code></span>
+                                    <span><p>{name}</p></span>
                                 </Table.Cell>
                                 <Table.Cell width='4' verticalAlign='top' >
-                                    <code><a as='a' href={FhirTypeWebLink} rel="noopener noreferrer" target='_blank'>{type}</a></code>
+                                    <p><a as='a' href={FhirTypeWebLink} rel="noopener noreferrer" target='_blank'>{type}</a></p>
                                 </Table.Cell>
                                 <Table.Cell width='8' verticalAlign='top' >
                                     <p>{documentation}</p>
