@@ -106,7 +106,7 @@ class MetadataComponent extends React.Component {
 
 
         return (
-            <Container text style={{ marginTop: '7em' }}>
+            <Container style={{ marginTop: '7em' }}>
                 {/* <Button positive onClick={this.handleClickGetMetadata} >Load Conformance Statment</Button>                 */}
                 <div>
                     <Divider hidden />

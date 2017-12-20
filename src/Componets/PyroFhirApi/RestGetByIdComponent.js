@@ -46,12 +46,15 @@ class RestGetByIdComponent extends React.Component {
                                     httpHeaders={_RequestHttpHeaders}
                                     searchParameters={this.props.searchParameters}
                                     exampleRequests={_exampleRequests}
-                                    color={_VerbGetColor} />
+                                    // color={_VerbGetColor}
+                                    includeHttpBody={false}/>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestResponsesComponent color={_VerbGetColor} />
+                                <RestResponsesComponent
+                                    // color={_VerbGetColor}
+                                />
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>

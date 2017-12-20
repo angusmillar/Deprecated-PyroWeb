@@ -49,7 +49,7 @@ class Expandable_Table extends React.Component {
             if (!isNil(this.props.tableHeadingComponent)) {
                 return (
                     <div>
-                        {this.props.tableHeadingComponent}                    
+                        {this.props.tableHeadingComponent}
                     </div>
                 )
             } else if (!isNil(this.props.tableHeadingIconType)) {
@@ -72,10 +72,10 @@ class Expandable_Table extends React.Component {
         const renderSubHeaderRow = () => {
             if (!isNil(this.props.tableSubHeadingComponent)) {
                 if (this.state.expandRows) {
-                    return this.props.tableSubHeadingComponent();                                        
-                }    
-            } 
-            return null;                        
+                    return this.props.tableSubHeadingComponent();
+                }
+            }
+            return null;
         };
 
 

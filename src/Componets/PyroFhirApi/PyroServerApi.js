@@ -120,6 +120,7 @@ class PyroServerApi extends React.Component {
                 const FhirResource = this.state.store.MetadataState.AjaxOutcome.FhirResource;
                 const currentValue = this.state.selectedSchema.value;
                 const HeadingSize = 'medium';
+                const HeadingColor = 'black';
                 const apiTitle = `${FhirResource.name} FHIR API `;                                
                 const serviceRootUrl = FhirResource.implementation.url;
                 const apiDescription = FhirResource.implementation.description;
@@ -129,7 +130,7 @@ class PyroServerApi extends React.Component {
 
                 
                 return (
-                    <Container text style={{ marginTop: '7em' }}>
+                    <Container style={{ marginTop: '7em' }}>
                         <div>
                             <Divider hidden />
                             <Header size='large'>{apiTitle}</Header>
@@ -137,7 +138,7 @@ class PyroServerApi extends React.Component {
                                 <List relaxed='very'>
                                     <List.Item>
                                         <List.Content>
-                                            <Header color='teal' dividing size={HeadingSize} >FHIR endpoint</Header><br />
+                                            <Header color={HeadingColor} dividing size={HeadingSize} >FHIR endpoint</Header><br />
                                         </List.Content>
                                         <span>
                                             <b>Schema: </b> {' '}
@@ -148,17 +149,17 @@ class PyroServerApi extends React.Component {
                                         </span>
                                     </List.Item>
                                     <List.Item>
-                                        <p><b>Endpoint URL: </b>     {renderFullURL(serviceRootUrl)}</p><br />
+                                        <b>Endpoint URL: </b><code>{renderFullURL(serviceRootUrl)}</code>
                                     </List.Item>
                                     <List.Item>
-                                        <p><b>Service Base URL: </b>{serviceRootUrl}</p>
+                                        <b>Service Base URL: </b><code>{serviceRootUrl}</code>
                                     </List.Item>
                                     <List.Item>
-                                        <Header color='teal' dividing size={HeadingSize}>Description</Header>
+                                        <Header color={HeadingColor} dividing size={HeadingSize}>Description</Header>
                                         <p>{apiDescription}</p>
                                     </List.Item>
                                     <List.Item>                                        
-                                        <Header color='teal' dividing size={HeadingSize}>Contact Developer</Header>
+                                        <Header color={HeadingColor} dividing size={HeadingSize}>Contact Developer</Header>
                                         {renderContact(apiContacts)}                                        
                                     </List.Item>
                                 </List>

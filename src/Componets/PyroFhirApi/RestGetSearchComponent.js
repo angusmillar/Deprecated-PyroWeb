@@ -42,12 +42,15 @@ class RestGetSearchComponent extends React.Component {
                                     exampleRequests={_exampleRequests}
                                     httpHeaders={_RequestHttpHeaders}
                                     searchParameters={this.props.searchParameters}
-                                    color={_VerbGetColor} />
+                                    // color={_VerbGetColor}
+                                    includeHttpBody={false}/>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestResponsesComponent color={_VerbGetColor} />
+                                <RestResponsesComponent
+                                    // color={_VerbGetColor}
+                                />
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>

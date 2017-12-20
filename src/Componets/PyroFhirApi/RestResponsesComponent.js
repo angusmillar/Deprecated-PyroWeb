@@ -79,4 +79,7 @@ RestResponsesComponent.propTypes = {
     color: PropTypes.string,
 }
 
+RestResponsesComponent.defaultProps = {    
+    color: 'pink'
+}
 export default RestResponsesComponent;  

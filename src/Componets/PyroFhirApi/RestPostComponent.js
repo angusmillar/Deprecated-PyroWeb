@@ -7,7 +7,7 @@ import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
 import RestRequestComponent from './RestRequestComponent';
 import RestResponsesComponent from './RestResponsesComponent';
-import RestRequestBodyComponent from './RestRequestBodyComponent'
+
 import FhirConstant from '../../Constants/FhirConstant';
 
 class RestPostComponent extends React.Component {
@@ -35,19 +35,21 @@ class RestPostComponent extends React.Component {
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestRequestComponent resourceName={this.props.resourceName} httpHeaders={_VerbGetHttpHeaders} searchParameters={this.props.searchParameters} color={_VerbColor} />
+                                <RestRequestComponent
+                                    resourceName={this.props.resourceName}
+                                    httpHeaders={_VerbGetHttpHeaders}
+                                    searchParameters={this.props.searchParameters}
+                                    // color={_VerbColor}
+                                    includeHttpBody={true}/>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestResponsesComponent color={_VerbColor} />
+                                <RestResponsesComponent
+                                    // color={_VerbColor}
+                                />
                             </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell colSpan='16'>
-                                <RestRequestBodyComponent  resourceName={this.props.resourceName} color={_VerbColor} />
-                            </Table.Cell>
-                        </Table.Row>                        
+                        </Table.Row>                                        
                     </Table.Body>
                 )
             } else {

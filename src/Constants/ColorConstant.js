@@ -5,6 +5,6 @@ class ColorConstant {
         Orange: 'orange',
         Red: 'red',
     };
-    static IconBackground = 'teal'
+    static IconBackground = 'black'
 }
 export default ColorConstant

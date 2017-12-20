@@ -8,6 +8,7 @@ import { Table, Divider } from 'semantic-ui-react'
 import RestParametersComponent from './RestParametersComponent'
 import RestHttpHeadersComponent from './RestHttpHeadersComponent'
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
+import RestRequestBodyComponent from './RestRequestBodyComponent'
 
 class RestRequestComponent extends React.Component {
     constructor(props) {
@@ -67,18 +68,31 @@ class RestRequestComponent extends React.Component {
             }
         };
 
+        const renderHttpBody = () => {
+            if (this.props.includeHttpBody) {
+                return (
+                    <Table.Row>
+                        <Table.Cell colSpan='3' width='16' verticalAlign='top'>
+                            <RestRequestBodyComponent resourceName={this.props.resourceName} color={this.props.color} />
+                        </Table.Cell>
+                    </Table.Row>
+                )
+            }
+        };
+
 
         const renderParametersRowsBody = (Expand) => {
             if (Expand) {
                 return (
                     <Table.Body>
                         {renderExampleRequestRow()}
-                        {renderHttpHeaders()}                        
+                        {renderHttpHeaders()}
                         <Table.Row >
                             <Table.Cell colSpan='3' width='16' verticalAlign='top'>
                                 <RestParametersComponent parameters={this.props.searchParameters} color={this.props.color} />
                             </Table.Cell>
                         </Table.Row>
+                        {renderHttpBody()}
                     </Table.Body>
                 )
             } else {
@@ -105,11 +119,13 @@ RestRequestComponent.propTypes = {
     searchParameters: PropTypes.array,
     color: PropTypes.string.isRequired,
     httpHeaders: PropTypes.array.isRequired,
+    includeHttpBody: PropTypes.bool.isRequired,
     exampleRequests: PropTypes.array
 }
 
 RestRequestComponent.defaultProps = {
     wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),
+    color: 'violet'
 }
 
 export default RestRequestComponent;  
