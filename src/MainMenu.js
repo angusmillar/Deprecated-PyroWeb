@@ -18,7 +18,7 @@ class MainMenu extends React.Component{
                         Pyro Web
                     </Menu.Item>
     
-                    <Menu.Item as={Link} to='/'>Home</Menu.Item>
+                    {/* <Menu.Item as={Link} to='/'>Home</Menu.Item> */}
     
                     <Dropdown item simple text='Server Information'>
                         <Dropdown.Menu>                            

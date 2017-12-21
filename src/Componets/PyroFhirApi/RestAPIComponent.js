@@ -41,6 +41,7 @@ class RestAPIComponent extends React.Component {
                     {/* <Header a='a' href={`${FhirConstant.STU3_SpecWebsite}/${_resourceName}.html`} size='huge'>{_resourceName}</Header> */}
                     {resourceDescription}
                 </span>
+                
                 <RestGetSearchComponent resourceName={_resourceName} searchParameters={_searchParameters} />
                 <Divider />
                 <RestGetByIdComponent resourceName={_resourceName} searchParameters={_searchParameters} />
@@ -49,7 +50,11 @@ class RestAPIComponent extends React.Component {
                 <Divider />
                 <RestGetVReadByVidComponent resourceName={_resourceName} searchParameters={_searchParameters} />
                 <Divider />
-                <RestPostComponent resourceName={_resourceName} searchParameters={_searchParameters} />
+                <Grid columns={1}>
+                <Grid.Column width={16}>
+                        <RestPostComponent resourceName={_resourceName} searchParameters={_searchParameters} />
+                        </Grid.Column>        
+                </Grid>
             </Segment>
         )
     }

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import isNil from 'lodash/isNil';
 import find from 'lodash/find'
 import map from 'lodash/map';
-import { List, Dropdown, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
+import { Grid, List, Dropdown, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
 
 import RestAPIComponent from './RestAPIComponent'
 import ContactDetails_Table from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_Table'
@@ -68,7 +68,7 @@ class PyroServerApi extends React.Component {
                     <Dimmer active inverted>
                         <Loader size='large'>Loading</Loader>
                     </Dimmer>
-                    <Image src={this.props.wireframeParagraphImage} />
+                    <Image fluid src={this.props.wireframeParagraphImage} />
                 </Segment>
             );
         }
@@ -121,54 +121,52 @@ class PyroServerApi extends React.Component {
                 const currentValue = this.state.selectedSchema.value;
                 const HeadingSize = 'medium';
                 const HeadingColor = 'black';
-                const apiTitle = `${FhirResource.name} FHIR API `;                                
+                const apiTitle = `${FhirResource.name} FHIR API `;
                 const serviceRootUrl = FhirResource.implementation.url;
                 const apiDescription = FhirResource.implementation.description;
                 const apiContacts = FhirResource.contact;
                 const apiResources = FhirResource.rest[0].resource;
 
 
-                
+
                 return (
-                    <Container style={{ marginTop: '7em' }}>
-                        <div>
-                            <Divider hidden />
-                            <Header size='large'>{apiTitle}</Header>
-                            <Segment padded>
-                                <List relaxed='very'>
-                                    <List.Item>
-                                        <List.Content>
-                                            <Header color={HeadingColor} dividing size={HeadingSize} >FHIR endpoint</Header><br />
-                                        </List.Content>
-                                        <span>
-                                            <b>Schema: </b> {' '}
-                                            <Dropdown inline
-                                                options={this.props.apiSchema}
-                                                defaultValue={currentValue}
-                                                onChange={this.handleSchemaChange} />
-                                        </span>
-                                    </List.Item>
-                                    <List.Item>
-                                        <b>Endpoint URL: </b><code>{renderFullURL(serviceRootUrl)}</code>
-                                    </List.Item>
-                                    <List.Item>
-                                        <b>Service Base URL: </b><code>{serviceRootUrl}</code>
-                                    </List.Item>
-                                    <List.Item>
-                                        <Header color={HeadingColor} dividing size={HeadingSize}>Description</Header>
-                                        <p>{apiDescription}</p>
-                                    </List.Item>
-                                    <List.Item>                                        
-                                        <Header color={HeadingColor} dividing size={HeadingSize}>Contact Developer</Header>
-                                        {renderContact(apiContacts)}                                        
-                                    </List.Item>
-                                </List>
-                            </Segment>
-                            {renderResources(apiResources)}                            
-                        </div>
-                    </Container>
+                    <div>
+                        <Divider hidden />
+                        <Header size='large'>{apiTitle}</Header>
+                        <Segment padded>
+                            <List relaxed='very'>
+                                <List.Item>
+                                    <List.Content>
+                                        <Header color={HeadingColor} dividing size={HeadingSize} >FHIR endpoint</Header><br />
+                                    </List.Content>
+                                    <span>
+                                        <b>Schema: </b> {' '}
+                                        <Dropdown inline
+                                            options={this.props.apiSchema}
+                                            defaultValue={currentValue}
+                                            onChange={this.handleSchemaChange} />
+                                    </span>
+                                </List.Item>
+                                <List.Item>
+                                    <b>Endpoint URL: </b><code>{renderFullURL(serviceRootUrl)}</code>
+                                </List.Item>
+                                <List.Item>
+                                    <b>Service Base URL: </b><code>{serviceRootUrl}</code>
+                                </List.Item>
+                                <List.Item>
+                                    <Header color={HeadingColor} dividing size={HeadingSize}>Description</Header>
+                                    <p>{apiDescription}</p>
+                                </List.Item>
+                                <List.Item>
+                                    <Header color={HeadingColor} dividing size={HeadingSize}>Contact Developer</Header>
+                                    {renderContact(apiContacts)}
+                                </List.Item>
+                            </List>
+                        </Segment>
+                        {renderResources(apiResources)}
+                    </div>
                 )
-                
+
             }
             else if (this.state.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
                 return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
@@ -190,22 +188,34 @@ class PyroServerApi extends React.Component {
 
     render() {
         return (
-            <div>
-                {this.renderApiDocumentation()})
-            </div>
+            <Container style={{ marginTop: '7em' }}>
+                <Grid>
+                    <Grid.Row only='tablet computer' >
+                        <div style={{ width: '1000px' }}>
+                            {this.renderApiDocumentation()}
+                        </div>
+                    </Grid.Row>
+                    <Grid.Row only='mobile' >
+                        <div style={{ width: '640px' }}>
+                            {this.renderApiDocumentation()}
+                        </div>
+                    </Grid.Row>
+                </Grid>
+
+            </Container>
         )
     }
 
 }
 //Type Checking
 PyroServerApi.propTypes = {
-    wireframeParagraphImage: PropTypes.string,        
-    apiSchema: PropTypes.array.isRequired,            
+    wireframeParagraphImage: PropTypes.string,
+    apiSchema: PropTypes.array.isRequired,
 }
 
 PyroServerApi.defaultProps = {
-    wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),        
-    apiSchema: [{ key: 'https', text: 'https', value: 'https' }, { key: 'http', text: 'http', value: 'http' }],            
+    wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),
+    apiSchema: [{ key: 'https', text: 'https', value: 'https' }, { key: 'http', text: 'http', value: 'http' }],
 }
 
 export default PyroServerApi;  
