@@ -10,7 +10,18 @@ import RestResponsesComponent from './RestResponsesComponent';
 
 import FhirConstant from '../../Constants/FhirConstant';
 
-class RestPostComponent extends React.Component {
+export default class RestPostComponent extends React.Component {
+
+    static propTypes = {
+        resourceName: PropTypes.string.isRequired,
+        contentTypeElement: PropTypes.element.isRequired,
+        selectedContentType: PropTypes.string.isRequired,
+        searchParameters: PropTypes.array
+    }
+
+    static defaultProps = {
+    }
+
     constructor(props) {
         super(props);
     }
@@ -39,7 +50,8 @@ class RestPostComponent extends React.Component {
                                     resourceName={this.props.resourceName}
                                     httpHeaders={_VerbGetHttpHeaders}
                                     searchParameters={this.props.searchParameters}
-                                    // color={_VerbColor}
+                                    contentTypeElement={this.props.contentTypeElement}
+                                    selectedContentType={this.props.selectedContentType}
                                     includeHttpBody={true}/>
                             </Table.Cell>
                         </Table.Row>
@@ -79,13 +91,3 @@ class RestPostComponent extends React.Component {
     }
 
 }
-//Type Checking
-RestPostComponent.propTypes = {    
-    resourceName: PropTypes.string.isRequired,
-    searchParameters: PropTypes.array
-}
-
-RestPostComponent.defaultProps = {
-}
-
-export default RestPostComponent;  

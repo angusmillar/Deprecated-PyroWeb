@@ -5,9 +5,19 @@ import isNil from 'lodash/isNil';
 import map from 'lodash/map';
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
-import FhirConstant from '../../Constants/FhirConstant';
+// import FhirConstant from '../../Constants/FhirConstant';
 
-class RestHttpHeadersComponent extends React.Component {
+export default class RestHttpHeadersComponent extends React.Component {
+
+    static propTypes = {
+        httpHeaders: PropTypes.array.isRequired,
+        contentTypeElement: PropTypes.element.isRequired,        
+        color: PropTypes.string,
+    }
+
+    static defaultProps = {
+    }
+
     constructor(props) {
         super(props);
     }
@@ -31,17 +41,25 @@ class RestHttpHeadersComponent extends React.Component {
                 return (
                     map(this.props.httpHeaders, (Header, Index) => {
                         const name = Header.name;
-                        const value = Header.value;                        
+                        const value = Header.value;
+                        const dymamicValue = (Name, Value) => {
+                            if (!isNil(this.props.contentTypeElement) && Name === 'Content-Type') {
+                                return this.props.contentTypeElement;
+                            } else {
+                                return <p>{Value}</p>;
+                            }                                                        
+                        }
+
                         return (
                             <Table.Row colSpan='3' key={Index}>
                                 <Table.Cell colSpan='1' width='4' verticalAlign='top'>
                                     <p>{name}:</p>
                                 </Table.Cell>
                                 <Table.Cell colSpan='1' width='8' verticalAlign='top' >
-                                    <p>{value}</p>
+                                    {dymamicValue(name,value)}
                                 </Table.Cell>
                                 <Table.Cell colSpan='1' width='4' verticalAlign='top' >
-                                  <p><a as='a' href={Header.moreInfo} rel="noopener noreferrer" target='_blank'>More Info</a></p>
+                                    <p><a as='a' href={Header.moreInfo} rel="noopener noreferrer" target='_blank'>More Info</a></p>
                                 </Table.Cell>
                             </Table.Row>
                         )
@@ -80,9 +98,4 @@ class RestHttpHeadersComponent extends React.Component {
     }
 }
 
-RestHttpHeadersComponent.propTypes = {
-    httpHeaders: PropTypes.array.isRequired,
-    color: PropTypes.string,
-}
 
-export default RestHttpHeadersComponent;  

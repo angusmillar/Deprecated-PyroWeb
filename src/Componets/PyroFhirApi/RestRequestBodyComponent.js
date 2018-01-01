@@ -1,41 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, Grid, Message } from 'semantic-ui-react'
-// import isNil from 'lodash/isNil';
-// import map from 'lodash/map';
-
-// import SyntaxHighlighter from 'react-syntax-highlighter';
-// import { vs } from 'react-syntax-highlighter/styles/hljs';
+import includes from 'lodash/includes';
+import toLower from 'lodash/toLower';
 import FhirConstant from '../../Constants/FhirConstant';
+
 import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
-// import xml from 'react-syntax-highlighter/languages/hljs/xml';
+import xml from 'react-syntax-highlighter/languages/hljs/xml';
 import json from 'react-syntax-highlighter/languages/hljs/json';
-// registerLanguage('xml', xml);
-registerLanguage('json', json);
 import { vs } from 'react-syntax-highlighter/styles/hljs';
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
 import FhirResourceExampleGenerator from './FhirResourceExampleGenerator'
 
-class RestRequestBodyComponent extends React.Component {
+export default class RestRequestBodyComponent extends React.Component {
+    
+    static propTypes = {
+        resourceName: PropTypes.string.isRequired,
+        selectedContentType: PropTypes.string.isRequired,
+        color: PropTypes.string,
+    }
+
+    static defaultProps = {        
+    }
+
     constructor(props) {
         super(props);
     }
 
     render() {
 
-        // const renderSubHeading = () => {
-        //     return (
-        //         <Table.Row>
-        //             <Table.HeaderCell colSpan='1' width='4'>Name</Table.HeaderCell>
-        //             <Table.HeaderCell colSpan='1' width='8'>Value</Table.HeaderCell>
-        //             <Table.HeaderCell colSpan='1' width='4'>More Info</Table.HeaderCell>
-        //         </Table.Row>
-        //     )
-        // };
-
-
         const renderExampleResourceAsXml = () => {
+            registerLanguage('xml', xml);
             return <SyntaxHighlighter
                 language='xml'
                 style={vs}
@@ -46,6 +42,7 @@ class RestRequestBodyComponent extends React.Component {
         }
 
         const renderExampleResourceAsJson = () => {
+            registerLanguage('json', json);
             return <SyntaxHighlighter
                 language='json'
                 style={vs}
@@ -55,7 +52,18 @@ class RestRequestBodyComponent extends React.Component {
             </SyntaxHighlighter>;
         }
 
+        const resolveExampleResource = (ContentType) => {
+            if (includes(toLower(ContentType), 'json')) {
+                return renderExampleResourceAsJson();
+            } else if (includes(toLower(ContentType), 'xml')) {
+                return renderExampleResourceAsXml();
+            } else {
+                return 'unkown format for example';
+            }            
+        }
+
         const renderParameterRows = () => {
+            const ContentType = this.props.selectedContentType;
             return (
                 <Table.Body>
                     <Table.Row colSpan='3'>
@@ -78,7 +86,7 @@ class RestRequestBodyComponent extends React.Component {
                             <Grid>
                                 <Grid.Row only='tablet computer' >
                                     <div style={{ width: '800px' }}>
-                                        {renderExampleResourceAsJson()}
+                                        {resolveExampleResource(ContentType)}
                                     </div>
                                 </Grid.Row>
                             </Grid>
@@ -94,7 +102,7 @@ class RestRequestBodyComponent extends React.Component {
                             <Grid>
                             <Grid.Row only='mobile' >
                                 <div style={{ width: '500px' }}>
-                                    {renderExampleResourceAsJson()}
+                                    {resolveExampleResource(ContentType)}
                                 </div>
                             </Grid.Row>
                         </Grid>
@@ -129,9 +137,3 @@ class RestRequestBodyComponent extends React.Component {
     }
 }
 
-RestRequestBodyComponent.propTypes = {
-    resourceName: PropTypes.string.isRequired,
-    color: PropTypes.string,
-}
-
-export default RestRequestBodyComponent;  

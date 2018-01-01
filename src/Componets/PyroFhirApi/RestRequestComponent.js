@@ -10,7 +10,24 @@ import RestHttpHeadersComponent from './RestHttpHeadersComponent'
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
 import RestRequestBodyComponent from './RestRequestBodyComponent'
 
-class RestRequestComponent extends React.Component {
+export default class RestRequestComponent extends React.Component {
+
+    static propTypes = {
+        resourceName: PropTypes.string.isRequired,
+        contentTypeElement: PropTypes.element.isRequired,
+        selectedContentType: PropTypes.string.isRequired,
+        searchParameters: PropTypes.array,
+        color: PropTypes.string.isRequired,
+        httpHeaders: PropTypes.array.isRequired,
+        includeHttpBody: PropTypes.bool.isRequired,
+        exampleRequests: PropTypes.array
+    }
+
+    static defaultProps = {
+        wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),
+        color: 'violet'
+    }
+
     constructor(props) {
         super(props);
     }
@@ -22,7 +39,10 @@ class RestRequestComponent extends React.Component {
                 return (
                     <Table.Row >
                         <Table.Cell colSpan='3' width='16' verticalAlign='top'>
-                            <RestHttpHeadersComponent httpHeaders={this.props.httpHeaders} color={this.props.color} />
+                            <RestHttpHeadersComponent
+                                httpHeaders={this.props.httpHeaders}
+                                contentTypeElement={this.props.contentTypeElement}                                
+                                color={this.props.color} />
                         </Table.Cell>
                     </Table.Row>
                 )
@@ -73,7 +93,10 @@ class RestRequestComponent extends React.Component {
                 return (
                     <Table.Row>
                         <Table.Cell colSpan='3' width='16' verticalAlign='top'>
-                            <RestRequestBodyComponent resourceName={this.props.resourceName} color={this.props.color} />
+                            <RestRequestBodyComponent
+                                resourceName={this.props.resourceName}
+                                selectedContentType={this.props.selectedContentType}
+                                color={this.props.color} />
                         </Table.Cell>
                     </Table.Row>
                 )
@@ -113,19 +136,3 @@ class RestRequestComponent extends React.Component {
         )
     }
 }
-
-RestRequestComponent.propTypes = {
-    resourceName: PropTypes.string.isRequired,
-    searchParameters: PropTypes.array,
-    color: PropTypes.string.isRequired,
-    httpHeaders: PropTypes.array.isRequired,
-    includeHttpBody: PropTypes.bool.isRequired,
-    exampleRequests: PropTypes.array
-}
-
-RestRequestComponent.defaultProps = {
-    wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),
-    color: 'violet'
-}
-
-export default RestRequestComponent;  

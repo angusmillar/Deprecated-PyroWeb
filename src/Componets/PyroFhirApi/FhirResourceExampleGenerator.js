@@ -27,7 +27,7 @@ class FhirResourceExampleGenerator {
     static getJsonResource(ResourceName) {
         let codeString = '';
         codeString = codeString.concat('{\n');
-        codeString = codeString.concat(`"resourceType": "${ResourceName}",\n`);
+        codeString = codeString.concat(`  "resourceType": "${ResourceName}",\n`);
         codeString = codeString.concat('  "id": "example",\n');
         codeString = codeString.concat('  "text": {\n');
         codeString = codeString.concat('    "status": "generated",\n');

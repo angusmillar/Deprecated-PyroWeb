@@ -14,7 +14,17 @@ import RestGetVReadByVidComponent from './RestGetVReadByVidComponent'
 import RestPostComponent from './RestPostComponent'
 import FhirConstant from '../../Constants/FhirConstant';
 
-class RestAPIComponent extends React.Component {
+export default class RestAPIComponent extends React.Component {
+
+    static propTypes = {
+        resource: PropTypes.object.isRequired,
+        selectedContentType: PropTypes.string.isRequired,
+        contentTypeElement: PropTypes.element.isRequired
+    }
+
+    static defaultProps = {        
+    }
+
     constructor(props) {
         super(props);
     }
@@ -52,7 +62,12 @@ class RestAPIComponent extends React.Component {
                 <Divider />
                 <Grid columns={1}>
                 <Grid.Column width={16}>
-                        <RestPostComponent resourceName={_resourceName} searchParameters={_searchParameters} />
+                        <RestPostComponent
+                            resourceName={_resourceName}
+                            searchParameters={_searchParameters}
+                            contentTypeElement={this.props.contentTypeElement}
+                            selectedContentType={this.props.selectedContentType}
+                        />
                         </Grid.Column>        
                 </Grid>
             </Segment>
@@ -60,12 +75,3 @@ class RestAPIComponent extends React.Component {
     }
 
 }
-//Type Checking
-RestAPIComponent.propTypes = {
-    resource: PropTypes.object.isRequired,
-}
-
-RestAPIComponent.defaultProps = {
-}
-
-export default RestAPIComponent;  
