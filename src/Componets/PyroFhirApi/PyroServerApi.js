@@ -91,6 +91,7 @@ export default class PyroServerApi extends React.Component {
                                 key={Index}
                                 resource={Resource}
                                 contentTypeElement={ContentTypeElement}
+                                acceptElement={AcceptElement}
                                 selectedContentType={this.state.selectedContentType}
                             />
                         )
@@ -104,10 +105,20 @@ export default class PyroServerApi extends React.Component {
             return (
                 <Dropdown
                     options={this.formatArray}
-                    floating
-                    // defaultValue={this.state.selectedContentType}
+                    floating                    
                     onChange={this.handleContentTypeChange}
                     value={this.state.selectedContentType}
+                />
+            )
+        };
+
+        const renderAcceptDropdown = () => {
+            return (
+                <Dropdown
+                    options={this.formatArray}
+                    floating                    
+                    onChange={this.handleAcceptChange}
+                    value={this.state.selectedAccept}
                 />
             )
         };
@@ -126,6 +137,7 @@ export default class PyroServerApi extends React.Component {
         const apiContacts = FhirResource.contact;
         const apiResources = FhirResource.rest[0].resource;
         const ContentTypeElement = renderContentTypeDropdown();
+        const AcceptElement = renderAcceptDropdown();
 
         return (
             <div>
@@ -188,7 +200,7 @@ export default class PyroServerApi extends React.Component {
                             {renderContact(apiContacts)}
                         </List.Item>
                         <List.Item>
-                            <Header color={HeadingColor} dividing size={HeadingSize}>Content-Type</Header>
+                            <Header color={HeadingColor} dividing size={HeadingSize}>Content-Type &amp; Accept Headers</Header>
                             <Divider hidden />
                             <Grid columns={3}>
                                 <Grid.Row>

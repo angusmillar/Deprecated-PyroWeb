@@ -12,6 +12,8 @@ import RestGetByIdComponent from './RestGetByIdComponent'
 import RestGetVReadComponent from './RestGetVReadComponent'
 import RestGetVReadByVidComponent from './RestGetVReadByVidComponent'
 import RestPostComponent from './RestPostComponent'
+import RestPutByIdComponent from './RestPutByIdComponent'
+import RestDeleteByIdComponent from './RestDeleteByIdComponent'
 import FhirConstant from '../../Constants/FhirConstant';
 
 export default class RestAPIComponent extends React.Component {
@@ -19,7 +21,8 @@ export default class RestAPIComponent extends React.Component {
     static propTypes = {
         resource: PropTypes.object.isRequired,
         selectedContentType: PropTypes.string.isRequired,
-        contentTypeElement: PropTypes.element.isRequired
+        contentTypeElement: PropTypes.element.isRequired,
+        acceptElement: PropTypes.element.isRequired
     }
 
     static defaultProps = {        
@@ -52,13 +55,29 @@ export default class RestAPIComponent extends React.Component {
                     {resourceDescription}
                 </span>
                 
-                <RestGetSearchComponent resourceName={_resourceName} searchParameters={_searchParameters} />
+                <RestGetSearchComponent
+                    resourceName={_resourceName}
+                    searchParameters={_searchParameters}
+                    acceptElement={this.props.acceptElement}
+                />
                 <Divider />
-                <RestGetByIdComponent resourceName={_resourceName} searchParameters={_searchParameters} />
+                <RestGetByIdComponent
+                    resourceName={_resourceName}
+                    searchParameters={_searchParameters}
+                    acceptElement={this.props.acceptElement}
+                />
                 <Divider />
-                <RestGetVReadComponent resourceName={_resourceName} searchParameters={_searchParameters} />
+                <RestGetVReadComponent
+                    resourceName={_resourceName}
+                    searchParameters={_searchParameters}
+                    acceptElement={this.props.acceptElement}
+                />
                 <Divider />
-                <RestGetVReadByVidComponent resourceName={_resourceName} searchParameters={_searchParameters} />
+                <RestGetVReadByVidComponent
+                    resourceName={_resourceName}
+                    searchParameters={_searchParameters}
+                    acceptElement={this.props.acceptElement}
+                />
                 <Divider />
                 <Grid columns={1}>
                 <Grid.Column width={16}>
@@ -66,10 +85,23 @@ export default class RestAPIComponent extends React.Component {
                             resourceName={_resourceName}
                             searchParameters={_searchParameters}
                             contentTypeElement={this.props.contentTypeElement}
+                            acceptElement={this.props.acceptElement}
                             selectedContentType={this.props.selectedContentType}
                         />
                         </Grid.Column>        
-                </Grid>
+                </Grid>                
+                <Divider />
+                <RestPutByIdComponent
+                    resourceName={_resourceName}
+                    searchParameters={_searchParameters}
+                    acceptElement={this.props.acceptElement}
+                />
+                <Divider />
+                <RestDeleteByIdComponent
+                    resourceName={_resourceName}
+                    searchParameters={_searchParameters}
+                    acceptElement={this.props.acceptElement}
+                />                
             </Segment>
         )
     }

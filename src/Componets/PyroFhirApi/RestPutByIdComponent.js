@@ -9,34 +9,36 @@ import RestRequestComponent from './RestRequestComponent';
 import RestResponsesComponent from './RestResponsesComponent';
 import FhirConstant from '../../Constants/FhirConstant';
 
-export default class RestGetSearchComponent extends React.Component {
+export default class RestPutByIdComponent extends React.Component {
 
     static propTypes = {
         resourceName: PropTypes.string.isRequired,
-        acceptElement: PropTypes.element.isRequired,
-        searchParameters: PropTypes.array
+        searchParameters: PropTypes.array,
+        acceptElement: PropTypes.element.isRequired
     }
 
-    static defaultProps = {
+    static defaultProps = {        
     }
 
     constructor(props) {
         super(props);
     }
 
-    render() {
-        const VerbGetName = 'GET';
-        const _VerbGetColor = 'blue';
-        //Example string must be post the Resource Name
-        const _exampleRequests = [
-            '?searchParameterName=value&searchParameterName=value',
-            ' '
-        ];
+    render() {    
+        const VerbGetName = 'PUT';
+        const _VerbColor = 'orange';                
         
+        const _exampleRequests = [
+            '/[id]'
+        ];
+        // const _ResponseHttpHeaders = [
+        //     { name: 'ETag', value: 'my etag' },
+        //     { name: 'LastModified', value: 'bla bla bla' }
+        // ];
 
-        const renderGetSearchTableBody = (Expand) => {
+        const renderGetByIdTableBody = (Expand) => {
             if (Expand) {
-                const description = `Return all ${this.props.resourceName} resources or filter ${this.props.resourceName} resources by a set of serach parameters. A search Bundle resource will be retunred with ${this.props.resourceName} resources as its entries.`;
+                const description = `Update or Add a ${this.props.resourceName} resource with the resource id of [id]. If a resource does not exsist with the [id] given then this request will add the resource with the [id] given.`;
                 return (
                     <Table.Body>
                         <Table.Row>
@@ -46,17 +48,17 @@ export default class RestGetSearchComponent extends React.Component {
                             <Table.Cell colSpan='16'>
                                 <RestRequestComponent
                                     resourceName={this.props.resourceName}
-                                    exampleRequests={_exampleRequests}
-                                    httpHeaders={FhirConstant.GetRequestHeaders}
+                                    httpHeaders={FhirConstant.GetRequestByIdHeaders}
                                     searchParameters={this.props.searchParameters}
-                                    acceptElement={this.props.acceptElement}
-                                    includeHttpBody={false} />
+                                    exampleRequests={_exampleRequests}
+                                    acceptElement={this.props.acceptElement}                                    
+                                    includeHttpBody={false}/>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
                                 <RestResponsesComponent
-                                // color={_VerbGetColor}
+                                    // color={_VerbGetColor}
                                 />
                             </Table.Cell>
                         </Table.Row>
@@ -79,13 +81,13 @@ export default class RestGetSearchComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingComponent={renderTableHeader(VerbGetName, _VerbGetColor, this.props.resourceName)}
+                tableHeadingComponent={renderTableHeader(VerbGetName, _VerbColor, `${this.props.resourceName}/[id]`)}
                 tableHeadingTitle={VerbGetName}
-                tableColorType={_VerbGetColor}
+                tableColorType={_VerbColor}
                 tableColorInverted={false}
-                tableRowsFunction={renderGetSearchTableBody}
+                tableRowsFunction={renderGetByIdTableBody}
             />
         )
     }
-
 }
+

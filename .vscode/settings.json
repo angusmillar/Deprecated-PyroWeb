@@ -45,5 +45,6 @@
 	"search.exclude": {
 		"dist/**": true
 	},
-	"typescript.check.tscVersion": false
+	"typescript.check.tscVersion": false,
+	"workbench.editor.tabSizing": "shrink"
 }

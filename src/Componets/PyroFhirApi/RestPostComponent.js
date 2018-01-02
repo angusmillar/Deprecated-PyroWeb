@@ -16,6 +16,7 @@ export default class RestPostComponent extends React.Component {
         resourceName: PropTypes.string.isRequired,
         contentTypeElement: PropTypes.element.isRequired,
         selectedContentType: PropTypes.string.isRequired,
+        acceptElement: PropTypes.element.isRequired,
         searchParameters: PropTypes.array
     }
 
@@ -29,13 +30,8 @@ export default class RestPostComponent extends React.Component {
     render() {    
         const VerbGetName = 'POST';
         const _VerbColor = 'green';
-        const _Description = `Add a ${this.props.resourceName} resource to the server`;
-        const _Path = this.props.resourceName;
-        const _VerbGetHttpHeaders = [
-            { name: 'Content-Type', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
-            { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
-            { name: 'If-None-Exist', value: '[search parameters]', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#ccreate` }            
-        ];
+        const _Description = `Add a ${this.props.resourceName} resource to the server. The server will assign a new GUID as the resource id`;
+        const _Path = this.props.resourceName;        
         
         const renderGetSearchTableBody = (Expand) => {
             if (Expand) {                
@@ -48,10 +44,11 @@ export default class RestPostComponent extends React.Component {
                             <Table.Cell colSpan='16'>
                                 <RestRequestComponent
                                     resourceName={this.props.resourceName}
-                                    httpHeaders={_VerbGetHttpHeaders}
+                                    httpHeaders={FhirConstant.PostRequestHeaders}
                                     searchParameters={this.props.searchParameters}
                                     contentTypeElement={this.props.contentTypeElement}
                                     selectedContentType={this.props.selectedContentType}
+                                    acceptElement={this.props.acceptElement}
                                     includeHttpBody={true}/>
                             </Table.Cell>
                         </Table.Row>

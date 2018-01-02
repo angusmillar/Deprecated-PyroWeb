@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react'
 import isNil from 'lodash/isNil';
+import toLower from 'lodash/toLower';
 import map from 'lodash/map';
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
@@ -11,7 +12,8 @@ export default class RestHttpHeadersComponent extends React.Component {
 
     static propTypes = {
         httpHeaders: PropTypes.array.isRequired,
-        contentTypeElement: PropTypes.element.isRequired,        
+        contentTypeElement: PropTypes.element, 
+        acceptElement: PropTypes.element,
         color: PropTypes.string,
     }
 
@@ -43,8 +45,10 @@ export default class RestHttpHeadersComponent extends React.Component {
                         const name = Header.name;
                         const value = Header.value;
                         const dymamicValue = (Name, Value) => {
-                            if (!isNil(this.props.contentTypeElement) && Name === 'Content-Type') {
+                            if (!isNil(this.props.contentTypeElement) && toLower(Name) === 'content-type') {
                                 return this.props.contentTypeElement;
+                            } else if (!isNil(this.props.acceptElement) && toLower(Name) === 'accept') {
+                                return this.props.acceptElement;
                             } else {
                                 return <p>{Value}</p>;
                             }                                                        

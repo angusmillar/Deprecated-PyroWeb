@@ -9,7 +9,17 @@ import RestRequestComponent from './RestRequestComponent';
 import RestResponsesComponent from './RestResponsesComponent';
 import FhirConstant from '../../Constants/FhirConstant';
 
-class RestGetVReadByVidComponent extends React.Component {
+export default class RestGetVReadByVidComponent extends React.Component {
+
+    static propTypes = {
+        resourceName: PropTypes.string.isRequired,
+        searchParameters: PropTypes.array,
+        acceptElement: PropTypes.element.isRequired
+    }
+
+    static defaultProps = {        
+    }
+
     constructor(props) {
         super(props);
     }
@@ -18,10 +28,7 @@ class RestGetVReadByVidComponent extends React.Component {
         const VerbGetName = 'GET';
         const _VerbGetColor = 'blue';                
         const _Description = `Return a ${this.props.resourceName} resource history instance by resource id of [id] and version of [vid]`;                
-        const _RequestHttpHeaders = [
-            { name: 'Content-Type', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
-            { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` }
-        ];
+        
         const _exampleRequests = [
             '/[id]/_history/[vid]'
         ];
@@ -36,10 +43,10 @@ class RestGetVReadByVidComponent extends React.Component {
                             <Table.Cell colSpan='16'>
                                 <RestRequestComponent
                                     resourceName={this.props.resourceName}
-                                    httpHeaders={_RequestHttpHeaders}
+                                    httpHeaders={FhirConstant.GetRequestVReadByVidHeaders}
                                     searchParameters={this.props.searchParameters}
                                     exampleRequests={_exampleRequests}
-                                    // color={_VerbGetColor}
+                                    acceptElement={this.props.acceptElement}
                                     includeHttpBody={false}/>
                             </Table.Cell>
                         </Table.Row>
@@ -78,14 +85,3 @@ class RestGetVReadByVidComponent extends React.Component {
         )
     }
 }
-
-//Type Checking
-RestGetVReadByVidComponent.propTypes = {    
-    resourceName: PropTypes.string.isRequired,
-    searchParameters: PropTypes.array
-}
-
-RestGetVReadByVidComponent.defaultProps = {
-}
-
-export default RestGetVReadByVidComponent;  

@@ -13,19 +13,22 @@ import RestRequestBodyComponent from './RestRequestBodyComponent'
 export default class RestRequestComponent extends React.Component {
 
     static propTypes = {
-        resourceName: PropTypes.string.isRequired,
-        contentTypeElement: PropTypes.element.isRequired,
-        selectedContentType: PropTypes.string.isRequired,
-        searchParameters: PropTypes.array,
-        color: PropTypes.string.isRequired,
+        resourceName: PropTypes.string.isRequired,        
         httpHeaders: PropTypes.array.isRequired,
-        includeHttpBody: PropTypes.bool.isRequired,
-        exampleRequests: PropTypes.array
+        
+        color: PropTypes.string,
+        contentTypeElement: PropTypes.element,
+        selectedContentType: PropTypes.string,
+        acceptElement: PropTypes.element,
+        searchParameters: PropTypes.array,        
+        exampleRequests: PropTypes.array,
+        includeHttpBody: PropTypes.bool,
     }
 
     static defaultProps = {
         wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),
-        color: 'violet'
+        color: 'violet',
+        includeHttpBody: false
     }
 
     constructor(props) {
@@ -41,7 +44,8 @@ export default class RestRequestComponent extends React.Component {
                         <Table.Cell colSpan='3' width='16' verticalAlign='top'>
                             <RestHttpHeadersComponent
                                 httpHeaders={this.props.httpHeaders}
-                                contentTypeElement={this.props.contentTypeElement}                                
+                                contentTypeElement={this.props.contentTypeElement}  
+                                acceptElement={this.props.acceptElement}
                                 color={this.props.color} />
                         </Table.Cell>
                     </Table.Row>
