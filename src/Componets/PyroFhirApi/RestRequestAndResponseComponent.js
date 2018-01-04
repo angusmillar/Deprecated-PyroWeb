@@ -11,26 +11,35 @@ import RestParametersComponent from './RestParametersComponent'
 import RestHttpHeadersComponent from './RestHttpHeadersComponent'
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
 import RestBodyComponent from './RestBodyComponent'
+import FhirResourceExampleGenerator from './FhirResourceExampleGenerator'
 
-export default class RestRequestComponent extends React.Component {
+export default class RestRequestAndResponseComponent extends React.Component {
 
     static propTypes = {
-        resourceName: PropTypes.string.isRequired,        
+        tableTitle: PropTypes.string.isRequired,
+        tableTitleIcon: PropTypes.string.isRequired,
+        resourceName: PropTypes.string.isRequired,
         httpHeaders: PropTypes.array.isRequired,
-        
-        color: PropTypes.string,
+        color: PropTypes.string.isRequired,
+
         contentTypeElement: PropTypes.element,
         selectedContentType: PropTypes.string,
         acceptElement: PropTypes.element,
-        searchParameters: PropTypes.array,        
+        searchParameters: PropTypes.array,
         exampleRequests: PropTypes.array,
+
         includeHttpBody: PropTypes.bool,
+        includeHeaders: PropTypes.bool,
+        includeSearchParameters: PropTypes.bool,
     }
 
     static defaultProps = {
-        wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),
-        color: 'violet',
-        includeHttpBody: false
+        color: 'black',
+        tableTitle: 'No title set',
+        tableTitleIcon: 'question',
+        includeHttpBody: false,
+        includeHeaders: false,
+        includeSearchParameters: false
     }
 
     constructor(props) {
@@ -40,13 +49,13 @@ export default class RestRequestComponent extends React.Component {
     render() {
 
         const renderHttpHeaders = () => {
-            if (this.props.httpHeaders.length != 0) {
+            if (this.props.includeHeaders && this.props.httpHeaders.length != 0) {
                 return (
                     <Table.Row >
                         <Table.Cell colSpan='3' width='16' verticalAlign='top'>
                             <RestHttpHeadersComponent
                                 httpHeaders={this.props.httpHeaders}
-                                contentTypeElement={this.props.contentTypeElement}  
+                                contentTypeElement={this.props.contentTypeElement}
                                 acceptElement={this.props.acceptElement}
                                 color={this.props.color} />
                         </Table.Cell>
@@ -55,9 +64,21 @@ export default class RestRequestComponent extends React.Component {
             } else {
                 return null;
             }
-
         };
 
+        const renderSearchParameters = () => {
+            if (this.props.includeSearchParameters && this.props.searchParameters.length != 0) {
+                return (
+                    <Table.Row >
+                        <Table.Cell colSpan='3' width='16' verticalAlign='top'>
+                            <RestParametersComponent parameters={this.props.searchParameters} color={this.props.color} />
+                        </Table.Cell>
+                    </Table.Row>
+                )
+            } else {
+                return null;
+            }
+        };
 
         const renderExampleRequests = (ExampleRequests, ResourceName) => {
             return (
@@ -95,23 +116,36 @@ export default class RestRequestComponent extends React.Component {
         };
 
         const renderHttpBody = () => {
-            if (this.props.includeHttpBody) {
-                const resolveSyntaxLanguage = () => {
-                    if (includes(toLower(this.props.selectedContentType), RestBodyComponent.SupportedSyntaxLanguages.json)) {
-                        return RestBodyComponent.SupportedSyntaxLanguages.json;
-                    } else if (includes(toLower(this.props.selectedContentType), RestBodyComponent.SupportedSyntaxLanguages.xml)) {
-                        return RestBodyComponent.SupportedSyntaxLanguages.xml;
-                    } else {
-                        return `selectedContentType was ${this.props.selectedContentType}`;
-                    }
+            const resolveSyntaxLanguage = () => {
+                if (includes(toLower(this.props.selectedContentType), RestBodyComponent.SupportedSyntaxLanguages.json)) {
+                    return RestBodyComponent.SupportedSyntaxLanguages.json;
+                } else if (includes(toLower(this.props.selectedContentType), RestBodyComponent.SupportedSyntaxLanguages.xml)) {
+                    return RestBodyComponent.SupportedSyntaxLanguages.xml;
+                } else {
+                    return `selectedContentType was ${this.props.selectedContentType}`;
                 }
+            }
 
+            const resolveResourceExample = (SyntaxLanguage) => {
+                if (SyntaxLanguage === RestBodyComponent.SupportedSyntaxLanguages.json) {
+                    return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName);
+                } else if (SyntaxLanguage === RestBodyComponent.SupportedSyntaxLanguages.xml) {
+                    return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName);
+                } else {
+                    return `SyntaxLanguage was ${SyntaxLanguage}, can not create example resource`;
+                }
+            }
+
+            if (this.props.includeHttpBody && this.props.includeHttpBody) {
+                const SyntaxLanguage = resolveSyntaxLanguage();
+                const ResourceExample = resolveResourceExample(SyntaxLanguage);
                 return (
                     <Table.Row>
                         <Table.Cell colSpan='3' width='16' verticalAlign='top'>
                             <RestBodyComponent
                                 resourceName={this.props.resourceName}
-                                syntaxLanguage={resolveSyntaxLanguage()}
+                                syntaxLanguage={resolveSyntaxLanguage()}        
+                                resourceData={ResourceExample}
                                 color={this.props.color} />
                         </Table.Cell>
                     </Table.Row>
@@ -119,18 +153,13 @@ export default class RestRequestComponent extends React.Component {
             }
         };
 
-
         const renderParametersRowsBody = (Expand) => {
             if (Expand) {
                 return (
                     <Table.Body>
                         {renderExampleRequestRow()}
                         {renderHttpHeaders()}
-                        <Table.Row >
-                            <Table.Cell colSpan='3' width='16' verticalAlign='top'>
-                                <RestParametersComponent parameters={this.props.searchParameters} color={this.props.color} />
-                            </Table.Cell>
-                        </Table.Row>
+                        {renderSearchParameters()}
                         {renderHttpBody()}
                     </Table.Body>
                 )
@@ -141,14 +170,12 @@ export default class RestRequestComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingTitle='Requests'
-                tableHeadingIconType='cloud upload'
+                tableHeadingTitle={this.props.tableTitle}
+                tableHeadingIconType={this.props.tableTitleIcon}
                 tableRowsFunction={renderParametersRowsBody}
                 tableColorType={this.props.color}
                 tableColorInverted={false}
             />
-
-
         )
     }
 }

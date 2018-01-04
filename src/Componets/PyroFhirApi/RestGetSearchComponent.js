@@ -6,7 +6,7 @@ import { Table } from 'semantic-ui-react'
 import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
 import RestRequestComponent from './RestRequestComponent';
-import RestResponsesComponent from './RestResponsesComponent';
+// import RestResponsesComponent from './RestResponsesComponent';
 import FhirConstant from '../../Constants/FhirConstant';
 
 export default class RestGetSearchComponent extends React.Component {
@@ -55,9 +55,9 @@ export default class RestGetSearchComponent extends React.Component {
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestResponsesComponent
-                                // color={_VerbGetColor}
-                                />
+                                {/* <RestResponsesComponent /> */}
+                                
+                                
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>

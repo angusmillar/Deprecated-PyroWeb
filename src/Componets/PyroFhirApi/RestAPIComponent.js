@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import moment from 'moment'
 import { Segment, Divider, Header, Grid, Popup, Icon } from 'semantic-ui-react'
 // import map from 'lodash/map';
 // import isNil from 'lodash/isNil';
@@ -20,6 +19,7 @@ export default class RestAPIComponent extends React.Component {
 
     static propTypes = {
         resource: PropTypes.object.isRequired,
+        endpointUrl: PropTypes.string.isRequired,
         selectedContentType: PropTypes.string.isRequired,
         contentTypeElement: PropTypes.element.isRequired,
         acceptElement: PropTypes.element.isRequired
@@ -83,6 +83,7 @@ export default class RestAPIComponent extends React.Component {
                 <Grid.Column width={16}>
                         <RestPostComponent
                             resourceName={_resourceName}
+                            endpointUrl={this.props.endpointUrl}
                             searchParameters={_searchParameters}
                             contentTypeElement={this.props.contentTypeElement}
                             acceptElement={this.props.acceptElement}

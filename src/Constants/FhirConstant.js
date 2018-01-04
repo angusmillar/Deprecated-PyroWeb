@@ -1,11 +1,22 @@
-class FhirConstant {
+import DateTimeSupport from '../SupportTools/DateTimeSupport'
+
+export default class FhirConstant {
     static STU3_SpecWebsite = 'http://hl7.org/fhir/STU3'
 
     static PostRequestHeaders = [
         { name: 'Content-Type', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
         { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
-        { name: 'If-None-Exist', value: '[search parameters]', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#ccreate` }            
+        { name: 'If-None-Exist', value: '[search parameters]', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#create` }            
     ];
+
+    static postResponseHeaders(EndpointUrl, ResourceName) {
+        return [
+            { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
+            { name: 'ETag', value: 'W/"1"', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#versioning` },
+            { name: 'Last-Modified', value: DateTimeSupport.NowdateTimeHttpHeader, moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#create` },
+            { name: 'Location', value: `${EndpointUrl}/${ResourceName}/52044f9d-fe92-4163-8c5d-2a3f16ee7e7b`, moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#create` }
+        ];
+    }    
 
     static GetRequestHeaders = [        
         { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
@@ -24,5 +35,5 @@ class FhirConstant {
     static GetRequestVReadByVidHeaders = [        
         { name: 'Accept', value: 'application/fhir+xml', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` }
     ];
+
 }
-export default FhirConstant

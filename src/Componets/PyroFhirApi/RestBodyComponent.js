@@ -1,23 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, Grid, Message } from 'semantic-ui-react'
-import includes from 'lodash/includes';
+
 import toLower from 'lodash/toLower';
 import FhirConstant from '../../Constants/FhirConstant';
 
 import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
-import xml from 'react-syntax-highlighter/languages/hljs/xml';
-import json from 'react-syntax-highlighter/languages/hljs/json';
+import registerLanguageXml from 'react-syntax-highlighter/languages/hljs/xml';
+import registerLanguageJson from 'react-syntax-highlighter/languages/hljs/json';
 import { vs } from 'react-syntax-highlighter/styles/hljs';
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
-import FhirResourceExampleGenerator from './FhirResourceExampleGenerator'
 
-export default class RestRequestBodyComponent extends React.Component {
+export default class RestBodyComponent extends React.Component {
     
     static propTypes = {
-        resourceName: PropTypes.string.isRequired,
-        selectedContentType: PropTypes.string.isRequired,
+        resourceName: PropTypes.string.isRequired,  
+        resourceData: PropTypes.string.isRequired,  
+        syntaxLanguage: PropTypes.string.isRequired,
         color: PropTypes.string,
     }
 
@@ -25,45 +25,49 @@ export default class RestRequestBodyComponent extends React.Component {
     }
 
     constructor(props) {
-        super(props);
+        super(props);       
     }
+
+    static SupportedSyntaxLanguages = { json: 'json', xml: 'xml' };
 
     render() {
 
         const renderExampleResourceAsXml = () => {
-            registerLanguage('xml', xml);
+            registerLanguage(RestBodyComponent.SupportedSyntaxLanguages.xml, registerLanguageXml);
             return <SyntaxHighlighter
-                language='xml'
+                language={RestBodyComponent.SupportedSyntaxLanguages.xml}
                 style={vs}
                 wrapLines={true}
-                showLineNumbers >
-                {FhirResourceExampleGenerator.getXmlResource(this.props.resourceName)}
+                showLineNumbers >               
+                {this.props.resourceData}
             </SyntaxHighlighter>;
         }
 
         const renderExampleResourceAsJson = () => {
-            registerLanguage('json', json);
+            registerLanguage(RestBodyComponent.SupportedSyntaxLanguages.json, registerLanguageJson);
             return <SyntaxHighlighter
-                language='json'
+                language={RestBodyComponent.SupportedSyntaxLanguages.json}
                 style={vs}
                 wrapLines={true}
                 showLineNumbers >
-                {FhirResourceExampleGenerator.getJsonResource(this.props.resourceName)}
+                {this.props.resourceData}                
             </SyntaxHighlighter>;
         }
 
-        const resolveExampleResource = (ContentType) => {
-            if (includes(toLower(ContentType), 'json')) {
+        const resolveExampleResource = () => {
+            if (toLower(this.props.syntaxLanguage) === RestBodyComponent.SupportedSyntaxLanguages.json) {
                 return renderExampleResourceAsJson();
-            } else if (includes(toLower(ContentType), 'xml')) {
+            } else if (toLower(this.props.syntaxLanguage) === RestBodyComponent.SupportedSyntaxLanguages.xml) {
                 return renderExampleResourceAsXml();
             } else {
-                return 'unkown format for example';
+                return `unkown props syntaxLanguage of ${this.props.syntaxLanguage}, expected [${RestBodyComponent.SupportedSyntaxLanguages.json}|${RestBodyComponent.SupportedSyntaxLanguages.xml}] `;
             }            
         }
 
+        
+
         const renderParameterRows = () => {
-            const ContentType = this.props.selectedContentType;
+            const ContentType = this.props.syntaxLanguage;
             return (
                 <Table.Body>
                     <Table.Row colSpan='3'>

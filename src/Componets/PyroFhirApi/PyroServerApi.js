@@ -68,7 +68,7 @@ export default class PyroServerApi extends React.Component {
             }
         };
 
-        const renderFullURL = (ServiceRootUrl) => {
+        const renderEndpointUrl = (ServiceRootUrl) => {
             if (isNil(this.props.apiSchema) || isNil(ServiceRootUrl)) {
                 return null
             }
@@ -90,6 +90,7 @@ export default class PyroServerApi extends React.Component {
                             <RestAPIComponent
                                 key={Index}
                                 resource={Resource}
+                                endpointUrl={EndpointUrl}
                                 contentTypeElement={ContentTypeElement}
                                 acceptElement={AcceptElement}
                                 selectedContentType={this.state.selectedContentType}
@@ -138,6 +139,7 @@ export default class PyroServerApi extends React.Component {
         const apiResources = FhirResource.rest[0].resource;
         const ContentTypeElement = renderContentTypeDropdown();
         const AcceptElement = renderAcceptDropdown();
+        const EndpointUrl = renderEndpointUrl(serviceRootUrl);
 
         return (
             <div>
@@ -162,7 +164,7 @@ export default class PyroServerApi extends React.Component {
                                         Endpoint Url:
                                     </Grid.Column>
                                     <Grid.Column floated='left' width={10}>
-                                        <b><code>{renderFullURL(serviceRootUrl)}</code></b>
+                                        <b><code>{EndpointUrl}</code></b>
                                     </Grid.Column>
                                 </Grid.Row>
                                 <Grid.Row>

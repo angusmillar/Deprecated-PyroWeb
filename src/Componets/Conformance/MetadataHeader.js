@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment'
+import DateTimeSupport from '../../SupportTools/DateTimeSupport'
 import { Table, Label, Flag } from 'semantic-ui-react'
 import map from 'lodash/map';
 import isNil from 'lodash/isNil';
@@ -28,7 +28,7 @@ class MetadataHeader extends React.Component {
         const dateTimeFormated = (Value) => {
             return (
                 Value &&
-                moment(this.props.Date).format('DD-MMM-YYYY hh:mm:ss (Z)')
+                DateTimeSupport.dateTimeHumanReadable(this.props.Date)
             )
         };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment'
+import DateTimeSupport from '../../SupportTools/DateTimeSupport'
 import isNil from 'lodash/isNil';
 import { Table } from 'semantic-ui-react'
 import upperFirst from 'lodash/upperFirst';
@@ -19,7 +19,7 @@ class Software_Table extends React.Component {
         const dateTimeFormated = (Value) => {
             return (
                 Value &&
-                moment(Value).format('DD-MMM-YYYY hh:mm:ss (Z)')
+                DateTimeSupport.dateTimeHumanReadable(Value)                
             )
         };
 

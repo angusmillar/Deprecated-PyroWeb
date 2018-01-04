@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Popup, Grid } from 'semantic-ui-react'
-import moment from 'moment'
+import DateTimeSupport from '../../../SupportTools/DateTimeSupport'
 import isUndefined from 'lodash/isUndefined';
 
 
@@ -16,7 +16,7 @@ class Period_Popup extends React.Component {
             return (
                 Value &&
                 //No time-zone showen as this converts to there local time
-                moment(Value).local().format('DD-MMM-YYYY hh:mm A')
+                DateTimeSupport.dateTimeLocal(Value)                
             )
         };
 
