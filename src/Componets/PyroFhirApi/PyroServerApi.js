@@ -4,10 +4,13 @@ import isNil from 'lodash/isNil';
 import find from 'lodash/find'
 import map from 'lodash/map';
 import transform from 'lodash/transform'
+import includes from 'lodash/includes';
+import toLower from 'lodash/toLower';
 import { Grid, List, Divider, Dropdown, Header, Segment } from 'semantic-ui-react'
 
 import RestAPIComponent from './RestAPIComponent'
 import ContactDetails_Table from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_Table'
+import FhirConstant from '../../Constants/FhirConstant';
 
 export default class PyroServerApi extends React.Component {
 
@@ -26,11 +29,15 @@ export default class PyroServerApi extends React.Component {
             result.push({ key: form, text: form, value: form });
         });
 
+        this.AcceptResponseformatArray = [
+            { key: FhirConstant.DefaultFhirJsonFormat, text: FhirConstant.DefaultFhirJsonFormat, value: FhirConstant.DefaultFhirJsonFormat },
+            { key: FhirConstant.DefaultFhirXmlFormat, text: FhirConstant.DefaultFhirXmlFormat, value: FhirConstant.DefaultFhirXmlFormat }],
 
         this.state = {
             selectedSchema: this.props.apiSchema[0],
-            selectedContentType: this.formatArray[0].value,
-            selectedAccept: this.formatArray[0].value,
+            selectedContentType: find(this.formatArray, ['value',FhirConstant.DefaultFhirJsonFormat]).value,
+            selectedAccept: find(this.formatArray, ['value',FhirConstant.DefaultFhirJsonFormat]).value,
+            selectedResponseAccept: find(this.AcceptResponseformatArray, ['value',FhirConstant.DefaultFhirJsonFormat]).value,
         };
     }
 
@@ -43,10 +50,28 @@ export default class PyroServerApi extends React.Component {
         this.setState(() => ({ selectedContentType: value }));        
     }
 
-    handleAcceptChange = (e, { value }) => {
-        this.setState(() => ({ selectedAccept: value }));
+    // Switch the list of Format types to the default format Types used application/fhir+xml or application/fhir+json
+    // User can use the non-standard formats 'text/xml' in the Accept header but they will only ever be retuned in responses
+    // the FHIR default equivented application/fhir+xml or application/fhir+json
+    // this switch and seperate ResponseAcceptDropdown manage this
+    responseFormat = (value) => {
+        if (includes(toLower(value), 'xml')) {
+            return FhirConstant.DefaultFhirXmlFormat;
+        } else if (includes(toLower(value), 'json')){
+            return FhirConstant.DefaultFhirJsonFormat;
+        } else {
+            return value;
+        }
     }
 
+    handleAcceptChange = (e, { value }) => {
+        this.setState(() => ({ selectedAccept: value, selectedResponseAccept: this.responseFormat(value) }));
+    }
+
+    handleResponseAcceptChange = (e, { value }) => {
+        
+        this.setState(() => ({ selectedAccept: value, selectedResponseAccept: this.responseFormat(value) }));
+    }
 
     render() {
 
@@ -93,6 +118,7 @@ export default class PyroServerApi extends React.Component {
                                 endpointUrl={EndpointUrl}
                                 contentTypeElement={ContentTypeElement}
                                 acceptElement={AcceptElement}
+                                acceptResponseElement={AcceptResponseElement}
                                 selectedContentType={this.state.selectedContentType}
                             />
                         )
@@ -124,6 +150,17 @@ export default class PyroServerApi extends React.Component {
             )
         };
 
+        const renderResponseAcceptDropdown = () => {
+            return (
+                <Dropdown
+                    options={this.AcceptResponseformatArray}
+                    floating                    
+                    onChange={this.handleAcceptChange}
+                    value={this.state.selectedResponseAccept}
+                />
+            )
+        };
+
         const FhirResource = this.props.ConformanceStatmentResource;
         const currentSchemaValue = this.state.selectedSchema;
         // const currentContentType = this.state.selectedContentType;
@@ -139,6 +176,7 @@ export default class PyroServerApi extends React.Component {
         const apiResources = FhirResource.rest[0].resource;
         const ContentTypeElement = renderContentTypeDropdown();
         const AcceptElement = renderAcceptDropdown();
+        const AcceptResponseElement = renderResponseAcceptDropdown();
         const EndpointUrl = renderEndpointUrl(serviceRootUrl);
 
         return (

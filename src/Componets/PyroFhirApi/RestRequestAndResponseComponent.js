@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import map from 'lodash/map';
 import isNil from 'lodash/isNil';
-import includes from 'lodash/includes';
-import toLower from 'lodash/toLower';
 
 import { Table, Divider } from 'semantic-ui-react'
 
@@ -11,7 +9,7 @@ import RestParametersComponent from './RestParametersComponent'
 import RestHttpHeadersComponent from './RestHttpHeadersComponent'
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
 import RestBodyComponent from './RestBodyComponent'
-import FhirResourceExampleGenerator from './FhirResourceExampleGenerator'
+
 
 export default class RestRequestAndResponseComponent extends React.Component {
 
@@ -23,10 +21,12 @@ export default class RestRequestAndResponseComponent extends React.Component {
         color: PropTypes.string.isRequired,
 
         contentTypeElement: PropTypes.element,
-        selectedContentType: PropTypes.string,
+        // selectedContentType: PropTypes.string,
         acceptElement: PropTypes.element,
         searchParameters: PropTypes.array,
         exampleRequests: PropTypes.array,
+
+        exampleBody: PropTypes.object,
 
         includeHttpBody: PropTypes.bool,
         includeHeaders: PropTypes.bool,
@@ -37,6 +37,7 @@ export default class RestRequestAndResponseComponent extends React.Component {
         color: 'black',
         tableTitle: 'No title set',
         tableTitleIcon: 'question',
+        exampleBody: {syntaxLanguage: 'xml', resource: 'Example Resource Not Set', message: 'User Message has not been set', isBundleResource: false},
         includeHttpBody: false,
         includeHeaders: false,
         includeSearchParameters: false
@@ -116,36 +117,16 @@ export default class RestRequestAndResponseComponent extends React.Component {
         };
 
         const renderHttpBody = () => {
-            const resolveSyntaxLanguage = () => {
-                if (includes(toLower(this.props.selectedContentType), RestBodyComponent.SupportedSyntaxLanguages.json)) {
-                    return RestBodyComponent.SupportedSyntaxLanguages.json;
-                } else if (includes(toLower(this.props.selectedContentType), RestBodyComponent.SupportedSyntaxLanguages.xml)) {
-                    return RestBodyComponent.SupportedSyntaxLanguages.xml;
-                } else {
-                    return `selectedContentType was ${this.props.selectedContentType}`;
-                }
-            }
-
-            const resolveResourceExample = (SyntaxLanguage) => {
-                if (SyntaxLanguage === RestBodyComponent.SupportedSyntaxLanguages.json) {
-                    return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName);
-                } else if (SyntaxLanguage === RestBodyComponent.SupportedSyntaxLanguages.xml) {
-                    return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName);
-                } else {
-                    return `SyntaxLanguage was ${SyntaxLanguage}, can not create example resource`;
-                }
-            }
-
             if (this.props.includeHttpBody && this.props.includeHttpBody) {
-                const SyntaxLanguage = resolveSyntaxLanguage();
-                const ResourceExample = resolveResourceExample(SyntaxLanguage);
                 return (
                     <Table.Row>
                         <Table.Cell colSpan='3' width='16' verticalAlign='top'>
                             <RestBodyComponent
+                                exampleMessage={this.props.exampleBody.message}    
                                 resourceName={this.props.resourceName}
-                                syntaxLanguage={resolveSyntaxLanguage()}        
-                                resourceData={ResourceExample}
+                                isBundleResource={this.props.exampleBody.isBundleResource}
+                                syntaxLanguage={this.props.exampleBody.syntaxLanguage}        
+                                resourceData={this.props.exampleBody.resource}                                
                                 color={this.props.color} />
                         </Table.Cell>
                     </Table.Row>

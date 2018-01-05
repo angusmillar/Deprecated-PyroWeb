@@ -10,11 +10,12 @@ export default class RestRequestComponent2 extends React.Component {
         httpHeaders: PropTypes.array.isRequired,        
     
         contentTypeElement: PropTypes.element,
-        selectedContentType: PropTypes.string,
+        // selectedContentType: PropTypes.string,
         acceptElement: PropTypes.element,
         searchParameters: PropTypes.array,        
         exampleRequests: PropTypes.array,
         includeHttpBody: PropTypes.bool,
+        exampleBody: PropTypes.object
     }
 
     static defaultProps = {        
@@ -33,7 +34,7 @@ export default class RestRequestComponent2 extends React.Component {
                 tableTitleIcon='cloud upload'
                 color='violet'                
                 includeHeaders={true}
-                includeSearchParameters={true}
+                includeSearchParameters={true}                
             />
         )
     }

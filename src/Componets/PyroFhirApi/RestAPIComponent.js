@@ -22,7 +22,8 @@ export default class RestAPIComponent extends React.Component {
         endpointUrl: PropTypes.string.isRequired,
         selectedContentType: PropTypes.string.isRequired,
         contentTypeElement: PropTypes.element.isRequired,
-        acceptElement: PropTypes.element.isRequired
+        acceptElement: PropTypes.element.isRequired,
+        acceptResponseElement: PropTypes.element.isRequired,
     }
 
     static defaultProps = {        
@@ -57,8 +58,11 @@ export default class RestAPIComponent extends React.Component {
                 
                 <RestGetSearchComponent
                     resourceName={_resourceName}
+                    endpointUrl={this.props.endpointUrl}
                     searchParameters={_searchParameters}
+                    contentTypeElement={this.props.contentTypeElement}
                     acceptElement={this.props.acceptElement}
+                    acceptResponseElement={this.props.acceptResponseElement}
                 />
                 <Divider />
                 <RestGetByIdComponent
@@ -87,7 +91,8 @@ export default class RestAPIComponent extends React.Component {
                             searchParameters={_searchParameters}
                             contentTypeElement={this.props.contentTypeElement}
                             acceptElement={this.props.acceptElement}
-                            selectedContentType={this.props.selectedContentType}
+                            acceptResponseElement={this.props.acceptResponseElement}
+                            // selectedContentType={this.props.selectedContentType}
                         />
                         </Grid.Column>        
                 </Grid>                

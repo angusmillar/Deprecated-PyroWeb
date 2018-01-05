@@ -5,15 +5,20 @@ import { Table } from 'semantic-ui-react'
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
-import RestRequestComponent from './RestRequestComponent';
-// import RestResponsesComponent from './RestResponsesComponent';
+import RestRequestComponent2 from './RestRequestComponent2';
+import RestResponsesComponent from './RestResponseComponent'
+
 import FhirConstant from '../../Constants/FhirConstant';
 
 export default class RestGetSearchComponent extends React.Component {
 
-    static propTypes = {
+    static propTypes = {    
         resourceName: PropTypes.string.isRequired,
+        endpointUrl: PropTypes.string.isRequired,
+        contentTypeElement: PropTypes.element.isRequired,
+        // selectedContentType: PropTypes.string.isRequired,
         acceptElement: PropTypes.element.isRequired,
+        acceptResponseElement: PropTypes.element.isRequired,
         searchParameters: PropTypes.array
     }
 
@@ -33,6 +38,14 @@ export default class RestGetSearchComponent extends React.Component {
             ' '
         ];
         
+        const resolveExampleBody = () => {            
+            return {
+                syntaxLanguage: 'xml',
+                resource: 'my Resource',
+                message: `A search Bundle resource containing ${this.props.resourceName} resources that match the search criteria.`,
+                isBundleResource: true
+            }
+        }
 
         const renderGetSearchTableBody = (Expand) => {
             if (Expand) {
@@ -44,20 +57,34 @@ export default class RestGetSearchComponent extends React.Component {
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                <RestRequestComponent
+                            <RestRequestComponent2
                                     resourceName={this.props.resourceName}
-                                    exampleRequests={_exampleRequests}
                                     httpHeaders={FhirConstant.GetRequestHeaders}
                                     searchParameters={this.props.searchParameters}
+                                    contentTypeElement={this.props.contentTypeElement}                                   
                                     acceptElement={this.props.acceptElement}
-                                    includeHttpBody={false} />
+                                    includeHttpBody={false}
+                                    exampleRequests={_exampleRequests}                                    
+                                />                                
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                                {/* <RestResponsesComponent /> */}
-                                
-                                
+                            <RestResponsesComponent
+                                    resourceName={this.props.resourceName}
+                                    endpointUrl={this.props.endpointUrl}
+                                    httpHeaders={FhirConstant.getResponseSearchHeaders()}
+                                    // For the response we switch the ContentType to be the Accept Type as the server returns us content as per what we asked 
+                                    // for with the Accept header on the request.
+                                    // While this is technical correct it may confuse users as when they change the dropdown for Content-Type within the response
+                                    // Headers section they might not relise or understand that what they are actualy also changing it the request's Accept type.
+                                    // For now I will leave this like this becasue it is correct. If this is a problem then maybe I will have to do work to 
+                                    // make the Content-Type in the response header not a dropdown so they can not chnage it there.
+                                    contentTypeElement={this.props.acceptResponseElement}
+                                    selectedContentType={this.props.acceptResponseElement.props.value}
+                                    acceptElement={this.props.acceptResponseElement}
+                                    exampleBody={resolveExampleBody()}
+                                />                                                                
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
