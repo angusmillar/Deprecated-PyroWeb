@@ -29,7 +29,7 @@ export default class RestResponseComponent extends React.Component {
         return (
             <RestRequestAndResponseComponent
                 {...this.props}           
-                tableTitle='Responses'
+                tableTitle='Response'
                 tableTitleIcon='cloud download'
                 color='pink'                
                 includeHeaders={true}

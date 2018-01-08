@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import includes from 'lodash/includes';
-import toLower from 'lodash/toLower';
 
 
 import { Table } from 'semantic-ui-react'
@@ -11,8 +9,9 @@ import RestVerbHeaderComponent from './RestVerbHeaderComponent';
 import RestRequestComponent2 from './RestRequestComponent2';
 import RestResponsesComponent from './RestResponseComponent';
 import FhirResourceExampleGenerator from './FhirResourceExampleGenerator'
-import RestBodyComponent from './RestBodyComponent'
+// import RestBodyComponent from './RestBodyComponent'
 import UuidSupport from '../../SupportTools/UuidSupport'
+import FormatSupport from '../../SupportTools/FormatSupport'
 import DateTimeSupport from '../../SupportTools/DateTimeSupport'
 
 import FhirConstant from '../../Constants/FhirConstant';
@@ -49,39 +48,29 @@ export default class RestPostComponent extends React.Component {
         const _Description = `Add a ${this.props.resourceName} resource to the server. The server will assign a new GUID as the resource id`;
         const _Path = this.props.resourceName;
 
-        const resolveSyntaxLanguage = (FormatRequired) => {
-            if (includes(toLower(FormatRequired), RestBodyComponent.SupportedSyntaxLanguages.json)) {
-                return RestBodyComponent.SupportedSyntaxLanguages.json;
-            } else if (includes(toLower(FormatRequired), RestBodyComponent.SupportedSyntaxLanguages.xml)) {
-                return RestBodyComponent.SupportedSyntaxLanguages.xml;
-            } else {
-                return `selectedContentType was ${FormatRequired}`;
-            }
-        }
-
-        const resolveResourceExample = (SyntaxLanguage, ExampleResourceType, GUID, LastModified) => {
-            if (SyntaxLanguage === RestBodyComponent.SupportedSyntaxLanguages.json) {
+        const resolveResourceExample = (FormatType, ExampleResourceType, GUID, LastModified) => {
+            if (FormatType === FormatSupport.FormatType.JSON) {
                 if (ExampleResourceType == this.ExampleResourceType.Request) {
                     return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, null, null, null);
                 } else {
                     return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, '1', LastModified);
                 }
-            } else if (SyntaxLanguage === RestBodyComponent.SupportedSyntaxLanguages.xml) {
+            } else if (FormatType === FormatSupport.FormatType.XML) {
                 if (ExampleResourceType == this.ExampleResourceType.Request) {
                     return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, null, null, null);
                 } else {
                     return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, '1', LastModified);
                 }
             } else {
-                return `SyntaxLanguage was ${SyntaxLanguage}, can not create example resource`;
+                return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
         }
 
         const resolveExampleBody = (ExampleResourceType, FormatRequired, GUID, LastModified) => {
-            const SyntaxLanguage = resolveSyntaxLanguage(FormatRequired);            
+            const FormatType = FormatSupport.resolveFormatFromString(FormatRequired);            
             return {
-                syntaxLanguage: SyntaxLanguage,
-                resource: resolveResourceExample(SyntaxLanguage, ExampleResourceType, GUID, LastModified),
+                formatType: FormatType,
+                resource: resolveResourceExample(FormatType, ExampleResourceType, GUID, LastModified),
                 message: `The ${this.props.resourceName} that is to be added to the FHIR server`,
                 isBundleResource: false
             }

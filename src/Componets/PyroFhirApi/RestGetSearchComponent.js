@@ -7,8 +7,10 @@ import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
 import RestRequestComponent2 from './RestRequestComponent2';
 import RestResponsesComponent from './RestResponseComponent'
+import FhirResourceExampleGenerator from './FhirResourceExampleGenerator'
 
 import FhirConstant from '../../Constants/FhirConstant';
+import FormatSupport from '../../SupportTools/FormatSupport';
 
 export default class RestGetSearchComponent extends React.Component {
 
@@ -38,12 +40,46 @@ export default class RestGetSearchComponent extends React.Component {
             ' '
         ];
         
-        const resolveExampleBody = () => {            
-            return {
-                syntaxLanguage: 'xml',
-                resource: 'my Resource',
-                message: `A search Bundle resource containing ${this.props.resourceName} resources that match the search criteria.`,
-                isBundleResource: true
+        // const resolveExampleBody = () => {            
+        //     return {
+        //         // syntaxLanguage: 'xml',
+        //         // resource: FhirResourceExampleGenerator.getXmlSearchBundleResource(this.props.resourceName),
+        //         formatType: FormatSupport.FormatType.JSON,
+        //         resource: FhirResourceExampleGenerator.getJsonSearchBundleResource(this.props.resourceName),
+        //         message: `A search Bundle resource containing ${this.props.resourceName} resources as entries which match the search criteria.`,
+        //         isBundleResource: true
+        //     }
+        // }
+
+
+        // const resolveResourceExample = (FormatType) => {
+        //     if (FormatType === FormatSupport.FormatType.JSON) {
+        //         return FhirResourceExampleGenerator.getJsonSearchBundleResource(this.props.resourceName);
+        //     } else if (FormatType === FormatSupport.FormatType.XML) {
+        //         return FhirResourceExampleGenerator.getXmlSearchBundleResource(this.props.resourceName);
+        //     } else {
+        //         return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
+        //     }
+        // }
+
+        const resolveExampleBody = (FormatRequired) => {
+            const FormatType = FormatSupport.resolveFormatFromString(FormatRequired);     
+            if (FormatType === FormatSupport.FormatType.JSON) {
+                return {
+                    formatType: FormatType,
+                    resource: FhirResourceExampleGenerator.getJsonSearchBundleResource(this.props.resourceName),
+                    message: `The ${this.props.resourceName} that is to be added to the FHIR server`,
+                    isBundleResource: false
+                }                
+            } else if (FormatType === FormatSupport.FormatType.XML) {
+                return {
+                    formatType: FormatType,
+                    resource: FhirResourceExampleGenerator.getXmlSearchBundleResource(this.props.resourceName),
+                    message: `The ${this.props.resourceName} that is to be added to the FHIR server`,
+                    isBundleResource: false
+                }                
+            } else {
+                return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
         }
 
@@ -83,7 +119,7 @@ export default class RestGetSearchComponent extends React.Component {
                                     contentTypeElement={this.props.acceptResponseElement}
                                     selectedContentType={this.props.acceptResponseElement.props.value}
                                     acceptElement={this.props.acceptResponseElement}
-                                    exampleBody={resolveExampleBody()}
+                                    exampleBody={resolveExampleBody(this.props.acceptResponseElement.props.value)}
                                 />                                                                
                             </Table.Cell>
                         </Table.Row>

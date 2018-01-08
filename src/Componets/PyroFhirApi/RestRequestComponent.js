@@ -141,7 +141,7 @@ export default class RestRequestComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingTitle='Requests'
+                tableHeadingTitle='Request'
                 tableHeadingIconType='cloud upload'
                 tableRowsFunction={renderParametersRowsBody}
                 tableColorType={this.props.color}

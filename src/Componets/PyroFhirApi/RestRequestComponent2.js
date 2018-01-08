@@ -30,7 +30,7 @@ export default class RestRequestComponent2 extends React.Component {
         return (
             <RestRequestAndResponseComponent
                 {...this.props}           
-                tableTitle='Requests'
+                tableTitle='Request'
                 tableTitleIcon='cloud upload'
                 color='violet'                
                 includeHeaders={true}

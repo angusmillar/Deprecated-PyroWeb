@@ -9,6 +9,7 @@ import RestParametersComponent from './RestParametersComponent'
 import RestHttpHeadersComponent from './RestHttpHeadersComponent'
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
 import RestBodyComponent from './RestBodyComponent'
+import FormatSupport from '../../SupportTools/FormatSupport'
 
 
 export default class RestRequestAndResponseComponent extends React.Component {
@@ -37,7 +38,7 @@ export default class RestRequestAndResponseComponent extends React.Component {
         color: 'black',
         tableTitle: 'No title set',
         tableTitleIcon: 'question',
-        exampleBody: {syntaxLanguage: 'xml', resource: 'Example Resource Not Set', message: 'User Message has not been set', isBundleResource: false},
+        exampleBody: {formatType: FormatSupport.FormatType.JSON, resource: 'Example Resource Not Set', message: 'User Message has not been set', isBundleResource: false},
         includeHttpBody: false,
         includeHeaders: false,
         includeSearchParameters: false
@@ -125,7 +126,7 @@ export default class RestRequestAndResponseComponent extends React.Component {
                                 exampleMessage={this.props.exampleBody.message}    
                                 resourceName={this.props.resourceName}
                                 isBundleResource={this.props.exampleBody.isBundleResource}
-                                syntaxLanguage={this.props.exampleBody.syntaxLanguage}        
+                                formatType={this.props.exampleBody.formatType}        
                                 resourceData={this.props.exampleBody.resource}                                
                                 color={this.props.color} />
                         </Table.Cell>
