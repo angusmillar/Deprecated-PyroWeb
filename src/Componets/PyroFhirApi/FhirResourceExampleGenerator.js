@@ -118,29 +118,66 @@ export default class FhirResourceExampleGenerator {
 
         return codeString;
     }
+   
 
-    static getJsonResource(ResourceName, ResourceId, ResourceVersion, LastUpdatedDateTime) {
+    static getXmlOperationOutcome() {
         let codeString = '';
-        codeString = codeString.concat('{\n');
-        codeString = codeString.concat(`  "resourceType": "${ResourceName}",\n`);
-        if (!isNil(ResourceId)) {
-            codeString = codeString.concat(`  "id": "${ResourceId}",\n`);
-        }
-
-        if (!isNil(ResourceVersion) && !isNil(LastUpdatedDateTime)) {
-            codeString = codeString.concat('  "meta": {\n');
-            codeString = codeString.concat(`    "versionId": "${ResourceVersion}",\n`);
-            codeString = codeString.concat(`    "lastUpdated": "${DateTimeSupport.dateTimeFhirMilliSec(LastUpdatedDateTime)}"\n`);
-            codeString = codeString.concat('  },\n');
-        }
-        codeString = codeString.concat('  "text": {\n');
-        codeString = codeString.concat('    "status": "generated",\n');
-        codeString = codeString.concat('    "div": "<div xmlns=\\"http:\\/\\/www.w3.org\\/1999\\/xhtml\\">\r      <ul>\r      <li>This is not a valid ${ResourceName} resource.<\\/li>\r      <li>It is only a bare bones example<\\/li>\r      <li>Please refer to the FHIR Specification<\\/li>\r      <li>for valid examples.<\\/li>\r      <li>A website link is provided above<\\/li>\r      <\\/ul>\r<\\/div>"\n');
-        codeString = codeString.concat('  }\n');
-        codeString = codeString.concat('}');
+        //80 Charaters
+        // codeString = codeString.concat('12345678901234567890123456789012345678901234567890123456789012345678901234567890\n');        
+        codeString = codeString.concat('<OperationOutcome xmlns="http://hl7.org/fhir">\n');
+        codeString = codeString.concat('  <text>\n');
+        codeString = codeString.concat('    <div xmlns="http://www.w3.org/1999/xhtml">\n');
+        codeString = codeString.concat('      <div>\n');
+        codeString = codeString.concat('        <h4>OperationOutcome Issue: 1</h4>\n');
+        codeString = codeString.concat('        <table>\n');
+        codeString = codeString.concat('          <tr>\n');
+        codeString = codeString.concat('            <td>\n');
+        codeString = codeString.concat('              <span>\n');
+        codeString = codeString.concat('                <b>Severity: </b>\n');
+        codeString = codeString.concat('              </span>\n');
+        codeString = codeString.concat('            </td>\n');
+        codeString = codeString.concat('            <td>\n');
+        codeString = codeString.concat('              <span>error</span>\n');
+        codeString = codeString.concat('            </td>\n');
+        codeString = codeString.concat('          </tr>\n');
+        codeString = codeString.concat('          <tr>\n');
+        codeString = codeString.concat('            <td>\n');
+        codeString = codeString.concat('              <span>\n');
+        codeString = codeString.concat('                <b>Type: </b>\n');
+        codeString = codeString.concat('              </span>\n');
+        codeString = codeString.concat('            </td>\n');
+        codeString = codeString.concat('            <td>\n');
+        codeString = codeString.concat('              <span>exception</span>\n');
+        codeString = codeString.concat('            </td>\n');
+        codeString = codeString.concat('          </tr>\n');
+        codeString = codeString.concat('          <tr>\n');
+        codeString = codeString.concat('            <td>\n');
+        codeString = codeString.concat('              <span>\n');
+        codeString = codeString.concat('                <b>Detail Text: </b>\n');
+        codeString = codeString.concat('              </span>\n');
+        codeString = codeString.concat('            </td>\n');
+        codeString = codeString.concat('            <td>\n');
+        codeString = codeString.concat('              <span>Some error message abount the problem</span>\n');
+        codeString = codeString.concat('            </td>\n');
+        codeString = codeString.concat('          </tr>\n');
+        codeString = codeString.concat('        </table>\n');
+        codeString = codeString.concat('      </div>\n');
+        codeString = codeString.concat('    </div>\n');
+        codeString = codeString.concat('  </text>\n');
+        codeString = codeString.concat('  <issue>\n');
+        codeString = codeString.concat('    <severity value="error" />\n');
+        codeString = codeString.concat('    <code value="exception" />\n');
+        codeString = codeString.concat('    <details>\n');
+        codeString = codeString.concat('      <text value="Some error message abount the problem" />\n');
+        codeString = codeString.concat('    </details>\n');
+        codeString = codeString.concat('  </issue>\n');
+        codeString = codeString.concat('</OperationOutcome>\n');        
 
         return codeString;
     }
+
+    
+
 
     static getJsonSearchBundleResource(ResourceName) {
         let codeString = '';
@@ -200,4 +237,50 @@ export default class FhirResourceExampleGenerator {
         return codeString;
     }
 
+
+    static getJsonResource(ResourceName, ResourceId, ResourceVersion, LastUpdatedDateTime) {
+        let codeString = '';
+        codeString = codeString.concat('{\n');
+        codeString = codeString.concat(`  "resourceType": "${ResourceName}",\n`);
+        if (!isNil(ResourceId)) {
+            codeString = codeString.concat(`  "id": "${ResourceId}",\n`);
+        }
+
+        if (!isNil(ResourceVersion) && !isNil(LastUpdatedDateTime)) {
+            codeString = codeString.concat('  "meta": {\n');
+            codeString = codeString.concat(`    "versionId": "${ResourceVersion}",\n`);
+            codeString = codeString.concat(`    "lastUpdated": "${DateTimeSupport.dateTimeFhirMilliSec(LastUpdatedDateTime)}"\n`);
+            codeString = codeString.concat('  },\n');
+        }
+        codeString = codeString.concat('  "text": {\n');
+        codeString = codeString.concat('    "status": "generated",\n');
+        codeString = codeString.concat('    "div": "<div xmlns=\\"http://www.w3.org/1999/xhtml\\">\\r      <ul>\\r      <li>This is not a valid ${ResourceName} resource.<\\/li>\\r      <li>It is only a bare bones example<\\/li>\\r      <li>Please refer to the FHIR Specification<\\/li>\\r      <li>for valid examples.<\\/li>\\r      <li>A website link is provided above<\\/li>\\r      <\\/ul>\\r<\\/div>"\n');
+        codeString = codeString.concat('  }\n');
+        codeString = codeString.concat('}');
+
+        return codeString;
+    }
+
+    static getJsonOperationOutcome() {
+        let codeString = '';
+        //80 Charaters
+        // codeString = codeString.concat('12345678901234567890123456789012345678901234567890123456789012345678901234567890\n');        
+        codeString = codeString.concat('{\n');
+        codeString = codeString.concat('    "resourceType": "OperationOutcome",\n');
+        codeString = codeString.concat('    "text": {\n');
+        codeString = codeString.concat('        "div": "<div xmlns=\\"http://www.w3.org/1999/xhtml\\">\\r\\n  <div>\\r\\n    <h4>OperationOutcome Issue: 1</h4>\\r\\n    <table>\\r\\n      <tr>\\r\\n        <td>\\r\\n          <span>\\r\\n            <b>Severity: </b>\\r\\n          </span>\\r\\n        </td>\\r\\n        <td>\\r\\n          <span>error</span>\\r\\n        </td>\\r\\n      </tr>\\r\\n      <tr>\\r\\n        <td>\\r\\n          <span>\\r\\n            <b>Type: </b>\\r\\n          </span>\\r\\n        </td>\\r\\n        <td>\\r\\n          <span>exception</span>\\r\\n        </td>\\r\\n      </tr>\\r\\n      <tr>\\r\\n        <td>\\r\\n          <span>\\r\\n            <b>Detail Text: </b>\\r\\n          </span>\\r\\n        </td>\\r\\n        <td>\\r\\n          <span>Some error message abount the problem</span>\\r\\n        </td>\\r\\n      </tr>\\r\\n    </table>\\r\\n  </div>\\r\\n</div>"\n');
+        codeString = codeString.concat('    },\n');
+        codeString = codeString.concat('    "issue": [\n');
+        codeString = codeString.concat('        {\n');
+        codeString = codeString.concat('            "severity": "error",\n');
+        codeString = codeString.concat('            "code": "exception",\n');
+        codeString = codeString.concat('            "details": {\n');
+        codeString = codeString.concat('                "text": "Some error message abount the problem"\n');
+        codeString = codeString.concat('            }\n');
+        codeString = codeString.concat('        }\n');
+        codeString = codeString.concat('    ]\n');
+        codeString = codeString.concat('}\n');
+
+        return codeString;
+    }
 }

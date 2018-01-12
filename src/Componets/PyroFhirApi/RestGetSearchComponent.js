@@ -1,24 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import isNil from 'lodash/isNil';
 import { Table } from 'semantic-ui-react'
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
-import RestRequestComponent2 from './RestRequestComponent2';
-import RestResponsesComponent from './RestResponseComponent'
+// import RestRequestComponent2 from './RestRequestComponent2';
+// import RestResponsesComponent from './RestResponseComponent'
+import RestHttpStatusComponent from './RestHttpStatusComponent'
 import FhirResourceExampleGenerator from './FhirResourceExampleGenerator'
+import ResponseComponent from './ResponseComponent'
+import RequestComponent from './RequestComponent'
+import RestHttpHeadersComponent from './RestHttpHeadersComponent'
+import RestBodyComponent from './RestBodyComponent'
+import RestParametersComponent from './RestParametersComponent'
 
 import FhirConstant from '../../Constants/FhirConstant';
+import HttpConstant from '../../Constants/HttpConstant';
 import FormatSupport from '../../SupportTools/FormatSupport';
 
 export default class RestGetSearchComponent extends React.Component {
 
-    static propTypes = {    
+    static propTypes = {
         resourceName: PropTypes.string.isRequired,
         endpointUrl: PropTypes.string.isRequired,
         contentTypeElement: PropTypes.element.isRequired,
-        // selectedContentType: PropTypes.string.isRequired,
         acceptElement: PropTypes.element.isRequired,
         acceptResponseElement: PropTypes.element.isRequired,
         searchParameters: PropTypes.array
@@ -32,59 +38,153 @@ export default class RestGetSearchComponent extends React.Component {
     }
 
     render() {
+
         const VerbGetName = 'GET';
         const _VerbGetColor = 'blue';
-        //Example string must be post the Resource Name
-        const _exampleRequests = [
-            '?searchParameterName=value&searchParameterName=value',
-            ' '
-        ];
-        
-        // const resolveExampleBody = () => {            
-        //     return {
-        //         // syntaxLanguage: 'xml',
-        //         // resource: FhirResourceExampleGenerator.getXmlSearchBundleResource(this.props.resourceName),
-        //         formatType: FormatSupport.FormatType.JSON,
-        //         resource: FhirResourceExampleGenerator.getJsonSearchBundleResource(this.props.resourceName),
-        //         message: `A search Bundle resource containing ${this.props.resourceName} resources as entries which match the search criteria.`,
-        //         isBundleResource: true
-        //     }
-        // }
 
+        // ================= Request Setup ===========================================================
 
-        // const resolveResourceExample = (FormatType) => {
-        //     if (FormatType === FormatSupport.FormatType.JSON) {
-        //         return FhirResourceExampleGenerator.getJsonSearchBundleResource(this.props.resourceName);
-        //     } else if (FormatType === FormatSupport.FormatType.XML) {
-        //         return FhirResourceExampleGenerator.getXmlSearchBundleResource(this.props.resourceName);
-        //     } else {
-        //         return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
-        //     }
-        // }
+        const getRequestExampleURL = () => {
+            return (
+                <code>
+                    <p>{`[Endpoint URL]/${this.props.resourceName}?searchParameterName=value&searchParameterName=value`}</p>
+                </code>
+            )
+        }
 
-        const resolveExampleBody = (FormatRequired) => {
-            const FormatType = FormatSupport.resolveFormatFromString(FormatRequired);     
+        const getRequestHttpHeadersComponent = () => {
+            if (!isNil(FhirConstant.GetRequestHeaders) && FhirConstant.GetRequestHeaders.length != 0) {
+                return (
+                    <RestHttpHeadersComponent
+                        httpHeaders={FhirConstant.GetRequestHeaders}
+                        contentTypeElement={this.props.contentTypeElement}
+                        acceptElement={this.props.acceptElement}
+                        color={'violet'} />
+                )
+            } else {
+                return null;
+            }
+        };
+
+        const getRequestSearchParametersComponent = () => {
+            if (!isNil(this.props.searchParameters) && this.props.searchParameters.length != 0) {
+                return (
+                    <RestParametersComponent
+                        parameters={this.props.searchParameters}
+                        color={'violet'}
+                    />
+                )
+            } else {
+                return null;
+            }
+        };
+
+        // ================= Response Setup ===========================================================
+
+        const getBodyOkExampleResource = (FormatType) => {
             if (FormatType === FormatSupport.FormatType.JSON) {
-                return {
-                    formatType: FormatType,
-                    resource: FhirResourceExampleGenerator.getJsonSearchBundleResource(this.props.resourceName),
-                    message: `The ${this.props.resourceName} that is to be added to the FHIR server`,
-                    isBundleResource: false
-                }                
+                return FhirResourceExampleGenerator.getJsonSearchBundleResource(this.props.resourceName);
             } else if (FormatType === FormatSupport.FormatType.XML) {
-                return {
-                    formatType: FormatType,
-                    resource: FhirResourceExampleGenerator.getXmlSearchBundleResource(this.props.resourceName),
-                    message: `The ${this.props.resourceName} that is to be added to the FHIR server`,
-                    isBundleResource: false
-                }                
+                return FhirResourceExampleGenerator.getXmlSearchBundleResource(this.props.resourceName);
             } else {
                 return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
         }
 
+        const getBodyBadRequestExampleResource = (FormatType) => {
+            if (FormatType === FormatSupport.FormatType.JSON) {
+                return FhirResourceExampleGenerator.getJsonOperationOutcome();
+            } else if (FormatType === FormatSupport.FormatType.XML) {
+                return FhirResourceExampleGenerator.getXmlOperationOutcome();
+            } else {
+                return `SyntaxLanguage was ${FormatType.toString()}, can not create example OperationOutcome resource`;
+            }
+        }
+
+        const getResponseBodyOkComponent = (Color) => {
+            const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
+            return (
+                <RestBodyComponent
+                    exampleMessage={`The ${this.props.resourceName} resources contained within and Bundle resource that match the request criteria`}
+                    resourceName={this.props.resourceName}
+                    isBundleResource={true}
+                    formatType={FormatRequired}
+                    resourceData={getBodyOkExampleResource(FormatRequired)}
+                    color={Color}
+                />
+            )
+
+        }
+
+        const getResponseBodyBadRequestComponent = (Color) => {
+            const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
+            return (
+                <RestBodyComponent
+                    exampleMessage={`The ${this.props.resourceName} resources contained within and Bundle resource that match the request criteria`}
+                    resourceName={this.props.resourceName}
+                    isBundleResource={true}
+                    formatType={FormatRequired}
+                    resourceData={getBodyBadRequestExampleResource(FormatRequired)}
+                    color={Color}
+                />
+            )
+
+        }
+
+        const getResponseHeadersComponent = (Color) => {
+            return (
+                <RestHttpHeadersComponent
+                    httpHeaders={FhirConstant.getResponseSearchHeaders()}
+                    contentTypeElement={this.props.acceptResponseElement}
+                    acceptElement={null}
+                    color={Color}
+                />
+            )
+        }
+
+        const getStatusOKComponent = () => {
+            const HttpStatus = HttpConstant.getStatusCodeByNumber('200');
+            return (
+                <RestHttpStatusComponent
+                    statusNumber={HttpStatus.number}
+                    statusText={HttpStatus.description}
+                    statusColor={HttpStatus.color}
+                    headerComponent={getResponseHeadersComponent(HttpStatus.color)}
+                    bodyComponent={getResponseBodyOkComponent(HttpStatus.color)}
+                />
+            )
+
+        }
+
+        const getStatusBadRequestComponent = () => {
+            const HttpStatus = HttpConstant.getStatusCodeByNumber('400');
+            return (
+                <RestHttpStatusComponent
+                    statusNumber={HttpStatus.number}
+                    statusText={HttpStatus.description}
+                    statusColor={HttpStatus.color}
+                    headerComponent={getResponseHeadersComponent(HttpStatus.color)}
+                    bodyComponent={getResponseBodyBadRequestComponent(HttpStatus.color)}
+                />
+            )
+
+        }
+
+        const getStatusComponentArray = () => {
+            const OK = getStatusOKComponent();
+            const Bad = getStatusBadRequestComponent()
+
+            return { OK, Bad }
+        }
+
+
+
+        // ================= Render Table Body Setup ===========================================================
+
+
         const renderGetSearchTableBody = (Expand) => {
             if (Expand) {
+                const StatusComponentArray = getStatusComponentArray();
                 const description = `Return all ${this.props.resourceName} resources or filter ${this.props.resourceName} resources by a set of serach parameters. A search Bundle resource will be retunred with ${this.props.resourceName} resources as its entries.`;
                 return (
                     <Table.Body>
@@ -93,34 +193,19 @@ export default class RestGetSearchComponent extends React.Component {
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                            <RestRequestComponent2
-                                    resourceName={this.props.resourceName}
-                                    httpHeaders={FhirConstant.GetRequestHeaders}
-                                    searchParameters={this.props.searchParameters}
-                                    contentTypeElement={this.props.contentTypeElement}                                   
-                                    acceptElement={this.props.acceptElement}
-                                    includeHttpBody={false}
-                                    exampleRequests={_exampleRequests}                                    
-                                />                                
+                                <RequestComponent
+                                    exampleComponet={getRequestExampleURL()}
+                                    headersComponent={getRequestHttpHeadersComponent()}
+                                    SearchParametersComponent={getRequestSearchParametersComponent()}
+                                    bodyComponent={null}
+                                />
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
-                            <RestResponsesComponent
-                                    resourceName={this.props.resourceName}
-                                    endpointUrl={this.props.endpointUrl}
-                                    httpHeaders={FhirConstant.getResponseSearchHeaders()}
-                                    // For the response we switch the ContentType to be the Accept Type as the server returns us content as per what we asked 
-                                    // for with the Accept header on the request.
-                                    // While this is technical correct it may confuse users as when they change the dropdown for Content-Type within the response
-                                    // Headers section they might not relise or understand that what they are actualy also changing it the request's Accept type.
-                                    // For now I will leave this like this becasue it is correct. If this is a problem then maybe I will have to do work to 
-                                    // make the Content-Type in the response header not a dropdown so they can not chnage it there.
-                                    contentTypeElement={this.props.acceptResponseElement}
-                                    selectedContentType={this.props.acceptResponseElement.props.value}
-                                    acceptElement={this.props.acceptResponseElement}
-                                    exampleBody={resolveExampleBody(this.props.acceptResponseElement.props.value)}
-                                />                                                                
+                                <ResponseComponent
+                                    statusComponentArray={StatusComponentArray}
+                                />
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
