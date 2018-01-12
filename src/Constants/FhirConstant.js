@@ -22,6 +22,12 @@ export default class FhirConstant {
         ];
     }    
 
+    static responseOperationOutcomeHeaders() {
+        return [
+            { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },
+        ];
+    }   
+
     static getResponseSearchHeaders() {
         return [
             { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsite}/http.html#mime-type` },           

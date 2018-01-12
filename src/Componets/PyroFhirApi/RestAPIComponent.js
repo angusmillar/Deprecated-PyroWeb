@@ -10,7 +10,7 @@ import RestGetSearchComponent from './RestGetSearchComponent'
 import RestGetByIdComponent from './RestGetByIdComponent'
 import RestGetVReadComponent from './RestGetVReadComponent'
 import RestGetVReadByVidComponent from './RestGetVReadByVidComponent'
-import RestPostComponent from './RestPostComponent'
+import RestPostComponent from './RestPostComponet'
 import RestPutByIdComponent from './RestPutByIdComponent'
 import RestDeleteByIdComponent from './RestDeleteByIdComponent'
 import FhirConstant from '../../Constants/FhirConstant';
@@ -26,7 +26,7 @@ export default class RestAPIComponent extends React.Component {
         acceptResponseElement: PropTypes.element.isRequired,
     }
 
-    static defaultProps = {        
+    static defaultProps = {
     }
 
     constructor(props) {
@@ -47,7 +47,7 @@ export default class RestAPIComponent extends React.Component {
                         hoverable
                     >
                         <Grid centered columns={1}>
-                            <Grid.Column textAlign='left'>                                
+                            <Grid.Column textAlign='left'>
                                 <span><Icon name='cogs' /><a a='a' href={`${FhirConstant.STU3_SpecWebsite}/${_resourceName}.html`} rel="noopener noreferrer" target='_blank'>Go-to FHIR Specification for the {_resourceName} resource</a></span>
                             </Grid.Column>
                         </Grid>
@@ -55,7 +55,7 @@ export default class RestAPIComponent extends React.Component {
                     {/* <Header a='a' href={`${FhirConstant.STU3_SpecWebsite}/${_resourceName}.html`} size='huge'>{_resourceName}</Header> */}
                     {resourceDescription}
                 </span>
-                
+
                 <RestGetSearchComponent
                     resourceName={_resourceName}
                     endpointUrl={this.props.endpointUrl}
@@ -84,18 +84,17 @@ export default class RestAPIComponent extends React.Component {
                 />
                 <Divider />
                 <Grid columns={1}>
-                <Grid.Column width={16}>
+                    <Grid.Column width={16}>                   
                         <RestPostComponent
                             resourceName={_resourceName}
                             endpointUrl={this.props.endpointUrl}
                             searchParameters={_searchParameters}
                             contentTypeElement={this.props.contentTypeElement}
                             acceptElement={this.props.acceptElement}
-                            acceptResponseElement={this.props.acceptResponseElement}
-                            // selectedContentType={this.props.selectedContentType}
+                            acceptResponseElement={this.props.acceptResponseElement}                        
                         />
-                        </Grid.Column>        
-                </Grid>                
+                    </Grid.Column>
+                </Grid>
                 <Divider />
                 <RestPutByIdComponent
                     resourceName={_resourceName}
@@ -107,7 +106,7 @@ export default class RestAPIComponent extends React.Component {
                     resourceName={_resourceName}
                     searchParameters={_searchParameters}
                     acceptElement={this.props.acceptElement}
-                />                
+                />
             </Segment>
         )
     }

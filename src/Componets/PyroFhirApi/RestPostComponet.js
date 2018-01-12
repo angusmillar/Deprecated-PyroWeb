@@ -16,8 +16,10 @@ import RestParametersComponent from './RestParametersComponent'
 import FhirConstant from '../../Constants/FhirConstant';
 import HttpConstant from '../../Constants/HttpConstant';
 import FormatSupport from '../../SupportTools/FormatSupport';
+import UuidSupport from '../../SupportTools/UuidSupport'
+import DateTimeSupport from '../../SupportTools/DateTimeSupport'
 
-export default class RestGetSearchComponent extends React.Component {
+export default class RestPostComponenTwo extends React.Component {
 
     static propTypes = {
         resourceName: PropTypes.string.isRequired,
@@ -37,24 +39,29 @@ export default class RestGetSearchComponent extends React.Component {
 
     render() {
 
-        const VerbGetName = 'GET';
-        const _VerbGetColor = 'blue';
+        const VerbName = 'POST';
+        const VerbColor = 'green';
+        const Description = `Add a ${this.props.resourceName} resource to the server. The server will assign a new GUID as the resource id`;
+        const GUID = UuidSupport.createGUID();
+        const LastModified = DateTimeSupport.NowMomentDefault;
+        
+        // const _Path = this.props.resourceName;
 
         // ================= Request Setup ===========================================================
 
         const getRequestExampleURL = () => {
             return (
                 <code>
-                    <p>{`[Endpoint URL]/${this.props.resourceName}?searchParameterName=value&searchParameterName=value`}</p>
+                    <p>{`[Endpoint]/${this.props.resourceName}`}</p>
                 </code>
             )
         }
 
         const getRequestHttpHeadersComponent = () => {
-            if (!isNil(FhirConstant.GetRequestHeaders) && FhirConstant.GetRequestHeaders.length != 0) {
+            if (!isNil(FhirConstant.PostRequestHeaders) && FhirConstant.PostRequestHeaders.length != 0) {
                 return (
                     <RestHttpHeadersComponent
-                        httpHeaders={FhirConstant.GetRequestHeaders}
+                        httpHeaders={FhirConstant.PostRequestHeaders}
                         contentTypeElement={this.props.contentTypeElement}
                         acceptElement={this.props.acceptElement}
                         color={'violet'} />
@@ -77,13 +84,38 @@ export default class RestGetSearchComponent extends React.Component {
             }
         };
 
+        const getRequestExampleResource = (FormatType) => {
+            if (FormatType === FormatSupport.FormatType.JSON) {
+                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, null, null, null);
+            } else if (FormatType === FormatSupport.FormatType.XML) {
+                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, null, null, null);
+            } else {
+                return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
+            }
+        }
+
+        const getRequestBodyComponent = () => {
+            const FormatRequired = FormatSupport.resolveFormatFromString(this.props.contentTypeElement.props.value)
+            return (
+                <RestBodyComponent
+                    exampleMessage={`The ${this.props.resourceName} that is to be added to the FHIR server`}
+                    resourceName={this.props.resourceName}
+                    isBundleResource={false}
+                    formatType={FormatRequired}
+                    resourceData={getRequestExampleResource(FormatRequired)}
+                    color={'violet'}
+                />
+            )
+
+        }
+
         // ================= Response Setup ===========================================================
 
         const getBodyOkExampleResource = (FormatType) => {
             if (FormatType === FormatSupport.FormatType.JSON) {
-                return FhirResourceExampleGenerator.getJsonSearchBundleResource(this.props.resourceName);
+                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, '1', LastModified);
             } else if (FormatType === FormatSupport.FormatType.XML) {
-                return FhirResourceExampleGenerator.getXmlSearchBundleResource(this.props.resourceName);
+                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, '1', LastModified);
             } else {
                 return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
@@ -103,7 +135,7 @@ export default class RestGetSearchComponent extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
-                    exampleMessage={`The ${this.props.resourceName} resources contained within and Bundle resource that match the request criteria`}
+                    exampleMessage={`The ${this.props.resourceName} resources as added to the server`}
                     resourceName={this.props.resourceName}
                     isBundleResource={true}
                     formatType={FormatRequired}
@@ -129,10 +161,21 @@ export default class RestGetSearchComponent extends React.Component {
 
         }
 
-        const getResponseHeadersComponent = (Color) => {
+        const getResponseOkHeadersComponent = (Color) => {           
             return (
                 <RestHttpHeadersComponent
-                    httpHeaders={FhirConstant.getResponseSearchHeaders()}
+                    httpHeaders={FhirConstant.postResponseHeaders(this.props.endpointUrl, this.props.resourceName, GUID, LastModified)}
+                    contentTypeElement={this.props.acceptResponseElement}
+                    acceptElement={null}
+                    color={Color}
+                />
+            )
+        }
+
+        const getResponseBadRequestHeadersComponent = (Color) => {           
+            return (
+                <RestHttpHeadersComponent
+                    httpHeaders={FhirConstant.responseOperationOutcomeHeaders()}
                     contentTypeElement={this.props.acceptResponseElement}
                     acceptElement={null}
                     color={Color}
@@ -147,7 +190,7 @@ export default class RestGetSearchComponent extends React.Component {
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}
-                    headerComponent={getResponseHeadersComponent(HttpStatus.color)}
+                    headerComponent={getResponseOkHeadersComponent(HttpStatus.color)}
                     bodyComponent={getResponseBodyOkComponent(HttpStatus.color)}
                 />
             )
@@ -161,7 +204,7 @@ export default class RestGetSearchComponent extends React.Component {
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}
-                    headerComponent={getResponseHeadersComponent(HttpStatus.color)}
+                    headerComponent={getResponseBadRequestHeadersComponent(HttpStatus.color)}
                     bodyComponent={getResponseBodyBadRequestComponent(HttpStatus.color)}
                 />
             )
@@ -183,11 +226,10 @@ export default class RestGetSearchComponent extends React.Component {
         const renderGetSearchTableBody = (Expand) => {
             if (Expand) {
                 const StatusComponentArray = getStatusComponentArray();
-                const description = `Return all ${this.props.resourceName} resources or filter ${this.props.resourceName} resources by a set of serach parameters. A search Bundle resource will be retunred with ${this.props.resourceName} resources as its entries.`;
                 return (
                     <Table.Body>
                         <Table.Row>
-                            <Table.Cell colSpan='16'>{description}</Table.Cell>
+                            <Table.Cell colSpan='16'>{Description}</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell colSpan='16'>
@@ -195,7 +237,7 @@ export default class RestGetSearchComponent extends React.Component {
                                     exampleComponet={getRequestExampleURL()}
                                     headersComponent={getRequestHttpHeadersComponent()}
                                     SearchParametersComponent={getRequestSearchParametersComponent()}
-                                    bodyComponent={null}
+                                    bodyComponent={getRequestBodyComponent()}
                                 />
                             </Table.Cell>
                         </Table.Row>
@@ -225,9 +267,9 @@ export default class RestGetSearchComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingComponent={renderTableHeader(VerbGetName, _VerbGetColor, this.props.resourceName)}
-                tableHeadingTitle={VerbGetName}
-                tableColorType={_VerbGetColor}
+                tableHeadingComponent={renderTableHeader(VerbName, VerbColor, this.props.resourceName)}
+                tableHeadingTitle={VerbName}
+                tableColorType={VerbColor}
                 tableColorInverted={false}
                 tableRowsFunction={renderGetSearchTableBody}
             />
