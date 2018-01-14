@@ -20,7 +20,7 @@ function getItemsState() {
     };
 }
 
-export default class metaDataStoreComponent extends React.Component {
+export default class MetaDataStoreComponent extends React.Component {
 
     constructor(props) {
         super(props);
@@ -28,6 +28,10 @@ export default class metaDataStoreComponent extends React.Component {
         this.state = { store: getItemsState()};
     }
 
+    initialise() {
+        AppActionsMetadata.getMetadata()
+    }
+    
     getInitialState() {
         return getItemsState();
     }
@@ -40,9 +44,7 @@ export default class metaDataStoreComponent extends React.Component {
         AppStoreMetadata.removeChangeListener(this._onChange);
     }
 
-    initialise() {
-        AppActionsMetadata.getMetadata()
-    }
+
 
     handleClickGetMetadata = () => {
         AppActionsMetadata.getMetadata();
