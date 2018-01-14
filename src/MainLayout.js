@@ -6,11 +6,23 @@ import Home from 'Home';
 import FluxTest from 'FluxTest';
 import MetadataComponent from './Componets/Conformance/MetadataComponent';
 // import PyroServerApi from './Componets/PyroFhirApi/PyroServerApi';
-import metaDataStoreComponent from './Componets/Reusable/StoreCompontents/metaDataStoreComponent'
+import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/MetaDataStoreComponent'
 
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-class MainLayoutTwo extends React.Component {
+export default class MainLayoutTwo extends React.Component {
+
+    static propTypes = {
+        siteIconProp: PropTypes.string,        
+    }
+
+    static defaultProps = {
+        siteIconProp: require('./Images/PyroIcon-100.png')
+    }
+
+    constructor(props) {
+        super(props);
+    }
 
     render() {
         return (
@@ -20,20 +32,10 @@ class MainLayoutTwo extends React.Component {
                     <Route exact path="/" component={Home} />                    
                     <Route exact path="/FluxTest-content" component={FluxTest} />
                     <Route exact path="/metadata-content" component={MetadataComponent} />
-                    <Route exact path="/pyro-fhir-api" component={metaDataStoreComponent} />
+                    <Route exact path="/pyro-fhir-api" component={MetaDataStoreComponent} />
                     <MainFooter siteIconProp={this.props.siteIconProp} />
                 </div>
             </Router>
         )
     }
 }
-
-MainLayoutTwo.propTypes = {
-    siteIconProp: PropTypes.string,
-}
-
-MainLayoutTwo.defaultProps = {
-    siteIconProp: require('./Images/PyroIcon-100.png')
-}
-
-export default MainLayoutTwo
