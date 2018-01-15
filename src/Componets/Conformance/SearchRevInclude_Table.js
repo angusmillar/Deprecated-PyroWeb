@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import isNil from 'lodash/isNil';
-import { Table } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react';
 import map from 'lodash/map';
 
-import Expandable_Table from '../Reusable/Table/Expandable_Table'
-import MetadataHeaderTableRow from './MetadataHeaderTableRow'
+import Expandable_Table from '../Reusable/Table/Expandable_Table';
+import MetadataHeaderTableRow from './MetadataHeaderTableRow';
 
 class SearchRevInclude_Table extends React.Component {
     constructor(props) {

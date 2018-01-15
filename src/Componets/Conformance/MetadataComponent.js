@@ -1,56 +1,31 @@
 import React from 'react';
-import AppActionsMetadata from 'Actions/AppActionsMetadata';
-import AppStoreMetadata from 'Store/AppStoreMetadata';
+
+import { Icon, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
+
 import AjaxConstant from 'Constants/AjaxConstant';
 import MetadataHeader from './MetadataHeader';
 import PropTypes from 'prop-types';
-import { Icon, Divider, Container, Header, Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
 
+export default class MetadataComponent extends React.Component {
+    
+    static propTypes = {
+        store: PropTypes.object.isRequired,
+        wireframeParagraphImage: PropTypes.string,
+    }
 
-function getItemsState() {
-    return {
-        MetadataState: AppStoreMetadata.getState()
-    };
-}
-
-class MetadataComponent extends React.Component {
+    static defaultProps = {    
+        wireframeParagraphImage: require('../../Images/wireframe/paragraph.png')
+    }
+    
     constructor(props) {
-        super(props);
-        this.initialise();
-        this.state = getItemsState();
-        this._onChange = this._onChange.bind(this);
-    }
-
-    getInitialState() {
-        return getItemsState();
-    }
-
-    componentDidMount() {
-        AppStoreMetadata.addChangeListener(this._onChange);
-    }
-
-    componentWillUnmount() {
-        AppStoreMetadata.removeChangeListener(this._onChange);
-    }
-
-    initialise() {
-        //AppActionsMetadata.initialiseStore();
-        AppActionsMetadata.getMetadata()
-    }
-
-    handleClickGetMetadata() {
-        AppActionsMetadata.getMetadata();
-    }
-
-    _onChange() {
-        this.setState(getItemsState());
+        super(props);        
     }
 
     conformanceStatement() {
-        if (this.state.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_None) {
+        if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_None) {
             return null;
         }
-        else if (this.state.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Pending) {
+        else if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Pending) {
             return (
                 <Segment>
                     <Dimmer active inverted>
@@ -60,9 +35,9 @@ class MetadataComponent extends React.Component {
                 </Segment>
             );
         }
-        else if (this.state.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
-            if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_Ok) {
-                const FhirResource = this.state.MetadataState.AjaxOutcome.FhirResource;
+        else if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
+            if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_Ok) {
+                const FhirResource = this.props.store.MetadataState.AjaxOutcome.FhirResource;
                 return <MetadataHeader
                     Date={FhirResource.date}
                     Name={FhirResource.name}
@@ -85,13 +60,13 @@ class MetadataComponent extends React.Component {
                     Rest={FhirResource.rest}>
                 </MetadataHeader>
             }
-            else if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
+            else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
                 return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
             }
-            else if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {
+            else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {
                 return <h2>We got no response from the Ajax call, work to do here!</h2>
             }
-            else if (this.state.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_CallSetupFailed) {
+            else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_CallSetupFailed) {
                 return <h2>Call Setup failed in Ajax call, work to do here!</h2>
             }
             else {
@@ -102,9 +77,7 @@ class MetadataComponent extends React.Component {
     }
 
     render() {
-        //const items = this.state.appState;
-
-
+        
         return (
             <Container style={{ marginTop: '7em' }}>                
                 <div>
@@ -125,13 +98,3 @@ class MetadataComponent extends React.Component {
     }
 
 }
-//Type Checking
-MetadataComponent.propTypes = {
-    wireframeParagraphImage: PropTypes.string,
-}
-
-MetadataComponent.defaultProps = {
-    wireframeParagraphImage: require('../../Images/wireframe/paragraph.png')
-}
-
-export default MetadataComponent;  
