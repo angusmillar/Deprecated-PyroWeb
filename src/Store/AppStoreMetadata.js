@@ -38,9 +38,9 @@ class AppStoreMetadata extends FluxStore {
     }
 }
 
-const appStoreInstance = new AppStoreMetadata();
+const AppStoreInstance = new AppStoreMetadata();
 
-appStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
+AppStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
     const action = payload.action;
     switch (action.actionType) {
         case AppConstants.APP_INITIALIZED:
@@ -56,8 +56,8 @@ appStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
             return;
     }
 
-    appStoreInstance.emitChange();
+    AppStoreInstance.emitChange();
 
 });
 
-export default appStoreInstance;
+export default AppStoreInstance;

@@ -5,22 +5,30 @@ import { Icon, Grid, Divider, Container, Header } from 'semantic-ui-react'
 
 import AjaxConstant from 'Constants/AjaxConstant';
 import PyroServerApi from '../../PyroFhirApi/PyroServerApi';
+import PyroServerConformanceStatmentComponent from '../../Conformance/PyroServerConformanceStatmentComponent'
 import PageDimmer from '../PageDimmer/PageDimmer';
 
 export default class MetaDataStoreComponent extends React.Component {
     
     static propTypes = {
         store: PropTypes.object.isRequired,
+        renderType: PropTypes.string.isRequired,
     };
 
-    static defaultProps = {        
+    static defaultProps = {             
     }
 
     constructor(props) {
-        super(props);       
+        super(props);               
     }
 
-    renderApiDocumentation() {
+    //The enum of which type to render as these both use the same store data
+    static RenderType = {
+        ServerAPI: 'ServerAPI',
+        ServerConformanceStatment: 'ServerConformanceStatment',       
+    };
+
+    renderBody() {        
         if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_None) {
             return null;
         }
@@ -29,7 +37,13 @@ export default class MetaDataStoreComponent extends React.Component {
         }
         else if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
             if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_Ok) {
-                return <PyroServerApi ConformanceStatmentResource={this.props.store.MetadataState.AjaxOutcome.FhirResource} />
+                if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerAPI) {
+                    return <PyroServerApi ConformanceStatmentResource={this.props.store.MetadataState.AjaxOutcome.FhirResource} />
+                } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerConformanceStatment) {
+                    return <PyroServerConformanceStatmentComponent ConformanceStatmentResource={this.props.store.MetadataState.AjaxOutcome.FhirResource} />
+                } else {
+                    return <h2>Render Type switch was not set correctly</h2>
+                }  
             }
             else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
                 return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
@@ -47,7 +61,18 @@ export default class MetaDataStoreComponent extends React.Component {
     }
 
     render() {
-        const ApiDocumentation = this.renderApiDocumentation();
+        const renderHeader = () => {
+            if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerAPI)
+            {
+                return 'FHIR API Documentation';
+            } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerConformanceStatment) {
+                return 'FHIR Server Conformance Statement'
+            } else {
+                return 'Render Switch was not set correctly'
+            }  
+        }        
+
+        const Body = this.renderBody();
         return (
             <Container style={{ marginTop: '7em' }}>
                 <div>
@@ -55,18 +80,18 @@ export default class MetaDataStoreComponent extends React.Component {
                     <Header as='h2'>
                         <Icon name='settings' />
                         <Header.Content>
-                            FHIR API Documentation
+                            {renderHeader()}
                     </Header.Content>
                     </Header>
                     <Grid>
                         <Grid.Row only='tablet computer' >
                             <div style={{ width: '1000px' }}>
-                                {ApiDocumentation}
+                                {Body}
                             </div>
                         </Grid.Row>
                         <Grid.Row only='mobile' >
                             <div style={{ width: '640px' }}>
-                                {ApiDocumentation}
+                                {Body}
                             </div>
                         </Grid.Row>
                     </Grid>

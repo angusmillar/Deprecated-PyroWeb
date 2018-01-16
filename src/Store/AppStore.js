@@ -4,6 +4,8 @@ import AppConstants from '../Constants/AppConstants';
 
 let appState = {};
 
+// This file is not actualy used but rather is a template for new stores to be created
+
 function reset() {
     appState = { HttpStatus: '0', Resource: null };
 }

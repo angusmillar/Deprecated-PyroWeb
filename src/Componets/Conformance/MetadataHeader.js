@@ -102,9 +102,13 @@ class MetadataHeader extends React.Component {
 
         return (
             <div>
-                <Label as='a' color='black' ribbon><h4>Server Name</h4></Label>
-                <span><b>{this.props.Name}</b></span>
                 <Table singleLine >
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell><h3>Server Name</h3></Table.HeaderCell>
+                            <Table.HeaderCell><b><h3>{this.props.Name}</h3></b></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
                     <Table.Body>
                         {tableRow('Description', this.props.Description)}
                         {tableRow('Publisher', this.props.Publisher)}
@@ -121,11 +125,11 @@ class MetadataHeader extends React.Component {
                         {jurisdictionRows(this.props.Jurisdiction)}
                     </Table.Body>
                 </Table>
-                {renderContact(this.props.Contact)}                
+                {renderContact(this.props.Contact)}
                 <Software_Table software={this.props.Software} />
                 <Implementation_Table Implementation={this.props.Implementation} />
-                <Formats_Table Format={this.props.Format} />                
-                {renderRest(this.props.Rest)}                
+                <Formats_Table Format={this.props.Format} />
+                {renderRest(this.props.Rest)}
             </div>
         )
     }
