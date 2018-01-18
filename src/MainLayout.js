@@ -4,7 +4,7 @@ import MainMenu from 'MainMenu';
 import MainFooter from 'MainFooter';
 import Home from 'Home';
 import FluxTest from 'FluxTest';
-// import PyroServerConformanceStatmentComponent from './Componets/Conformance/PyroServerConformanceStatmentComponent';
+import { Grid } from 'semantic-ui-react'
 import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/MetaDataStoreComponent';
 
 import AppActionsMetadata from 'Actions/AppActionsMetadata';
@@ -21,11 +21,11 @@ function getItemsState() {
 export default class MainLayoutTwo extends React.Component {
 
     static propTypes = {
-        siteIconProp: PropTypes.string,
+        siteIcon: PropTypes.string,
     }
 
     static defaultProps = {
-        siteIconProp: require('./Images/PyroIcon-100.png')
+        siteIcon: require('./Images/SiteIcon/PyroIcon-100.png')
     }
 
     constructor(props) {
@@ -36,7 +36,7 @@ export default class MainLayoutTwo extends React.Component {
 
     initialise() {
         AppActionsMetadata.getMetadata()
-    }    
+    }
 
     componentDidMount() {
         AppStoreMetadata.addChangeListener(this._onChange);
@@ -47,30 +47,36 @@ export default class MainLayoutTwo extends React.Component {
     }
 
     _onChange = () => {
-        this.setState(() => ({ store: getItemsState()}));        
+        this.setState(() => ({ store: getItemsState() }));
     }
 
     render() {
-        
-        const renderFhirServerApiComponent = (props, Component) => {            
-            return (<Component {...props} renderType={MetaDataStoreComponent.RenderType.ServerAPI} store={this.state.store}/>)
+
+        const renderHomeComponent = (props, Component) => {
+            return (<Component {...props} renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment} siteIcon={this.props.siteIcon} />)
         };
-        
-        const renderFhirServerConformanceStatmentComponent = (props, Component) => {            
+
+        const renderFhirServerApiComponent = (props, Component) => {
+            return (<Component {...props} renderType={MetaDataStoreComponent.RenderType.ServerAPI} store={this.state.store} />)
+        };
+
+        const renderFhirServerConformanceStatmentComponent = (props, Component) => {
             return (<Component {...props} renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment} store={this.state.store} />)
         };
+
+
 
         return (
             <Router>
                 <div>
-                    <MainMenu siteIconProp={this.props.siteIconProp} />
-                    <Route exact path="/" component={Home} />
-                    <Route exact path="/FluxTest-content" component={FluxTest} />
-                    {/* <Route exact path="/metadata-content" component={MetadataComponent} /> */}
-                    {/* <Route exact path="/pyro-fhir-api" component={getMetaDataStoreComponent()} /> */}
-                    <Route exact path="/metadata-content" render={(props) => renderFhirServerConformanceStatmentComponent(props, MetaDataStoreComponent)} />
-                    <Route exact path="/pyro-fhir-api" render={(props) => renderFhirServerApiComponent(props, MetaDataStoreComponent)} />
-                    <MainFooter siteIconProp={this.props.siteIconProp} />
+                    <MainMenu siteIcon={this.props.siteIcon} />
+                    <Grid container stackable style={{ marginTop: '3em'}} >
+                        <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />
+                        <Route exact path="/FluxTest-content" component={FluxTest} />
+                        <Route exact path="/metadata-content" render={(props) => renderFhirServerConformanceStatmentComponent(props, MetaDataStoreComponent)} />
+                        <Route exact path="/pyro-fhir-api" render={(props) => renderFhirServerApiComponent(props, MetaDataStoreComponent)} />
+                    </Grid>
+                    <MainFooter siteIcon={this.props.siteIcon} />
                 </div>
             </Router>
         )

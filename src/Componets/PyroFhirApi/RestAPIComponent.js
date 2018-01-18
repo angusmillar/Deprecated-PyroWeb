@@ -39,7 +39,7 @@ export default class RestAPIComponent extends React.Component {
         const resourceDescription = null; //we don't have a description in the conformance stament
 
         return (
-            <Segment raised padded >
+            <Segment >
                 <span>
                     <Popup
                         trigger={<Header a='a' href={`${FhirConstant.STU3_SpecWebsite}/${_resourceName}.html`} size='huge'>{_resourceName}</Header>}

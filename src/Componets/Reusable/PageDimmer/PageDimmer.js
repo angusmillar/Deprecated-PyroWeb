@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
+import { Dimmer, Loader, Image, Grid } from 'semantic-ui-react'
 
 export default class PageDimmer extends React.Component {
 
@@ -18,12 +18,12 @@ export default class PageDimmer extends React.Component {
 
     render() {
         return (
-            <Segment>
+            <Grid>
                 <Dimmer active inverted>
                     <Loader size='large'>Loading</Loader>
                 </Dimmer>
                 <Image fluid src={this.props.wireframeParagraphImage} />
-            </Segment>
+            </Grid>
         );
     }
 

@@ -63,6 +63,7 @@ class ContactDetails_Table extends React.Component {
                     tableHeadingTitle={this.props.Name}                    
                     tableColorInverted={false}
                     tableRowsFunction={renderTableBody}
+                    tableColorType='grey'
                 />                
             )
         }

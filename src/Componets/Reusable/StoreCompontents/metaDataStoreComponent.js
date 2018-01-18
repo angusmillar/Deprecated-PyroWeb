@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Icon, Grid, Divider, Container, Header } from 'semantic-ui-react'
+import { Icon, Grid, Header } from 'semantic-ui-react'
 
 import AjaxConstant from 'Constants/AjaxConstant';
 import PyroServerApi from '../../PyroFhirApi/PyroServerApi';
@@ -9,26 +9,26 @@ import PyroServerConformanceStatmentComponent from '../../Conformance/PyroServer
 import PageDimmer from '../PageDimmer/PageDimmer';
 
 export default class MetaDataStoreComponent extends React.Component {
-    
+
     static propTypes = {
         store: PropTypes.object.isRequired,
         renderType: PropTypes.string.isRequired,
     };
 
-    static defaultProps = {             
+    static defaultProps = {
     }
 
     constructor(props) {
-        super(props);               
+        super(props);
     }
 
     //The enum of which type to render as these both use the same store data
     static RenderType = {
         ServerAPI: 'ServerAPI',
-        ServerConformanceStatment: 'ServerConformanceStatment',       
+        ServerConformanceStatment: 'ServerConformanceStatment',
     };
 
-    renderBody() {        
+    renderBody() {
         if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_None) {
             return null;
         }
@@ -43,7 +43,7 @@ export default class MetaDataStoreComponent extends React.Component {
                     return <PyroServerConformanceStatmentComponent ConformanceStatmentResource={this.props.store.MetadataState.AjaxOutcome.FhirResource} />
                 } else {
                     return <h2>Render Type switch was not set correctly</h2>
-                }  
+                }
             }
             else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
                 return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
@@ -62,41 +62,44 @@ export default class MetaDataStoreComponent extends React.Component {
 
     render() {
         const renderHeader = () => {
-            if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerAPI)
-            {
+            if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerAPI) {
                 return 'FHIR API Documentation';
             } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerConformanceStatment) {
                 return 'FHIR Server Conformance Statement'
             } else {
                 return 'Render Switch was not set correctly'
-            }  
-        }        
+            }
+        }
 
         const Body = this.renderBody();
         return (
-            <Container style={{ marginTop: '7em' }}>
-                <div>
-                    <Divider hidden />
-                    <Header as='h2'>
-                        <Icon name='settings' />
-                        <Header.Content>
-                            {renderHeader()}
-                    </Header.Content>
-                    </Header>
-                    <Grid>
-                        <Grid.Row only='tablet computer' >
-                            <div style={{ width: '1000px' }}>
-                                {Body}
-                            </div>
-                        </Grid.Row>
-                        <Grid.Row only='mobile' >
-                            <div style={{ width: '640px' }}>
-                                {Body}
-                            </div>
-                        </Grid.Row>
-                    </Grid>
-                </div>
-            </Container>
+            <Grid>
+                <Grid.Row>
+                    <Grid.Column width={16} >
+                        <Header as='h2'>
+                            <Icon name='settings' />
+                            <Header.Content>
+                                {renderHeader()}
+                            </Header.Content>
+                        </Header>
+                    </Grid.Column>
+                </Grid.Row>
+                {/* <Divider hidden /> */}
+                <Grid.Row only='tablet computer' >
+                    <Grid.Column width={16} >
+                        {/* <div style={{ width: '1000px' }}> */}
+                            {Body}
+                        {/* </div> */}
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row only='mobile' >
+                    <Grid.Column width={16} >
+                        {/* <div style={{ width: '640px' }}> */}
+                            {Body}
+                        {/* </div> */}
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
         )
     }
 

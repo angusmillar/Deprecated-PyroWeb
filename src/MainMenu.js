@@ -12,7 +12,7 @@ class MainMenu extends React.Component{
                         <Image
                             size='mini'
                             circular
-                            src={this.props.siteIconProp}
+                            src={this.props.siteIcon}
                             style={{ marginRight: '1.5em' }}
                         />
                         Pyro Web
@@ -47,12 +47,12 @@ class MainMenu extends React.Component{
 //Type Checking
 MainMenu.propTypes = {
     setCurrentPage: PropTypes.func,
-    siteIconProp: PropTypes.string,     
+    siteIcon: PropTypes.string,     
  }
 
  //Null Ref checking
  MainMenu.propTypes = {
-    siteIconProp: PropTypes.string.isRequired    
+    siteIcon: PropTypes.string.isRequired    
  }
  
 export default MainMenu

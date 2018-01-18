@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Label } from 'semantic-ui-react'
 
+
 class RestVerbHeaderComponent extends React.Component {
     constructor(props) {
         super(props);
@@ -15,6 +16,8 @@ class RestVerbHeaderComponent extends React.Component {
             </span>
         )
     }
+
+    
 }
 
 RestVerbHeaderComponent.propTypes = {
