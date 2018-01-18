@@ -12,9 +12,9 @@ class MainFooter extends React.Component{
                 style={{ margin: '5em 0em 0em', padding: '5em 0em' }}>
                 
                 <Container textAlign='center'>
-                    <Grid divided inverted stackable>
+                    <Grid divided inverted stackable centered>
                         <Grid.Row>
-                            <Grid.Column width={3}>
+                            <Grid.Column width={3} textAlign='center'>
                                 <Header inverted as='h4' content='FHIR Resources' />
                                 <List link inverted>                                                                                                                                        
                                     <List.Item as='a' href='http://hl7.org/fhir/STU3/index.html'>FHIR Specification STU3</List.Item>
@@ -23,7 +23,7 @@ class MainFooter extends React.Component{
                                     <List.Item as='a' href='http://fhir.hl7.org.au/fhir/base2017Dec/'>Australian FHIR Base Profiles</List.Item>                                    
                                 </List>
                             </Grid.Column>
-                            <Grid.Column width={3}>
+                            <Grid.Column width={3} textAlign='center'>
                                 <Header inverted as='h4' content='FHIR Blogs' />
                                 <List link inverted>
                                     <List.Item as='a' href='http://www.healthintersections.com.au/'>Health Intersections</List.Item>
@@ -32,7 +32,7 @@ class MainFooter extends React.Component{
                                     <List.Item as='a' href='http://motorcycleguy.blogspot.com.au/search/label/FHIR'>Motor Cycle Guy</List.Item>
                                 </List>
                             </Grid.Column>
-                            <Grid.Column width={3}>
+                            <Grid.Column width={3} textAlign='center'>
                                 <Header inverted as='h4' content='FHIR Testing' />
                                 <List link inverted>
                                     <List.Item as='a' href='http://wiki.hl7.org/index.php?title=Publicly_Available_FHIR_Servers_for_testing'>Public FHIR Test Servers</List.Item>
@@ -41,7 +41,7 @@ class MainFooter extends React.Component{
                                     <List.Item as='a' href='http://hapifhir.io/doc_server_tester.html'>HAPI FHIR Testing</List.Item>                                        
                                 </List>
                             </Grid.Column>
-                            <Grid.Column width={3}>
+                            <Grid.Column width={3} textAlign='center'>
                                 <Header inverted as='h4' content='Give me more FHIR' />
                                 <p>There is an active community of FHIR implmenters from around the globe at: </p>                                
                                 <List link inverted>
@@ -56,13 +56,12 @@ class MainFooter extends React.Component{
                         centered
                         size='mini'
                         circular
-                        src={this.props.siteIconProp}
+                        src={this.props.siteIcon}
                     />
+                    <Divider hidden  />
                     <List horizontal inverted divided link>
                         <List.Item as='a' href='#'>Site Map</List.Item>
-                        <List.Item as='a' href='#'>Contact Us</List.Item>
-                        {/* <List.Item as='a' href='#'>Terms and Conditions</List.Item> */}
-                        {/* <List.Item as='a' href='#'>Privacy Policy</List.Item> */}
+                        <List.Item as='a' href='#'>Contact Us</List.Item>                       
                     </List>
                 </Container>
             </Segment>           
@@ -73,12 +72,12 @@ class MainFooter extends React.Component{
 
 //Type Checking
 MainFooter.propTypes = {
-    siteIconProp: PropTypes.string,    
+    siteIcon: PropTypes.string,    
  }
 
  //Null Ref checking
  MainFooter.propTypes = {
-    siteIconProp: PropTypes.string.isRequired    
+    siteIcon: PropTypes.string.isRequired    
  }
  
 export default MainFooter
