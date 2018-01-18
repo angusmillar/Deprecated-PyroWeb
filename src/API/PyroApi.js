@@ -2,23 +2,24 @@ import axios from 'axios';
 import AppActionsMetadata from 'Actions/AppActionsMetadata';
 import AppDispatcher from '../Dispatcher/AppDispatcher';
 import AppConstants from '../Constants/AppConstants';
+import FhirServerConstant from '../Constants/FhirServerConstant';
+import FhirConstant from '../Constants/FhirConstant'
 import AjaxConstants from '../Constants/AjaxConstant';
 import AjaxOutcome from '../Ajax/AjaxOutcome';
 
 class PyroApi {
 
     constructor() {
-        //GG's Server
-        //const ServerBaseUrl = 'http://test.fhir.org/r3/';
+
         //Pyro Server
-        const ServerBaseUrl = 'https://pyrohealth.net/test/stu3/fhir/';
+        const ServerBaseUrl = `${FhirServerConstant.PrimaryFhirServerEndpoint}/`;
         this.RequestConfig = {
             headers: {
-                'Accept': 'application/fhir+json',
-                'Content-Type': 'application/fhir+json'
+                'Accept': FhirConstant.DefaultFhirJsonFormat,
+                'Content-Type': FhirConstant.DefaultFhirJsonFormat
             },
             baseURL: ServerBaseUrl,
-            timeout: 40000, 
+            timeout: FhirServerConstant.RequestTimeout, 
             responseType: 'json'
         };
 
@@ -63,7 +64,7 @@ class PyroApi {
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
                     // http.ClientRequest in node.js
                     // const OutCome = new AjaxOutcome(null, AjaxConstants.CallCompletedState.Completed_NoResponse, null, `The request was made but no response was received after ${this.RequestConfig.timeout / 1000} secs`);
-                    const OutCome = new AjaxOutcome(null, AjaxConstants.CallCompletedState.Completed_NoResponse, null, `The request was made but no response was received after 40 secs`);
+                    const OutCome = new AjaxOutcome(null, AjaxConstants.CallCompletedState.Completed_NoResponse, null, `The request was made but no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
                     AppActionsMetadata.setMetadata(OutCome);
                 } else {
                     // Something happened in setting up the request that triggered an Error

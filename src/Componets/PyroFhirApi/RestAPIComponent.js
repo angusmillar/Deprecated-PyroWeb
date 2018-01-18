@@ -1,11 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Segment, Divider, Header, Grid, Popup, Icon } from 'semantic-ui-react'
-// import map from 'lodash/map';
-// import isNil from 'lodash/isNil';
-//import filter from 'lodash/filter'
-// import upperFirst from 'lodash/upperFirst';
-// import toLower from 'lodash/toLower';
+
 import RestGetSearchComponent from './RestGetSearchComponent'
 import RestGetByIdComponent from './RestGetByIdComponent'
 import RestGetVReadComponent from './RestGetVReadComponent'
@@ -14,6 +11,7 @@ import RestPostComponent from './RestPostComponet'
 import RestPutByIdComponent from './RestPutByIdComponent'
 import RestDeleteByIdComponent from './RestDeleteByIdComponent'
 import FhirConstant from '../../Constants/FhirConstant';
+import WebLink from '../../Componets/Reusable/WebLink/WebLink';
 
 export default class RestAPIComponent extends React.Component {
 
@@ -42,17 +40,19 @@ export default class RestAPIComponent extends React.Component {
             <Segment >
                 <span>
                     <Popup
-                        trigger={<Header a='a' href={`${FhirConstant.STU3_SpecWebsite}/${_resourceName}.html`} size='huge'>{_resourceName}</Header>}
+                        trigger={<Header a='a' href={`${FhirConstant.STU3_SpecWebsiteUrl}/${_resourceName}.html`} size='huge'>{_resourceName}</Header>}
                         flowing
                         hoverable
                     >
                         <Grid centered columns={1}>
                             <Grid.Column textAlign='left'>
-                                <span><Icon name='cogs' /><a a='a' href={`${FhirConstant.STU3_SpecWebsite}/${_resourceName}.html`} rel="noopener noreferrer" target='_blank'>Go-to FHIR Specification for the {_resourceName} resource</a></span>
+                                <span>
+                                    <Icon name='cogs' />
+                                    <WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${_resourceName}.html`} display={`Go-to FHIR Specification for the ${_resourceName} resource`}/>                                    
+                                </span>
                             </Grid.Column>
                         </Grid>
-                    </Popup>
-                    {/* <Header a='a' href={`${FhirConstant.STU3_SpecWebsite}/${_resourceName}.html`} size='huge'>{_resourceName}</Header> */}
+                    </Popup>                    
                     {resourceDescription}
                 </span>
 

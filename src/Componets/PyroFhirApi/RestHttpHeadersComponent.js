@@ -6,7 +6,7 @@ import toLower from 'lodash/toLower';
 import map from 'lodash/map';
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
-// import FhirConstant from '../../Constants/FhirConstant';
+import WebLink from '../Reusable/WebLink/WebLink'
 
 export default class RestHttpHeadersComponent extends React.Component {
 
@@ -62,8 +62,8 @@ export default class RestHttpHeadersComponent extends React.Component {
                                 <Table.Cell colSpan='1' width='8' verticalAlign='top' >
                                     {dymamicValue(name,value)}
                                 </Table.Cell>
-                                <Table.Cell colSpan='1' width='4' verticalAlign='top' >
-                                    <p><a as='a' href={Header.moreInfo} rel="noopener noreferrer" target='_blank'>More Info</a></p>
+                                <Table.Cell colSpan='1' width='4' verticalAlign='top' >                                    
+                                    <p><WebLink url={Header.moreInfo} display={'More Info'}/></p>
                                 </Table.Cell>
                             </Table.Row>
                         )

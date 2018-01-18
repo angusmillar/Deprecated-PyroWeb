@@ -4,6 +4,7 @@ import isNil from 'lodash/isNil';
 import { Table } from 'semantic-ui-react'
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
+import WebLink from '../Reusable/WebLink/WebLink'
 import MetadataHeaderTableRow from './MetadataHeaderTableRow'
 
 class SearchParam_Table extends React.Component {
@@ -21,8 +22,8 @@ class SearchParam_Table extends React.Component {
                     <Table.Body>
                         <MetadataHeaderTableRow RowLabel='Name' RowValue={this.props.searchParam.name} />
                         <MetadataHeaderTableRow RowLabel='Type' RowValue={this.props.searchParam.type} />
-                        <MetadataHeaderTableRow RowLabel='Documentation' RowValue={this.props.searchParam.documentation} />
-                        <MetadataHeaderTableRow RowLabel='Definition' RowValue={<a href={'http:'.concat(this.props.searchParam.definition)}>{this.props.searchParam.definition}</a>} />
+                        <MetadataHeaderTableRow RowLabel='Documentation' RowValue={<p>{this.props.searchParam.documentation}</p>} />
+                        <MetadataHeaderTableRow RowLabel='Definition' RowValue={<WebLink url={`${this.props.searchParam.definition}#search`} display={`FHIR Specification for search parameter ${this.props.searchParam.name}`}/>} />
                     </Table.Body>
                 )
             }

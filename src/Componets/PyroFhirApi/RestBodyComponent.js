@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Table, Grid, Message } from 'semantic-ui-react'
 
 import FhirConstant from '../../Constants/FhirConstant';
+import WebLink from '../Reusable/WebLink/WebLink';
 import FormatSupport from '../../SupportTools/FormatSupport'
 
 import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
@@ -63,12 +64,12 @@ export default class RestBodyComponent extends React.Component {
             if (this.props.isBundleResource) {
                 return (
                     <div>
-                      <p>Please refer to the FHIR specification for a detailed docuemntation on how Bundle resources are structured. <br /><a a='a' href={`${FhirConstant.STU3_SpecWebsite}/bundle.html`} rel="noopener noreferrer" target='_blank'>Go-to FHIR Specification for the Bundle resource</a></p>
-                      <p>Or click here to refer to the FHIR specification for detailed docuemntation about {this.props.resourceName} resources. <br /><a a='a' href={`${FhirConstant.STU3_SpecWebsite}/${this.props.resourceName}.html`} rel="noopener noreferrer" target='_blank'>Go-to FHIR Specification for the {this.props.resourceName} resource</a></p>
+                      <p>Please refer to the FHIR specification for a detailed docuemntation on how Bundle resources are structured. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/bundle.html`} display={'Go-to FHIR Specification for the Bundle resource'} /></p>                        
+                      <p>Or click here to refer to the FHIR specification for detailed docuemntation about {this.props.resourceName} resources. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${this.props.resourceName}.html`} display={`Go-to FHIR Specification for the ${this.props.resourceName} resource`}/></p>
                     </div>
                 )
-            } else {
-                return <p>Please refer to the FHIR specification for a detailed docuemntation of how to structure a {this.props.resourceName} resource. <br /><a a='a' href={`${FhirConstant.STU3_SpecWebsite}/${this.props.resourceName}.html`} rel="noopener noreferrer" target='_blank'>Go-to FHIR Specification for the {this.props.resourceName} resource</a></p>
+            } else {                
+                return <p>Please refer to the FHIR specification for a detailed docuemntation of how to structure a {this.props.resourceName} resource. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${this.props.resourceName}.html`} display={`Go-to FHIR Specification for the ${this.props.resourceName} resource`}/></p>
             }
         }
         const renderParameterRows = () => {

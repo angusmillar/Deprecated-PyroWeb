@@ -5,6 +5,7 @@ import { Table } from 'semantic-ui-react'
 import upperFirst from 'lodash/upperFirst';
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
+import WebLink from '../Reusable/WebLink/WebLink'
 import MetadataHeaderTableRow from './MetadataHeaderTableRow'
 
 class Implementation_Table extends React.Component {
@@ -23,7 +24,9 @@ class Implementation_Table extends React.Component {
                 return (
                     <Table.Row>
                         <Table.Cell><b>URL</b></Table.Cell>
-                        <Table.Cell textAlign='left' ><a href={'http:'.concat(Value)}>{Value}</a> </Table.Cell>
+                        <Table.Cell textAlign='left' >
+                            <WebLink newTab={true} url={'http:'.concat(Value)} display={Value} />                            
+                        </Table.Cell>
                     </Table.Row>
                 )
             }

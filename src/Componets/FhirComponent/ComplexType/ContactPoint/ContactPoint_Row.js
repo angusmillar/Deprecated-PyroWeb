@@ -4,6 +4,7 @@ import ContactUse_Label from './ContactUse_Label'
 import ContactSystem_Label from './ContactSystem_Label'
 import Period_Label from '../Period_Label'
 import Rank_Label from './Rank_Label'
+import WebLink from '../../../Reusable/WebLink/WebLink'
 
 import { Table } from 'semantic-ui-react'
 
@@ -16,18 +17,18 @@ class ContactPoint_Row extends React.Component {
 
         const resolveContactValueType = (Value, System) => {
             switch (System) {
-                case 'phone':
-                    return <a href={'callto:'.concat(Value)}>{Value}</a>                ;
+                case 'phone':                                       
+                    return <WebLink url={Value} display={Value} linkType={WebLink.LinkType.callTo} />
                 case 'fax':
-                    return <a href={'fax:'.concat(Value)}>{Value}</a>                
+                    return <WebLink url={Value} display={Value} linkType={WebLink.LinkType.fax} />                        
                 case 'email':
-                    return <a href={'mailto:'.concat(Value)}>{Value}</a>                
+                    return <WebLink url={Value} display={Value} linkType={WebLink.LinkType.mailto} />                            
                 case 'pager':
                     return <p>{Value}</p>
                 case 'url':
-                    return <a href={'http://'.concat(Value)}>{Value}</a>                
+                    return <WebLink url={Value} display={Value} linkType={WebLink.LinkType.webLink} />                                
                 case 'sms':
-                    return <a href={'sms:'.concat(Value)}>{Value}</a>                
+                    return <WebLink url={Value} display={Value} linkType={WebLink.LinkType.sms} />                        
                 case 'other':
                     return <p>{Value}</p>
                 default:

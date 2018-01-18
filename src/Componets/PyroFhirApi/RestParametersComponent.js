@@ -5,7 +5,8 @@ import isNil from 'lodash/isNil';
 import map from 'lodash/map';
 
 import FhirConstant from '../../Constants/FhirConstant';
-import Expandable_Table from '../Reusable/Table/Expandable_Table'
+import Expandable_Table from '../Reusable/Table/Expandable_Table';
+import WebLink from '../Reusable/WebLink/WebLink';
 
 class RestParametersComponent extends React.Component {
     constructor(props) {
@@ -32,7 +33,7 @@ class RestParametersComponent extends React.Component {
                     map(this.props.parameters, (Parameter, Index) => {
                         const name = Parameter.name;
                         const type = Parameter.type;
-                        const FhirTypeWebLink = `${FhirConstant.STU3_SpecWebsite}/search.html#${type}`;
+                        const FhirTypeWebLink = `${FhirConstant.STU3_SpecWebsiteUrl}/search.html#${type}`;
                         const documentation = Parameter.documentation;
                         return (
                             <Table.Row key={Index}>
@@ -40,7 +41,8 @@ class RestParametersComponent extends React.Component {
                                     <span><p>{name}</p></span>
                                 </Table.Cell>
                                 <Table.Cell width='4' verticalAlign='top' >
-                                    <p><a as='a' href={FhirTypeWebLink} rel="noopener noreferrer" target='_blank'>{type}</a></p>
+                                
+                                    <p><WebLink newTab={true} url={FhirTypeWebLink} display={type}/></p>
                                 </Table.Cell>
                                 <Table.Cell width='8' verticalAlign='top' >
                                     <p>{documentation}</p>
