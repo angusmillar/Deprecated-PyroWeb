@@ -127,7 +127,7 @@ export default class RestPostComponenTwo extends React.Component {
             } else if (FormatType === FormatSupport.FormatType.XML) {
                 return FhirResourceExampleGenerator.getXmlOperationOutcome();
             } else {
-                return `SyntaxLanguage was ${FormatType.toString()}, can not create example OperationOutcome resource`;
+                return `SyntaxLanguage was ${FormatType.toString()}, can not create example ${FhirConstant.OperationOutcomeResourceNam} resource`;
             }
         }
 
@@ -150,8 +150,8 @@ export default class RestPostComponenTwo extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
-                    exampleMessage={`The ${this.props.resourceName} resources contained within and Bundle resource that match the request criteria`}
-                    resourceName={this.props.resourceName}
+                    exampleMessage={`An ${FhirConstant.OperationOutcomeResourceName} resource containing information about the error that has occured.`}
+                    resourceName={FhirConstant.OperationOutcomeResourceNam}
                     isBundleResource={true}
                     formatType={FormatRequired}
                     resourceData={getBodyBadRequestExampleResource(FormatRequired)}

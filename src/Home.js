@@ -86,11 +86,11 @@ export default class Home extends React.Component {
                                 <Header.Content>
                                     Who am I
                                 </Header.Content>
-                            </Header>
-                            <p>Angus Millar: I&#39;m an Australian integration specialist with a passion for HL7 integration and informatics.</p>
-                            <p>My passion grew from many years working in pathology laboratories later moving into Laboratory Information Systems (LIS) support and development at Kestral Computing.</p>
-                            <p>More recently I have worked on EMR integration at QLD Health and currently, work as a Solution Architect at the Australian Digital Health Agency (formally known as NeHTA).</p>
-                            <p>I regularly attend the Australian FHIR Connectathons and run the beginner streams helping educate newcomers to the FHIR specification.</p>
+                            </Header>  
+                            <p><WebLink newTab={true} url={'https://www.linkedin.com/in/angus-millar-64298342/'} display={'Angus Millar'}/> I&#39;m an Australian integration specialist with a passion for HL7 integration and informatics.</p>
+                            <p>My passion grew from many years working in pathology laboratories later moving into Laboratory Information Systems (LIS) support and development at <WebLink newTab={true} url={'http://www.kestral.com.au/'} display={'Kestral Computing'}/>.</p>
+                            <p>More recently I have worked on EMR integration at QLD Health and currently, work as a Solution Architect at the <WebLink newTab={true} url={'https://www.digitalhealth.gov.au/'} display={'Australian Digital Health Agency'}/> (formally known as NeHTA).</p>
+                            <p>I regularly attend the Australian FHIR Connectathons and run the beginner streams helping educate newcomers to the FHIR specification.</p>                                                        
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

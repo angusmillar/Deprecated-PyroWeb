@@ -95,7 +95,7 @@ export default class RestGetSearchComponent extends React.Component {
             } else if (FormatType === FormatSupport.FormatType.XML) {
                 return FhirResourceExampleGenerator.getXmlOperationOutcome();
             } else {
-                return `SyntaxLanguage was ${FormatType.toString()}, can not create example OperationOutcome resource`;
+                return `SyntaxLanguage was ${FormatType.toString()}, can not create example ${FhirConstant.OperationOutcomeResourceNam} resource`;
             }
         }
 
@@ -118,18 +118,18 @@ export default class RestGetSearchComponent extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
-                    exampleMessage={`The ${this.props.resourceName} resources contained within and Bundle resource that match the request criteria`}
-                    resourceName={this.props.resourceName}
-                    isBundleResource={true}
+                    exampleMessage={`An ${FhirConstant.OperationOutcomeResourceName} resource containing information about the error that has occured.`}
+                    resourceName={FhirConstant.OperationOutcomeResourceName}
+                    isBundleResource={false}
                     formatType={FormatRequired}
                     resourceData={getBodyBadRequestExampleResource(FormatRequired)}
                     color={Color}
                 />
             )
-
         }
 
-        const getResponseHeadersComponent = (Color) => {
+
+        const getResponseOkHeadersComponent = (Color) => {           
             return (
                 <RestHttpHeadersComponent
                     httpHeaders={FhirConstant.getResponseSearchHeaders()}
@@ -140,6 +140,17 @@ export default class RestGetSearchComponent extends React.Component {
             )
         }
 
+        const getResponseBadRequestHeadersComponent = (Color) => {           
+            return (
+                <RestHttpHeadersComponent
+                    httpHeaders={FhirConstant.responseOperationOutcomeHeaders()}
+                    contentTypeElement={this.props.acceptResponseElement}
+                    acceptElement={null}
+                    color={Color}
+                />
+            )
+        }    
+
         const getStatusOKComponent = () => {
             const HttpStatus = HttpConstant.getStatusCodeByNumber('200');
             return (
@@ -147,7 +158,7 @@ export default class RestGetSearchComponent extends React.Component {
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}
-                    headerComponent={getResponseHeadersComponent(HttpStatus.color)}
+                    headerComponent={getResponseOkHeadersComponent(HttpStatus.color)}
                     bodyComponent={getResponseBodyOkComponent(HttpStatus.color)}
                 />
             )
@@ -161,7 +172,7 @@ export default class RestGetSearchComponent extends React.Component {
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}
-                    headerComponent={getResponseHeadersComponent(HttpStatus.color)}
+                    headerComponent={getResponseBadRequestHeadersComponent(HttpStatus.color)}
                     bodyComponent={getResponseBodyBadRequestComponent(HttpStatus.color)}
                 />
             )
