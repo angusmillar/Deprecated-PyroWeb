@@ -96,7 +96,7 @@ export default class RestGetByIdComponent extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
-                    exampleMessage={`The ${this.props.resourceName} resource for the Resource Id requested`}
+                    userMessage={<p>{`The ${this.props.resourceName} resource for the Resource Id requested`}</p>}
                     resourceName={this.props.resourceName}
                     isBundleResource={false}
                     formatType={FormatRequired}
@@ -111,7 +111,7 @@ export default class RestGetByIdComponent extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
-                    exampleMessage={`An ${FhirConstant.OperationOutcomeResourceName} resource containing information about the error that has occured.`}
+                    exampleMessage={<p>{`An ${FhirConstant.OperationOutcomeResourceName} resource containing information about the error that has occured.`}</p>}
                     resourceName={FhirConstant.OperationOutcomeResourceName}
                     isBundleResource={false}
                     formatType={FormatRequired}

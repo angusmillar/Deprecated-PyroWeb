@@ -44,7 +44,7 @@ export default class RestPostComponenTwo extends React.Component {
         const Description = `Add a ${this.props.resourceName} resource to the server. The server will assign a new GUID as the resource id`;
         const GUID = UuidSupport.createGUID();
         const LastModified = DateTimeSupport.NowMomentDefault;
-        
+
         // const _Path = this.props.resourceName;
 
         // ================= Request Setup ===========================================================
@@ -98,7 +98,7 @@ export default class RestPostComponenTwo extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.contentTypeElement.props.value)
             return (
                 <RestBodyComponent
-                    exampleMessage={`The ${this.props.resourceName} that is to be added to the FHIR server`}
+                    userMessage={<p>{`The ${this.props.resourceName} that is to be added to the FHIR server`}</p>}
                     resourceName={this.props.resourceName}
                     isBundleResource={false}
                     formatType={FormatRequired}
@@ -135,7 +135,7 @@ export default class RestPostComponenTwo extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
-                    exampleMessage={`The ${this.props.resourceName} resources as added to the server`}
+                    userMessage={<p>{`The ${this.props.resourceName} resources as added to the server`}</p>}
                     resourceName={this.props.resourceName}
                     isBundleResource={true}
                     formatType={FormatRequired}
@@ -150,7 +150,7 @@ export default class RestPostComponenTwo extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
-                    exampleMessage={`An ${FhirConstant.OperationOutcomeResourceName} resource containing information about the error that has occured.`}
+                    userMessage={<p>{`An ${FhirConstant.OperationOutcomeResourceName} resource containing information about the error that has occured.`}</p>}
                     resourceName={FhirConstant.OperationOutcomeResourceNam}
                     isBundleResource={true}
                     formatType={FormatRequired}
@@ -161,7 +161,7 @@ export default class RestPostComponenTwo extends React.Component {
 
         }
 
-        const getResponseOkHeadersComponent = (Color) => {           
+        const getResponseOkHeadersComponent = (Color) => {
             return (
                 <RestHttpHeadersComponent
                     httpHeaders={FhirConstant.postResponseHeaders(this.props.endpointUrl, this.props.resourceName, GUID, LastModified)}
@@ -172,7 +172,7 @@ export default class RestPostComponenTwo extends React.Component {
             )
         }
 
-        const getResponseBadRequestHeadersComponent = (Color) => {           
+        const getResponseBadRequestHeadersComponent = (Color) => {
             return (
                 <RestHttpHeadersComponent
                     httpHeaders={FhirConstant.responseOperationOutcomeHeaders()}
@@ -187,6 +187,11 @@ export default class RestPostComponenTwo extends React.Component {
             const HttpStatus = HttpConstant.getStatusCodeByNumber('200');
             return (
                 <RestHttpStatusComponent
+                    userMessage={<div>
+                        <p>The request was successful and an {this.props.resourceName} resource is commited to the FHIR server.</p>
+                        <p>The updated {this.props.resourceName} resource is echoed back in the response body with a newly assigned GUID as it&#39;s resource id and version set to 1.
+                        The resource version and location including assigned resource id can also be found in the returned headers</p>
+                    </div>}
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}
@@ -201,6 +206,9 @@ export default class RestPostComponenTwo extends React.Component {
             const HttpStatus = HttpConstant.getStatusCodeByNumber('400');
             return (
                 <RestHttpStatusComponent
+                    userMessage={<div>
+                        <p>Some form of error has occured with the request. An {FhirConstant.OperationOutcomeResourceName} resource will be return indicating what went wrong.</p>
+                    </div>}
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}

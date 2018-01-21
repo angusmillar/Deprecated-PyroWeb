@@ -5,6 +5,7 @@ import { Table, Grid, Message } from 'semantic-ui-react'
 import FhirConstant from '../../Constants/FhirConstant';
 import WebLink from '../Reusable/WebLink/WebLink';
 import FormatSupport from '../../SupportTools/FormatSupport'
+import isNil from 'lodash/isNil'
 
 import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
 import registerLanguageXml from 'react-syntax-highlighter/languages/hljs/xml';
@@ -15,11 +16,11 @@ import Expandable_Table from '../Reusable/Table/Expandable_Table'
 
 export default class RestBodyComponent extends React.Component {
     
-    static propTypes = {
-        exampleMessage: PropTypes.string.isRequired,
+    static propTypes = {        
         resourceName: PropTypes.string.isRequired,  
         resourceData: PropTypes.string.isRequired,  
         formatType: PropTypes.object.isRequired,
+        userMessage: PropTypes.element,
         isBundleResource: PropTypes.bool,
         color: PropTypes.string,
     }
@@ -72,15 +73,25 @@ export default class RestBodyComponent extends React.Component {
                 return <p>Please refer to the FHIR specification for a detailed docuemntation of how to structure a {this.props.resourceName} resource. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${this.props.resourceName}.html`} display={`Go-to FHIR Specification for the ${this.props.resourceName} resource`}/></p>
             }
         }
+
+        const resolveExampleMessage =() => {
+            if (!isNil(this.props.userMessage)) {
+                return (
+                    <Table.Row colSpan='3'>
+                        <Table.Cell colSpan='3' width='16' verticalAlign='top'>
+                            {this.props.userMessage}
+                        </Table.Cell>
+                    </Table.Row>
+                )
+            }
+            return null;
+        }
+
         const renderParameterRows = () => {
             // const ContentType = this.props.formatType;
             return (
                 <Table.Body>
-                    <Table.Row colSpan='3'>
-                        <Table.Cell colSpan='3' width='16' verticalAlign='top'>
-                            <p>{this.props.exampleMessage}</p>
-                        </Table.Cell>
-                    </Table.Row>
+                    {resolveExampleMessage()}
                     <Table.Row colSpan='3'>
                         <Table.Cell colSpan='3' width='16' verticalAlign='top'>
                             <Message
