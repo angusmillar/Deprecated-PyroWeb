@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Table } from 'semantic-ui-react'
 
+import isNil from 'lodash/isNil';
 import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestHttpStatusHeaderComponent from './RestHttpStatusHeaderComponent';
 
@@ -12,8 +13,9 @@ export default class RestHttpStatusComponent extends React.Component {
         statusNumber: PropTypes.string.isRequired,
         statusText: PropTypes.string.isRequired,
         statusColor: PropTypes.string.isRequired,
-        headerComponent: PropTypes.element.isRequired,
-        bodyComponent: PropTypes.element.isRequired,
+        headerComponent: PropTypes.element,
+        bodyComponent: PropTypes.element,
+        userMessage: PropTypes.element,
     }
 
     static defaultProps = {
@@ -25,20 +27,52 @@ export default class RestHttpStatusComponent extends React.Component {
 
     render() {
 
+        const getUserMessage = () => {
+            if (!isNil(this.props.userMessage)) {
+                return (
+                    <Table.Row>
+                    <Table.Cell colSpan='16'>
+                        {this.props.userMessage}
+                    </Table.Cell>
+                </Table.Row>
+                )                    
+            }
+            return null;
+        }
+
+        const getHeaderComponent = () => {
+            if (!isNil(this.props.headerComponent)) {
+                return (
+                    <Table.Row>
+                    <Table.Cell colSpan='16'>
+                        {this.props.headerComponent}
+                    </Table.Cell>
+                </Table.Row>
+                )                    
+            }
+            return null;
+        }
+
+        const getBodyComponent = () => {
+            if (!isNil(this.props.bodyComponent)) {
+                return (
+                    <Table.Row>
+                    <Table.Cell colSpan='16'>
+                        {this.props.bodyComponent}
+                    </Table.Cell>
+                </Table.Row>
+                )                    
+            }
+            return null;
+        }
+
         const renderTableBody = (Expand) => {
             if (Expand) {
                 return (
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell colSpan='16'>
-                                {this.props.headerComponent}
-                            </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell colSpan='16'>
-                                {this.props.bodyComponent}
-                            </Table.Cell>
-                        </Table.Row>
+                        {getUserMessage()}
+                        {getHeaderComponent()}
+                        {getBodyComponent()}
                     </Table.Body>
                 )
             } else {
