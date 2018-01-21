@@ -75,8 +75,10 @@ export default class RestAPIComponent extends React.Component {
                 <Divider />
                 <RestGetVReadComponent
                     resourceName={_resourceName}
-                    searchParameters={_searchParameters}
+                    endpointUrl={this.props.endpointUrl}                    
+                    contentTypeElement={this.props.contentTypeElement}
                     acceptElement={this.props.acceptElement}
+                    acceptResponseElement={this.props.acceptResponseElement}
                 />
                 <Divider />
                 <RestGetVReadByVidComponent
