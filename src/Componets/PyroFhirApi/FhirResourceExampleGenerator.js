@@ -43,14 +43,12 @@ export default class FhirResourceExampleGenerator {
         return codeString;
     }
 
-    static _getBundelXmlResource(ResourceName, ResourceId) {
-        const LastUpdatedDateTime = moment().subtract(7, 'days');
-        return FhirResourceExampleGenerator.getXmlResource(ResourceName, ResourceId, '1', LastUpdatedDateTime);
+    static _getBundelXmlResource(ResourceName, ResourceId, ResourceVersion, ResourceLastUpdated) {        
+        return FhirResourceExampleGenerator.getXmlResource(ResourceName, ResourceId, ResourceVersion, ResourceLastUpdated);
     }
 
-    static _getBundelJsonResource(ResourceName, ResourceId) {
-        const LastUpdatedDateTime = moment().subtract(7, 'days');
-        return FhirResourceExampleGenerator.getJsonResource(ResourceName, ResourceId, '1', LastUpdatedDateTime);
+    static _getBundelJsonResource(ResourceName, ResourceId, ResourceVersion, ResourceLastUpdated) {        
+        return FhirResourceExampleGenerator.getJsonResource(ResourceName, ResourceId, ResourceVersion, LastUpdatedDateTime);
     }
 
     static _padBundelResource(Resource, Amount) {
@@ -67,10 +65,14 @@ export default class FhirResourceExampleGenerator {
         // codeString = codeString.concat('12345678901234567890123456789012345678901234567890123456789012345678901234567890\n');        
 
         const ResourceOneGuid = UuidSupport.createGUID();
-        const ResourceOne = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceOneGuid);
+        const ResourceOneVersion = '1';
+        const ResourceOneLastUpdatedDateTime = moment().subtract(7, 'days');
+        const ResourceOne = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceOneGuid, ResourceOneVersion, ResourceOneLastUpdatedDateTime);
 
         const ResourceTwoGuid = UuidSupport.createGUID();
-        const ResourceTwo = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceTwoGuid);
+        const ResourceTwoVersion = '1';
+        const ResourceTwoLastUpdatedDateTime = moment().subtract(14, 'days');
+        const ResourceTwo = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceTwoGuid, ResourceTwoVersion, ResourceTwoLastUpdatedDateTime);
 
         codeString = codeString.concat('<Bundle xmlns="http://hl7.org/fhir">\n');
         codeString = codeString.concat('    <type value="searchset" />\n');
@@ -119,6 +121,84 @@ export default class FhirResourceExampleGenerator {
         return codeString;
     }
    
+    static getXmlHistoryBundleResource(ResourceName, GUID) {
+        let codeString = '';
+        //80 Charaters
+        // codeString = codeString.concat('12345678901234567890123456789012345678901234567890123456789012345678901234567890\n');        
+
+        const ResourceOneGuid = GUID;
+        const ResourceOneVersion = '1';
+        const ResourceOneLastUpdatedDateTime = moment().subtract(14, 'days');
+        const ResourceOne = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceOneGuid, ResourceOneVersion, ResourceOneLastUpdatedDateTime);
+
+        const ResourceTwoGuid = GUID;
+        const ResourceTwoVersion = '2';
+        const ResourceTwoLastUpdatedDateTime = moment().subtract(7, 'days');
+        const ResourceTwo = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceTwoGuid, ResourceTwoVersion, ResourceTwoLastUpdatedDateTime);
+
+        codeString = codeString.concat('<Bundle xmlns="http://hl7.org/fhir">\n');
+        codeString = codeString.concat('    <type value="history" />\n');
+        codeString = codeString.concat('    <total value="3" />\n');
+        codeString = codeString.concat('    <link>\n');
+        codeString = codeString.concat('        <relation value="first" />\n');
+        codeString = codeString.concat(`        <url value="https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history?page=1" />\n`);
+        codeString = codeString.concat('    </link>\n');
+        codeString = codeString.concat('    <link>\n');
+        codeString = codeString.concat('        <relation value="last" />\n');
+        codeString = codeString.concat(`        <url value="https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history?page=1" />\n`);
+        codeString = codeString.concat('    </link>\n');
+        codeString = codeString.concat('    <link>\n');
+        codeString = codeString.concat('        <relation value="next" />\n');
+        codeString = codeString.concat(`        <url value="https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history?page=1" />\n`);
+        codeString = codeString.concat('    </link>\n');
+        codeString = codeString.concat('    <link>\n');
+        codeString = codeString.concat('        <relation value="self" />\n');
+        codeString = codeString.concat(`        <url value="https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history" />\n`);
+        codeString = codeString.concat('    </link>\n');
+
+
+        codeString = codeString.concat('    <entry>\n')
+        codeString = codeString.concat(`        <fullUrl value="https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history" />\n`)
+        codeString = codeString.concat('        <request>\n')
+        codeString = codeString.concat('            <method value="DELETE" />\n')
+        codeString = codeString.concat(`            <url value="${ResourceName}/${GUID}/_history/3" />\n`)
+        codeString = codeString.concat('        </request>\n')
+        codeString = codeString.concat('    </entry>\n')
+
+        codeString = codeString.concat('    <entry>\n');
+        codeString = codeString.concat(`        <fullUrl value="https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${ResourceOneGuid}" />\n`);
+        codeString = codeString.concat('        <resource>\n');
+        
+        codeString = codeString.concat(`${FhirResourceExampleGenerator._padBundelResource(ResourceTwo, 10)}`);
+
+        codeString = codeString.concat('        </resource>\n');
+
+        codeString = codeString.concat('        <request>\n')
+        codeString = codeString.concat('          <method value="PUT" />\n')
+        codeString = codeString.concat(`          <url value="${ResourceName}/${GUID}/_history/2" />\n`)
+        codeString = codeString.concat('        </request>\n')
+
+        codeString = codeString.concat('    </entry>\n');
+        codeString = codeString.concat('    <entry>\n');
+        codeString = codeString.concat(`        <fullUrl value="https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${ResourceTwoGuid}" />\n`);
+        codeString = codeString.concat('        <resource>\n');
+
+        codeString = codeString.concat(`${FhirResourceExampleGenerator._padBundelResource(ResourceOne, 10)}`);
+
+        codeString = codeString.concat('        </resource>\n');
+
+        codeString = codeString.concat('        <request>\n')
+        codeString = codeString.concat('          <method value="POST" />\n')
+        codeString = codeString.concat(`          <url value="${ResourceName}/${GUID}/_history/1" />\n`)
+        codeString = codeString.concat('        </request>\n')
+
+        codeString = codeString.concat('    </entry>\n');
+        codeString = codeString.concat('</Bundle>\n');
+
+
+        return codeString;
+    }
+
 
     static getXmlOperationOutcome() {
         let codeString = '';
@@ -185,36 +265,40 @@ export default class FhirResourceExampleGenerator {
         // codeString = codeString.concat('12345678901234567890123456789012345678901234567890123456789012345678901234567890\n');        
 
         const ResourceOneGuid = UuidSupport.createGUID();
-        const ResourceOne = FhirResourceExampleGenerator._getBundelJsonResource(ResourceName, ResourceOneGuid);
+        const ResourceOneVersion = '1';
+        const ResourceOneLastUpdatedDateTime = moment().subtract(7, 'days');
+        const ResourceOne = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceOneGuid, ResourceOneVersion, ResourceOneLastUpdatedDateTime);
 
         const ResourceTwoGuid = UuidSupport.createGUID();
-        const ResourceTwo = FhirResourceExampleGenerator._getBundelJsonResource(ResourceName, ResourceTwoGuid);
+        const ResourceTwoVersion = '1';
+        const ResourceTwoLastUpdatedDateTime = moment().subtract(14, 'days');
+        const ResourceTwo = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceTwoGuid, ResourceTwoVersion, ResourceTwoLastUpdatedDateTime);
 
         codeString = codeString.concat('{\n');
         codeString = codeString.concat('    "resourceType": "Bundle",\n');
         codeString = codeString.concat('    "type": "searchset",\n');
-        codeString = codeString.concat('    "total": 163,\n');
+        codeString = codeString.concat('    "total": 2,\n');
         codeString = codeString.concat('    "link": [\n');
         codeString = codeString.concat('        {\n');
         codeString = codeString.concat('            "relation": "first",\n');
-        codeString = codeString.concat('            "url": "https://pyrohealth.net/test/stu3/fhir/Patient?page=1"\n');
+        codeString = codeString.concat(`            "url": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}?page=1"\n`);
         codeString = codeString.concat('        },\n');
         codeString = codeString.concat('        {\n');
         codeString = codeString.concat('            "relation": "last",\n');
-        codeString = codeString.concat('            "url": "https://pyrohealth.net/test/stu3/fhir/Patient?page=4"\n');
+        codeString = codeString.concat(`            "url": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}?page=4"\n`);
         codeString = codeString.concat('        },\n');
         codeString = codeString.concat('        {\n');
         codeString = codeString.concat('            "relation": "next",\n');
-        codeString = codeString.concat('            "url": "https://pyrohealth.net/test/stu3/fhir/Patient?page=2"\n');
+        codeString = codeString.concat(`            "url": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}?page=2"\n`);
         codeString = codeString.concat('        },\n');
         codeString = codeString.concat('        {\n');
         codeString = codeString.concat('            "relation": "self",\n');
-        codeString = codeString.concat('            "url": "https://pyrohealth.net/test/stu3/fhir/Patient"\n');
+        codeString = codeString.concat(`            "url": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}"\n`);
         codeString = codeString.concat('        }\n');
         codeString = codeString.concat('    ],\n');
         codeString = codeString.concat('    "entry": [\n');
         codeString = codeString.concat('        {\n');
-        codeString = codeString.concat('            "fullUrl": "https://pyrohealth.net/test/stu3/fhir/Patient/IHIStatusExample",\n');
+        codeString = codeString.concat(`            "fullUrl": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${ResourceOneGuid}",\n`);
         codeString = codeString.concat('            "resource": {\n');
         codeString = codeString.concat(`${FhirResourceExampleGenerator._padBundelResource(ResourceOne, 16)}`);
         codeString = codeString.concat('            },\n');
@@ -223,13 +307,90 @@ export default class FhirResourceExampleGenerator {
         codeString = codeString.concat('            }\n');
         codeString = codeString.concat('        },\n');
         codeString = codeString.concat('        {\n');
-        codeString = codeString.concat('            "fullUrl": "https://pyrohealth.net/test/stu3/fhir/Patient/PrincessOfPop",\n');
+        codeString = codeString.concat(`            "fullUrl": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${ResourceTwoGuid}",\n`);
         codeString = codeString.concat('            "resource": {\n');
         codeString = codeString.concat(`${FhirResourceExampleGenerator._padBundelResource(ResourceTwo, 16)}`);
         codeString = codeString.concat('            },\n');
         codeString = codeString.concat('            "search": {\n');
         codeString = codeString.concat('                "mode": "match"\n');
         codeString = codeString.concat('            }\n');
+        codeString = codeString.concat('        }\n');        
+        codeString = codeString.concat('    ]\n');
+        codeString = codeString.concat('}\n');
+
+        return codeString;
+    }
+
+    static getJsonHistoryBundleResource(ResourceName, GUID) {
+        let codeString = '';
+        //80 Charaters
+        // codeString = codeString.concat('12345678901234567890123456789012345678901234567890123456789012345678901234567890\n');        
+
+        const ResourceOneGuid = GUID;
+        const ResourceOneVersion = '1';
+        const ResourceOneLastUpdatedDateTime = moment().subtract(14, 'days');
+        const ResourceOne = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceOneGuid, ResourceOneVersion, ResourceOneLastUpdatedDateTime);
+
+        const ResourceTwoGuid = GUID;
+        const ResourceTwoVersion = '2';
+        const ResourceTwoLastUpdatedDateTime = moment().subtract(7, 'days');
+        const ResourceTwo = FhirResourceExampleGenerator._getBundelXmlResource(ResourceName, ResourceTwoGuid, ResourceTwoVersion, ResourceTwoLastUpdatedDateTime);
+
+        codeString = codeString.concat('{\n');
+        codeString = codeString.concat('    "resourceType": "Bundle",\n');
+        codeString = codeString.concat('    "type": "history",\n');
+        codeString = codeString.concat('    "total": 3,\n');
+        codeString = codeString.concat('    "link": [\n');
+        codeString = codeString.concat('        {\n');
+        codeString = codeString.concat('            "relation": "first",\n');
+        codeString = codeString.concat(`            "url": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history?page=1"\n`);
+        codeString = codeString.concat('        },\n');
+        codeString = codeString.concat('        {\n');
+        codeString = codeString.concat('            "relation": "last",\n');
+        codeString = codeString.concat(`            "url": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history?page=1"\n`);
+        codeString = codeString.concat('        },\n');
+        codeString = codeString.concat('        {\n');
+        codeString = codeString.concat('            "relation": "next",\n');
+        codeString = codeString.concat(`            "url": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history?page=1"\n`);
+        codeString = codeString.concat('        },\n');
+        codeString = codeString.concat('        {\n');
+        codeString = codeString.concat('            "relation": "self",\n');
+        codeString = codeString.concat(`            "url": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}/_history"\n`);
+        codeString = codeString.concat('        }\n');
+        codeString = codeString.concat('    ],\n');
+        codeString = codeString.concat('    "entry": [\n');
+
+        codeString = codeString.concat('        {\n');
+        codeString = codeString.concat(`            "fullUrl": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}",\n`);
+        codeString = codeString.concat('            "request": {\n');
+        codeString = codeString.concat('                "method": "DELETE",\n');
+        codeString = codeString.concat(`                "url": "${ResourceName}/${GUID}/_history/3"\n`);
+        codeString = codeString.concat('            }\n');
+        codeString = codeString.concat('        },\n');
+
+        codeString = codeString.concat('        {\n');
+        codeString = codeString.concat(`            "fullUrl": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}",\n`);
+        codeString = codeString.concat('            "resource": {\n');
+        codeString = codeString.concat(`${FhirResourceExampleGenerator._padBundelResource(ResourceTwo, 16)}`);
+        codeString = codeString.concat('            },\n');
+        
+        codeString = codeString.concat('            "request": {\n');
+        codeString = codeString.concat('                "method": "PUT",\n');
+        codeString = codeString.concat(`                "url": "${ResourceName}/${GUID}/_history/2"\n`);
+        codeString = codeString.concat('            }\n');
+                
+        codeString = codeString.concat('        },\n');
+        codeString = codeString.concat('        {\n');
+        codeString = codeString.concat(`            "fullUrl": "https://pyrohealth.net/test/stu3/fhir/${ResourceName}/${GUID}",\n`);
+        codeString = codeString.concat('            "resource": {\n');
+        codeString = codeString.concat(`${FhirResourceExampleGenerator._padBundelResource(ResourceOne, 16)}`);
+        codeString = codeString.concat('            },\n');
+        
+        codeString = codeString.concat('            "request": {\n');
+        codeString = codeString.concat('                "method": "POST",\n');
+        codeString = codeString.concat(`                "url": "${ResourceName}/${GUID}/_history/1"\n`);
+        codeString = codeString.concat('            }\n');
+    
         codeString = codeString.concat('        }\n');        
         codeString = codeString.concat('    ]\n');
         codeString = codeString.concat('}\n');
