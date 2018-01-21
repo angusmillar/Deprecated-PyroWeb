@@ -48,7 +48,7 @@ export default class FhirResourceExampleGenerator {
     }
 
     static _getBundelJsonResource(ResourceName, ResourceId, ResourceVersion, ResourceLastUpdated) {        
-        return FhirResourceExampleGenerator.getJsonResource(ResourceName, ResourceId, ResourceVersion, LastUpdatedDateTime);
+        return FhirResourceExampleGenerator.getJsonResource(ResourceName, ResourceId, ResourceVersion, ResourceLastUpdated);
     }
 
     static _padBundelResource(Resource, Amount) {
