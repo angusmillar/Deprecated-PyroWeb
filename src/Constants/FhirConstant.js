@@ -10,6 +10,7 @@ export default class FhirConstant {
     static DefaultFhirJsonFormat = 'application/fhir+json';
 
     static OperationOutcomeResourceName = 'OperationOutcome';
+    static BundleResourceName = 'Bundle';
 
     static PostRequestHeaders = [
         { name: 'Content-Type', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
@@ -34,6 +35,17 @@ export default class FhirConstant {
     static responseOperationOutcomeHeaders() {
         return [
             { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
+        ];
+    }   
+
+    static responseGoneHeaders(Version) {
+        let _Version = '1';
+        if (!isNil(Version)) {
+            _Version = Version;
+        }
+        return [
+            { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
+            { name: 'ETag', value: `W/"${_Version}"`, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#versioning` },
         ];
     }   
 
