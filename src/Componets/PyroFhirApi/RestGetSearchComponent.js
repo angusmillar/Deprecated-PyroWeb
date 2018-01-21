@@ -37,16 +37,21 @@ export default class RestGetSearchComponent extends React.Component {
 
     render() {
 
-        const VerbGetName = 'GET';
-        const _VerbGetColor = 'blue';
+        const VerbName = 'GET';
+        const VerbColor = 'blue';
+        const VerbPath = `${this.props.resourceName}?{search}`
 
         // ================= Request Setup ===========================================================
 
         const getRequestExampleURL = () => {
             return (
-                <code>
-                    <p>{`[Endpoint URL]/${this.props.resourceName}?searchParameterName=value&searchParameterName=value`}</p>
-                </code>
+                <div>
+                    <p><b>Filter {this.props.resourceName} resources by a set of search parameters</b></p>                    
+                    <p><code>{`[Endpoint URL]/${this.props.resourceName}?name=value&name=value`}</code></p>
+                    
+                    <p><b>Return all {this.props.resourceName} resources</b></p>                    
+                    <p><code>{`[Endpoint URL]/${this.props.resourceName}`}</code></p>
+                </div>
             )
         }
 
@@ -242,9 +247,9 @@ export default class RestGetSearchComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingComponent={renderTableHeader(VerbGetName, _VerbGetColor, this.props.resourceName)}
-                tableHeadingTitle={VerbGetName}
-                tableColorType={_VerbGetColor}
+                tableHeadingComponent={renderTableHeader(VerbName, VerbColor, VerbPath)}
+                tableHeadingTitle={VerbName}
+                tableColorType={VerbColor}
                 tableColorInverted={false}
                 tableRowsFunction={renderGetSearchTableBody}
             />

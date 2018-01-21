@@ -18,6 +18,11 @@ export default class FhirConstant {
         { name: 'If-None-Exist', value: '[search parameters]', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#ccreate` }            
     ];
 
+    static PutRequestHeaders = [
+        { name: 'Content-Type', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
+        { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },        
+    ];
+
     static postResponseHeaders(EndpointUrl, ResourceName, ResourceId, LastModified, Version) {
         let _Version = '1';
         if (!isNil(Version)) {

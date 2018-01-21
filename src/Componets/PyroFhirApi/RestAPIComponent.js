@@ -7,8 +7,10 @@ import RestGetSearchComponent from './RestGetSearchComponent'
 import RestGetByIdComponent from './RestGetByIdComponent'
 import RestGetVReadComponent from './RestGetVReadComponent'
 import RestGetVReadByVidComponent from './RestGetVReadByVidComponent'
-import RestPostComponent from './RestPostComponet'
+import RestPostComponent from './RestPostComponent'
 import RestPutByIdComponent from './RestPutByIdComponent'
+import RestPutBySearchComponent from './RestPutBySearchComponent'
+
 import RestDeleteByIdComponent from './RestDeleteByIdComponent'
 import FhirConstant from '../../Constants/FhirConstant';
 import WebLink from '../../Componets/Reusable/WebLink/WebLink';
@@ -102,10 +104,21 @@ export default class RestAPIComponent extends React.Component {
                     </Grid.Column>
                 </Grid>
                 <Divider />
+                <RestPutBySearchComponent
+                    resourceName={_resourceName}
+                    endpointUrl={this.props.endpointUrl}        
+                    searchParameters={_searchParameters}
+                    contentTypeElement={this.props.contentTypeElement}
+                    acceptElement={this.props.acceptElement}
+                    acceptResponseElement={this.props.acceptResponseElement}
+                />
+                <Divider />
                 <RestPutByIdComponent
                     resourceName={_resourceName}
-                    searchParameters={_searchParameters}
+                    endpointUrl={this.props.endpointUrl}                    
+                    contentTypeElement={this.props.contentTypeElement}
                     acceptElement={this.props.acceptElement}
+                    acceptResponseElement={this.props.acceptResponseElement}
                 />
                 <Divider />
                 <RestDeleteByIdComponent

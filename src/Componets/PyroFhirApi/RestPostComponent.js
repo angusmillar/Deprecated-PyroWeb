@@ -11,7 +11,7 @@ import ResponseComponent from './ResponseComponent'
 import RequestComponent from './RequestComponent'
 import RestHttpHeadersComponent from './RestHttpHeadersComponent'
 import RestBodyComponent from './RestBodyComponent'
-// import RestParametersComponent from './RestParametersComponent'
+import RestParametersComponent from './RestParametersComponent'
 
 import FhirConstant from '../../Constants/FhirConstant';
 import HttpConstant from '../../Constants/HttpConstant';
@@ -19,14 +19,15 @@ import FormatSupport from '../../SupportTools/FormatSupport';
 import UuidSupport from '../../SupportTools/UuidSupport'
 import DateTimeSupport from '../../SupportTools/DateTimeSupport'
 
-export default class RestPutByIdComponent extends React.Component {
+export default class RestPostComponent extends React.Component {
 
     static propTypes = {
         resourceName: PropTypes.string.isRequired,
         endpointUrl: PropTypes.string.isRequired,
         contentTypeElement: PropTypes.element.isRequired,
         acceptElement: PropTypes.element.isRequired,
-        acceptResponseElement: PropTypes.element.isRequired,        
+        acceptResponseElement: PropTypes.element.isRequired,
+        searchParameters: PropTypes.array
     }
 
     static defaultProps = {
@@ -38,10 +39,9 @@ export default class RestPutByIdComponent extends React.Component {
 
     render() {
 
-        const VerbName = 'PUT';
-        const VerbColor = 'orange';
-        const VerbPath = `${this.props.resourceName}/[id]`;
-        const Description = `Create or Update an ${this.props.resourceName} resource in the FHIR server with the resource [id] provided in the request URL. The resource must also contain the same resource id as found in the URL.`;
+        const VerbName = 'POST';
+        const VerbColor = 'green';
+        const Description = `Add a new ${this.props.resourceName} resource to the server. The server will assign a new GUID as the resource id`;
         const GUID = UuidSupport.createGUID();
         const LastModified = DateTimeSupport.NowMomentDefault;
 
@@ -52,16 +52,16 @@ export default class RestPutByIdComponent extends React.Component {
         const getRequestExampleURL = () => {
             return (
                 <code>
-                    <p>{`[Endpoint]/${this.props.resourceName}/${GUID}`}</p>
+                    <p>{`[Endpoint]/${this.props.resourceName}`}</p>
                 </code>
             )
         }
 
         const getRequestHttpHeadersComponent = () => {
-            if (!isNil(FhirConstant.PutRequestHeaders) && FhirConstant.PutRequestHeaders.length != 0) {
+            if (!isNil(FhirConstant.PostRequestHeaders) && FhirConstant.PostRequestHeaders.length != 0) {
                 return (
                     <RestHttpHeadersComponent
-                        httpHeaders={FhirConstant.PutRequestHeaders}
+                        httpHeaders={FhirConstant.PostRequestHeaders}
                         contentTypeElement={this.props.contentTypeElement}
                         acceptElement={this.props.acceptElement}
                         color={'violet'} />
@@ -71,11 +71,24 @@ export default class RestPutByIdComponent extends React.Component {
             }
         };
 
+        const getRequestSearchParametersComponent = () => {
+            if (!isNil(this.props.searchParameters) && this.props.searchParameters.length != 0) {
+                return (
+                    <RestParametersComponent
+                        parameters={this.props.searchParameters}
+                        color={'violet'}
+                    />
+                )
+            } else {
+                return null;
+            }
+        };
+
         const getRequestExampleResource = (FormatType) => {
             if (FormatType === FormatSupport.FormatType.JSON) {
-                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, null, null);
+                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, null, null, null);
             } else if (FormatType === FormatSupport.FormatType.XML) {
-                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, null, null);
+                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, null, null, null);
             } else {
                 return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
@@ -85,7 +98,7 @@ export default class RestPutByIdComponent extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.contentTypeElement.props.value)
             return (
                 <RestBodyComponent
-                    userMessage={<p>{`The ${this.props.resourceName} resource that is to be added or updated in the FHIR server`}</p>}
+                    userMessage={<p>{`The new ${this.props.resourceName} resource that is to be added to the FHIR server`}</p>}
                     resourceName={this.props.resourceName}
                     isBundleResource={false}
                     formatType={FormatRequired}
@@ -98,11 +111,11 @@ export default class RestPutByIdComponent extends React.Component {
 
         // ================= Response Setup ===========================================================
 
-        const getBodyOkExampleResource = (FormatType, ResourceVersion) => {
+        const getBodyCreatedExampleResource = (FormatType) => {
             if (FormatType === FormatSupport.FormatType.JSON) {
-                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, ResourceVersion, LastModified);
+                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, '1', LastModified);
             } else if (FormatType === FormatSupport.FormatType.XML) {
-                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, ResourceVersion, LastModified);
+                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, '1', LastModified);
             } else {
                 return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
@@ -118,18 +131,19 @@ export default class RestPutByIdComponent extends React.Component {
             }
         }
 
-        const getResponseBodyComponent = (Color, ResourceVersion) => {
+        const getResponseBodyCreatedComponent = (Color) => {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
-                    userMessage={<p>{`The ${this.props.resourceName} resources as added to the server`}</p>}
+                    userMessage={<p>{`The new ${this.props.resourceName} resources as it was added to the server. The server will have assigned it a new resource id and marked it as version 1.`}</p>}
                     resourceName={this.props.resourceName}
                     isBundleResource={true}
                     formatType={FormatRequired}
-                    resourceData={getBodyOkExampleResource(FormatRequired, ResourceVersion)}
+                    resourceData={getBodyCreatedExampleResource(FormatRequired)}
                     color={Color}
                 />
             )
+
         }
 
         const getResponseBodyBadRequestComponent = (Color) => {
@@ -147,10 +161,10 @@ export default class RestPutByIdComponent extends React.Component {
 
         }
 
-        const getResponseHeadersComponent = (Color, ResourceVersion) => {
+        const getResponseCreatedHeadersComponent = (Color) => {
             return (
                 <RestHttpHeadersComponent
-                    httpHeaders={FhirConstant.postResponseHeaders(this.props.endpointUrl, this.props.resourceName, GUID, LastModified, ResourceVersion)}
+                    httpHeaders={FhirConstant.postResponseHeaders(this.props.endpointUrl, this.props.resourceName, GUID, LastModified)}
                     contentTypeElement={this.props.acceptResponseElement}
                     acceptElement={null}
                     color={Color}
@@ -169,42 +183,20 @@ export default class RestPutByIdComponent extends React.Component {
             )
         }
 
-        const getStatusOKComponent = () => {
-            const HttpStatus = HttpConstant.getStatusCodeByNumber('200');
-            const UpdatedResourceVersionNumber = '3';
-            return (
-                <RestHttpStatusComponent
-                    userMessage={<div>
-                        <p>The request was successful and the {this.props.resourceName} resource has been updated in the FHIR server and assigned the next sequential version number relative to the server.</p>
-                        <p>The updated {this.props.resourceName} resource is echoed back in the response body with a newly assigned version number.
-                        The resource version and location can also be found in the returned headers</p>
-                    </div>}
-                    statusNumber={HttpStatus.number}
-                    statusText={HttpStatus.description}
-                    statusColor={HttpStatus.color}
-                    headerComponent={getResponseHeadersComponent(HttpStatus.color, UpdatedResourceVersionNumber)}
-                    bodyComponent={getResponseBodyComponent(HttpStatus.color, UpdatedResourceVersionNumber )}
-                />
-            )
-
-        }
-
         const getStatusCreatedComponent = () => {
             const HttpStatus = HttpConstant.getStatusCodeByNumber('201');
-            const CreatedResourceVersionNumber = '1';
             return (
                 <RestHttpStatusComponent
                     userMessage={<div>
-                        <p>The request was successful. As there was no {this.props.resourceName} resource in the FHIR server with the [id] provided,
-                        the server has added the resource as new using the resource [id] provided. The server will have set the version to 1</p>
-                        <p>The {this.props.resourceName} resource is echoed back in the response body with the assigned [id] as provided in the request URL and resource. The version is set to 1.
-                        The resource version and location can also be found in the returned headers</p>
+                        <p>The request was successful and a new {this.props.resourceName} resource is added to the FHIR server with a newly assigned GUID as it&#39;s resource id and version set to 1.</p>
+                        <p>The {this.props.resourceName} resource is echoed back in the response body with it&#39;s newly assigned resource id and version set to 1.
+                        The resource version and location including assigned resource id can also be found in the returned headers</p>
                     </div>}
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}
-                    headerComponent={getResponseHeadersComponent(HttpStatus.color, CreatedResourceVersionNumber)}
-                    bodyComponent={getResponseBodyComponent(HttpStatus.color, CreatedResourceVersionNumber)}
+                    headerComponent={getResponseCreatedHeadersComponent(HttpStatus.color)}
+                    bodyComponent={getResponseBodyCreatedComponent(HttpStatus.color)}
                 />
             )
 
@@ -228,11 +220,10 @@ export default class RestPutByIdComponent extends React.Component {
         }
 
         const getStatusComponentArray = () => {
-            const OK = getStatusOKComponent();
             const Created = getStatusCreatedComponent();
             const Bad = getStatusBadRequestComponent()
 
-            return { Created, OK, Bad }
+            return { Created, Bad }
         }
 
 
@@ -252,7 +243,8 @@ export default class RestPutByIdComponent extends React.Component {
                             <Table.Cell colSpan='16'>
                                 <RequestComponent
                                     exampleComponet={getRequestExampleURL()}
-                                    headersComponent={getRequestHttpHeadersComponent()}                                    
+                                    headersComponent={getRequestHttpHeadersComponent()}
+                                    SearchParametersComponent={getRequestSearchParametersComponent()}
                                     bodyComponent={getRequestBodyComponent()}
                                 />
                             </Table.Cell>
@@ -283,7 +275,7 @@ export default class RestPutByIdComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingComponent={renderTableHeader(VerbName, VerbColor, VerbPath)}
+                tableHeadingComponent={renderTableHeader(VerbName, VerbColor, this.props.resourceName)}
                 tableHeadingTitle={VerbName}
                 tableColorType={VerbColor}
                 tableColorInverted={false}

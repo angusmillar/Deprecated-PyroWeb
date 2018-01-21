@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import isNil from 'lodash/isNil';
-import { Table } from 'semantic-ui-react'
+import { Table, List } from 'semantic-ui-react'
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
@@ -19,7 +19,7 @@ import FormatSupport from '../../SupportTools/FormatSupport';
 import UuidSupport from '../../SupportTools/UuidSupport'
 import DateTimeSupport from '../../SupportTools/DateTimeSupport'
 
-export default class RestPostComponenTwo extends React.Component {
+export default class RestPutBySearchComponent extends React.Component {
 
     static propTypes = {
         resourceName: PropTypes.string.isRequired,
@@ -39,9 +39,10 @@ export default class RestPostComponenTwo extends React.Component {
 
     render() {
 
-        const VerbName = 'POST';
-        const VerbColor = 'green';
-        const Description = `Add a ${this.props.resourceName} resource to the server. The server will assign a new GUID as the resource id`;
+        const VerbName = 'PUT';
+        const VerbColor = 'orange';
+        const VerbPath = `${this.props.resourceName}?{search}`;
+        const Description = `Create or Update an ${this.props.resourceName} resource in the FHIR server with the resource [id] provided in the request URL. The resource must also contain the same resource id as found in the URL.`;
         const GUID = UuidSupport.createGUID();
         const LastModified = DateTimeSupport.NowMomentDefault;
 
@@ -52,16 +53,16 @@ export default class RestPostComponenTwo extends React.Component {
         const getRequestExampleURL = () => {
             return (
                 <code>
-                    <p>{`[Endpoint]/${this.props.resourceName}`}</p>
+                    <p>{`[Endpoint]/${this.props.resourceName}?SearchParameterName=value&SearchParameterName=value`}</p>
                 </code>
             )
         }
 
         const getRequestHttpHeadersComponent = () => {
-            if (!isNil(FhirConstant.PostRequestHeaders) && FhirConstant.PostRequestHeaders.length != 0) {
+            if (!isNil(FhirConstant.PutRequestHeaders) && FhirConstant.PutRequestHeaders.length != 0) {
                 return (
                     <RestHttpHeadersComponent
-                        httpHeaders={FhirConstant.PostRequestHeaders}
+                        httpHeaders={FhirConstant.PutRequestHeaders}
                         contentTypeElement={this.props.contentTypeElement}
                         acceptElement={this.props.acceptElement}
                         color={'violet'} />
@@ -86,9 +87,9 @@ export default class RestPostComponenTwo extends React.Component {
 
         const getRequestExampleResource = (FormatType) => {
             if (FormatType === FormatSupport.FormatType.JSON) {
-                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, null, null, null);
+                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, null, null);
             } else if (FormatType === FormatSupport.FormatType.XML) {
-                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, null, null, null);
+                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, null, null);
             } else {
                 return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
@@ -98,7 +99,7 @@ export default class RestPostComponenTwo extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.contentTypeElement.props.value)
             return (
                 <RestBodyComponent
-                    userMessage={<p>{`The ${this.props.resourceName} that is to be added to the FHIR server`}</p>}
+                    userMessage={<p>{`The ${this.props.resourceName} resource that is to be added or updated in the FHIR server`}</p>}
                     resourceName={this.props.resourceName}
                     isBundleResource={false}
                     formatType={FormatRequired}
@@ -111,11 +112,11 @@ export default class RestPostComponenTwo extends React.Component {
 
         // ================= Response Setup ===========================================================
 
-        const getBodyOkExampleResource = (FormatType) => {
+        const getBodyOkExampleResource = (FormatType, ResourceVersion) => {
             if (FormatType === FormatSupport.FormatType.JSON) {
-                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, '1', LastModified);
+                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, ResourceVersion, LastModified);
             } else if (FormatType === FormatSupport.FormatType.XML) {
-                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, '1', LastModified);
+                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, ResourceVersion, LastModified);
             } else {
                 return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
@@ -131,7 +132,7 @@ export default class RestPostComponenTwo extends React.Component {
             }
         }
 
-        const getResponseBodyOkComponent = (Color) => {
+        const getResponseBodyComponent = (Color, ResourceVersion) => {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.acceptResponseElement.props.value)
             return (
                 <RestBodyComponent
@@ -139,11 +140,10 @@ export default class RestPostComponenTwo extends React.Component {
                     resourceName={this.props.resourceName}
                     isBundleResource={true}
                     formatType={FormatRequired}
-                    resourceData={getBodyOkExampleResource(FormatRequired)}
+                    resourceData={getBodyOkExampleResource(FormatRequired, ResourceVersion)}
                     color={Color}
                 />
             )
-
         }
 
         const getResponseBodyBadRequestComponent = (Color) => {
@@ -151,7 +151,7 @@ export default class RestPostComponenTwo extends React.Component {
             return (
                 <RestBodyComponent
                     userMessage={<p>{`An ${FhirConstant.OperationOutcomeResourceName} resource containing information about the error that has occured.`}</p>}
-                    resourceName={FhirConstant.OperationOutcomeResourceNam}
+                    resourceName={FhirConstant.OperationOutcomeResourceName}
                     isBundleResource={true}
                     formatType={FormatRequired}
                     resourceData={getBodyBadRequestExampleResource(FormatRequired)}
@@ -161,10 +161,10 @@ export default class RestPostComponenTwo extends React.Component {
 
         }
 
-        const getResponseOkHeadersComponent = (Color) => {
+        const getResponseHeadersComponent = (Color, ResourceVersion) => {
             return (
                 <RestHttpHeadersComponent
-                    httpHeaders={FhirConstant.postResponseHeaders(this.props.endpointUrl, this.props.resourceName, GUID, LastModified)}
+                    httpHeaders={FhirConstant.postResponseHeaders(this.props.endpointUrl, this.props.resourceName, GUID, LastModified, ResourceVersion)}
                     contentTypeElement={this.props.acceptResponseElement}
                     acceptElement={null}
                     color={Color}
@@ -185,18 +185,40 @@ export default class RestPostComponenTwo extends React.Component {
 
         const getStatusOKComponent = () => {
             const HttpStatus = HttpConstant.getStatusCodeByNumber('200');
+            const UpdatedResourceVersionNumber = '3';
             return (
                 <RestHttpStatusComponent
                     userMessage={<div>
-                        <p>The request was successful and an {this.props.resourceName} resource is commited to the FHIR server.</p>
-                        <p>The updated {this.props.resourceName} resource is echoed back in the response body with a newly assigned GUID as it&#39;s resource id and version set to 1.
-                        The resource version and location including assigned resource id can also be found in the returned headers</p>
+                        <p>The request was successful and the {this.props.resourceName} resource has been updated in the FHIR server and assigned the next sequential version number relative to the server.</p>
+                        <p>The updated {this.props.resourceName} resource is echoed back in the response body with a newly assigned version number.
+                        The resource version and location can also be found in the returned headers</p>
                     </div>}
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}
-                    headerComponent={getResponseOkHeadersComponent(HttpStatus.color)}
-                    bodyComponent={getResponseBodyOkComponent(HttpStatus.color)}
+                    headerComponent={getResponseHeadersComponent(HttpStatus.color, UpdatedResourceVersionNumber)}
+                    bodyComponent={getResponseBodyComponent(HttpStatus.color, UpdatedResourceVersionNumber)}
+                />
+            )
+
+        }
+
+        const getStatusCreatedComponent = () => {
+            const HttpStatus = HttpConstant.getStatusCodeByNumber('201');
+            const CreatedResourceVersionNumber = '1';
+            return (
+                <RestHttpStatusComponent
+                    userMessage={<div>
+                        <p>The request was successful. As there was no {this.props.resourceName} resource in the FHIR server with the [id] provided,
+                        the server has added the resource as new using the resource [id] provided. The server will have set the version to 1</p>
+                        <p>The {this.props.resourceName} resource is echoed back in the response body with the assigned [id] as provided in the request URL and resource. The version is set to 1.
+                        The resource version and location can also be found in the returned headers</p>
+                    </div>}
+                    statusNumber={HttpStatus.number}
+                    statusText={HttpStatus.description}
+                    statusColor={HttpStatus.color}
+                    headerComponent={getResponseHeadersComponent(HttpStatus.color, CreatedResourceVersionNumber)}
+                    bodyComponent={getResponseBodyComponent(HttpStatus.color, CreatedResourceVersionNumber)}
                 />
             )
 
@@ -221,11 +243,28 @@ export default class RestPostComponenTwo extends React.Component {
 
         const getStatusComponentArray = () => {
             const OK = getStatusOKComponent();
+            const Created = getStatusCreatedComponent();
             const Bad = getStatusBadRequestComponent()
 
-            return { OK, Bad }
+            return { Created, OK, Bad }
         }
 
+        const getSearchTableDescription = () => {
+            return (
+                <Table.Row>
+                    <Table.Cell colSpan='16'>
+                        <p>Update an existing resource based on some identification criteria, rather than by logical id.</p>
+                        <p>When the server processes this update, it performs a search using its standard search facilities for the resource type, with the goal of resolving a single logical id for this request. The action it takes depends on how many matches are found:</p>
+                        <List bulleted>
+                            <List.Item><b>No matches:</b> The server performs a create interaction</List.Item>
+                            <List.Item><b>One Match:</b> The server performs the update against the matching resource</List.Item>
+                            <List.Item><b>Multiple matches:</b> The server returns a 412 Precondition Failed error indicating the client's criteria were not selective enough</List.Item>
+                        </List>
+                        <p>This variant can be used to allow a stateless client (such as an interface engine) to submit updated results to a server, without having to remember the logical ids that the server has assigned. For example, a client updating the status of a lab result from &quot;preliminary&quot; to &quot;final&quot; might submit the finalized result using <code><b>PUT:</b>/Observation?identifier=http://my-lab-system|123</code></p>
+                    </Table.Cell>
+                </Table.Row>
+            )
+        }
 
 
         // ================= Render Table Body Setup ===========================================================
@@ -236,9 +275,7 @@ export default class RestPostComponenTwo extends React.Component {
                 const StatusComponentArray = getStatusComponentArray();
                 return (
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell colSpan='16'>{Description}</Table.Cell>
-                        </Table.Row>
+                        {getSearchTableDescription()}
                         <Table.Row>
                             <Table.Cell colSpan='16'>
                                 <RequestComponent
@@ -275,7 +312,7 @@ export default class RestPostComponenTwo extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingComponent={renderTableHeader(VerbName, VerbColor, this.props.resourceName)}
+                tableHeadingComponent={renderTableHeader(VerbName, VerbColor, VerbPath)}
                 tableHeadingTitle={VerbName}
                 tableColorType={VerbColor}
                 tableColorInverted={false}
