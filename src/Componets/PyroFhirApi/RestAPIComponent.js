@@ -48,11 +48,11 @@ export default class RestAPIComponent extends React.Component {
                             <Grid.Column textAlign='left'>
                                 <span>
                                     <Icon name='cogs' />
-                                    <WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${_resourceName}.html`} display={`Go-to FHIR Specification for the ${_resourceName} resource`}/>                                    
+                                    <WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${_resourceName}.html`} display={`Go-to FHIR Specification for the ${_resourceName} resource`} />
                                 </span>
                             </Grid.Column>
                         </Grid>
-                    </Popup>                    
+                    </Popup>
                     {resourceDescription}
                 </span>
 
@@ -67,7 +67,7 @@ export default class RestAPIComponent extends React.Component {
                 <Divider />
                 <RestGetByIdComponent
                     resourceName={_resourceName}
-                    endpointUrl={this.props.endpointUrl}                    
+                    endpointUrl={this.props.endpointUrl}
                     contentTypeElement={this.props.contentTypeElement}
                     acceptElement={this.props.acceptElement}
                     acceptResponseElement={this.props.acceptResponseElement}
@@ -75,7 +75,7 @@ export default class RestAPIComponent extends React.Component {
                 <Divider />
                 <RestGetVReadComponent
                     resourceName={_resourceName}
-                    endpointUrl={this.props.endpointUrl}                    
+                    endpointUrl={this.props.endpointUrl}
                     contentTypeElement={this.props.contentTypeElement}
                     acceptElement={this.props.acceptElement}
                     acceptResponseElement={this.props.acceptResponseElement}
@@ -83,19 +83,21 @@ export default class RestAPIComponent extends React.Component {
                 <Divider />
                 <RestGetVReadByVidComponent
                     resourceName={_resourceName}
-                    searchParameters={_searchParameters}
+                    endpointUrl={this.props.endpointUrl}
+                    contentTypeElement={this.props.contentTypeElement}
                     acceptElement={this.props.acceptElement}
+                    acceptResponseElement={this.props.acceptResponseElement}
                 />
                 <Divider />
                 <Grid columns={1}>
-                    <Grid.Column width={16}>                   
+                    <Grid.Column width={16}>
                         <RestPostComponent
                             resourceName={_resourceName}
                             endpointUrl={this.props.endpointUrl}
                             searchParameters={_searchParameters}
                             contentTypeElement={this.props.contentTypeElement}
                             acceptElement={this.props.acceptElement}
-                            acceptResponseElement={this.props.acceptResponseElement}                        
+                            acceptResponseElement={this.props.acceptResponseElement}
                         />
                     </Grid.Column>
                 </Grid>
