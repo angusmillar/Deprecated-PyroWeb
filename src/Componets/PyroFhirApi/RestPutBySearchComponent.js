@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import isNil from 'lodash/isNil';
+import ss from '../../SupportTools/StringSupport';
 import { Table, List } from 'semantic-ui-react'
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table';
@@ -42,7 +43,6 @@ export default class RestPutBySearchComponent extends React.Component {
         const VerbName = 'PUT';
         const VerbColor = 'orange';
         const VerbPath = `${this.props.resourceName}?{search}`;
-        const Description = `Create or Update an ${this.props.resourceName} resource in the FHIR server with the resource [id] provided in the request URL. The resource must also contain the same resource id as found in the URL.`;
         const GUID = UuidSupport.createGUID();
         const LastModified = DateTimeSupport.NowMomentDefault;
 
@@ -50,11 +50,13 @@ export default class RestPutBySearchComponent extends React.Component {
 
         // ================= Request Setup ===========================================================
 
+
         const getRequestExampleURL = () => {
             return (
-                <code>
-                    <p>{`[Endpoint]/${this.props.resourceName}?SearchParameterName=value&SearchParameterName=value`}</p>
-                </code>
+                <div>
+                    <p><b>Select {this.props.resourceName} resource to be updated or added by using a set of search parameters</b></p>
+                    <p><code>{`[Endpoint]/${this.props.resourceName}?name=value&name=value`}</code></p>
+                </div>
             )
         }
 
@@ -87,9 +89,9 @@ export default class RestPutBySearchComponent extends React.Component {
 
         const getRequestExampleResource = (FormatType) => {
             if (FormatType === FormatSupport.FormatType.JSON) {
-                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName, GUID, null, null);
+                return FhirResourceExampleGenerator.getJsonResource(this.props.resourceName,null, null, null);
             } else if (FormatType === FormatSupport.FormatType.XML) {
-                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, GUID, null, null);
+                return FhirResourceExampleGenerator.getXmlResource(this.props.resourceName, null, null, null);
             } else {
                 return `SyntaxLanguage was ${FormatType.toString()}, can not create example resource`;
             }
@@ -99,7 +101,15 @@ export default class RestPutBySearchComponent extends React.Component {
             const FormatRequired = FormatSupport.resolveFormatFromString(this.props.contentTypeElement.props.value)
             return (
                 <RestBodyComponent
-                    userMessage={<p>{`The ${this.props.resourceName} resource that is to be added or updated in the FHIR server`}</p>}
+                    userMessage={
+                        <div>
+                            <p>The {this.props.resourceName} resource that is to be added or updated in the FHIR server</p>
+                            <p>The resource must either contain a resource id that matches the single resource located by the search parameters or contain no id element at all, as seen in this example.</p>
+                            <p>If you know the resource id then you should question why you are using this call with search parameters to locate the resource to update at all?
+                                In this case, I would suggest using the resource id directly, for example: </p>
+                            <code><b>PUT: </b>[ednpoint]{this.props.resourceName}/[id]</code>
+                        </div>
+                    }
                     resourceName={this.props.resourceName}
                     isBundleResource={false}
                     formatType={FormatRequired}
@@ -224,6 +234,23 @@ export default class RestPutBySearchComponent extends React.Component {
 
         }
 
+        const getStatusPreconditionFailedComponent = () => {
+            const HttpStatus = HttpConstant.getStatusCodeByNumber('412');
+            return (
+                <RestHttpStatusComponent
+                    userMessage={<div>
+                        <p>Multiple matches: The server returns a 412 Precondition Failed error indicating the client{ss.escape.SingleQuote}s search
+                        criteria was not selective enough and located multiple {this.props.resourceName} resources in the FHIR server. The search must
+                        locate one or none to be successful.</p>
+                    </div>}
+                    statusNumber={HttpStatus.number}
+                    statusText={HttpStatus.description}
+                    statusColor={HttpStatus.color}                    
+                />
+            )
+
+        }
+
         const getStatusBadRequestComponent = () => {
             const HttpStatus = HttpConstant.getStatusCodeByNumber('400');
             return (
@@ -244,9 +271,10 @@ export default class RestPutBySearchComponent extends React.Component {
         const getStatusComponentArray = () => {
             const OK = getStatusOKComponent();
             const Created = getStatusCreatedComponent();
-            const Bad = getStatusBadRequestComponent()
+            const PreconditionFailed = getStatusPreconditionFailedComponent();
+            const Bad = getStatusBadRequestComponent();
 
-            return { Created, OK, Bad }
+            return { Created, OK, PreconditionFailed, Bad }
         }
 
         const getSearchTableDescription = () => {
@@ -258,9 +286,10 @@ export default class RestPutBySearchComponent extends React.Component {
                         <List bulleted>
                             <List.Item><b>No matches:</b> The server performs a create interaction</List.Item>
                             <List.Item><b>One Match:</b> The server performs the update against the matching resource</List.Item>
-                            <List.Item><b>Multiple matches:</b> The server returns a 412 Precondition Failed error indicating the client's criteria were not selective enough</List.Item>
+                            <List.Item><b>Multiple matches:</b> The server returns a 412 Precondition Failed error indicating the client{ss.escape.SingleQuote}s criteria were not selective enough</List.Item>
                         </List>
-                        <p>This variant can be used to allow a stateless client (such as an interface engine) to submit updated results to a server, without having to remember the logical ids that the server has assigned. For example, a client updating the status of a lab result from &quot;preliminary&quot; to &quot;final&quot; might submit the finalized result using <code><b>PUT:</b>/Observation?identifier=http://my-lab-system|123</code></p>
+                        <p>This variant can be used to allow a stateless client (such as an interface engine) to submit updated results to a server, without having to remember the logical ids that the server has assigned. For example, a client updating the status of a lab result from &quot;preliminary&quot; to &quot;final&quot; might submit the finalized result using <br />
+                            <code><b>PUT:</b>/Observation?identifier=http://my-lab-system|123</code></p>
                     </Table.Cell>
                 </Table.Row>
             )

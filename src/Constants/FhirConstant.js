@@ -43,16 +43,31 @@ export default class FhirConstant {
         ];
     }   
 
-    static responseGoneHeaders(Version) {
-        let _Version = '1';
+    static responseGoneHeaders(Version) {        
         if (!isNil(Version)) {
-            _Version = Version;
-        }
-        return [
-            { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
-            { name: 'ETag', value: `W/"${_Version}"`, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#versioning` },
-        ];
+            return [
+                { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
+                { name: 'ETag', value: `W/"${Version}"`, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#versioning` },
+            ];
+        } else {
+            return [
+                { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },               
+            ];
+        }        
     }   
+
+    static responseNoContentHeaders(Version) {
+        if (!isNil(Version)) {
+            return [
+                { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
+                { name: 'ETag', value: `W/"${Version}"`, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#versioning` },
+            ];
+        } else {
+            return [
+                { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },               
+            ];
+        }        
+    } 
 
     static getResponseSearchHeaders() {
         return [
@@ -64,6 +79,9 @@ export default class FhirConstant {
         { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
     ];
 
+    static DeleteRequestHeaders = [        
+        { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
+    ];
 
     static GetRequestByIdHeaders = [        
         { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },

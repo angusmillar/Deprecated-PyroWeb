@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import isNil from 'lodash/isNil';
-import { Table } from 'semantic-ui-react'
+import { Table, List } from 'semantic-ui-react'
 
 import Expandable_Table from '../Reusable/Table/Expandable_Table';
 import RestVerbHeaderComponent from './RestVerbHeaderComponent';
@@ -16,17 +16,16 @@ import RestParametersComponent from './RestParametersComponent'
 import FhirConstant from '../../Constants/FhirConstant';
 import HttpConstant from '../../Constants/HttpConstant';
 import FormatSupport from '../../SupportTools/FormatSupport';
-import UuidSupport from '../../SupportTools/UuidSupport'
 
-
-export default class RestDeleteByIdComponent extends React.Component {
+export default class RestDeleteBySearchComponent extends React.Component {
 
     static propTypes = {
         resourceName: PropTypes.string.isRequired,
         endpointUrl: PropTypes.string.isRequired,
         contentTypeElement: PropTypes.element.isRequired,
         acceptElement: PropTypes.element.isRequired,
-        acceptResponseElement: PropTypes.element.isRequired,        
+        acceptResponseElement: PropTypes.element.isRequired,
+        searchParameters: PropTypes.array
     }
 
     static defaultProps = {
@@ -40,19 +39,14 @@ export default class RestDeleteByIdComponent extends React.Component {
 
         const VerbName = 'DELETE';
         const VerbColor = 'red';
-        const Description = `Delete a ${this.props.resourceName} resource with the resource id of [id]`;
-        const GUID = UuidSupport.createGUID();
-        const DeletedResourceVersion = 5; //do not set lower than 1.
+        const VerbPath = `/${this.props.resourceName}?{search}`;
         
-
-        // const _Path = this.props.resourceName;
-
         // ================= Request Setup ===========================================================
 
         const getRequestExampleURL = () => {
             return (
                 <code>
-                    <p>{`[Endpoint]/${this.props.resourceName}/${GUID}`}</p>
+                    <p>{`[Endpoint]/${this.props.resourceName}?name=value&name=value`}</p>
                 </code>
             )
         }
@@ -69,7 +63,21 @@ export default class RestDeleteByIdComponent extends React.Component {
             } else {
                 return null;
             }
-        };            
+        };
+
+        const getRequestSearchParametersComponent = () => {
+            if (!isNil(this.props.searchParameters) && this.props.searchParameters.length != 0) {
+                return (
+                    <RestParametersComponent
+                        parameters={this.props.searchParameters}
+                        color={'violet'}
+                    />
+                )
+            } else {
+                return null;
+            }
+        };
+       
 
         // ================= Response Setup ===========================================================
 
@@ -78,35 +86,18 @@ export default class RestDeleteByIdComponent extends React.Component {
             return (
                 <RestHttpStatusComponent
                     userMessage={<div>
-                        <p>The deletion has been successful as either the resource with the requested [id] has been
-                            deleted from the FHIR server or it never existed in the first place.</p>
-                        <p>If a resource did exsist, and was deleted, then an ETag header will be returned indicating
-                            the current resource version. As seen in this example. The version given in the ETag is the
-                            deleted version that contains no resource instance. If you wished to retrive the resource
-                            before it was deleted, you would need to perform a GET request one version number back, 
-                            version {(DeletedResourceVersion - 1).toString()} in this example.</p>
+                        <p>The deletion has been successful and none, one or more resources have been deleted from the server.</p>                        
                     </div>}
                     statusNumber={HttpStatus.number}
                     statusText={HttpStatus.description}
                     statusColor={HttpStatus.color}
-                    headerComponent={getResponseNoContentHeadersComponent(HttpStatus.color)}
-                    // bodyComponent={getResponseBodyBadRequestComponent(HttpStatus.color)}
+                    // headerComponent={getResponseNoContentHeadersComponent(HttpStatus.color)}                    
                 />
             )
 
         }
 
-        const getResponseNoContentHeadersComponent = (Color) => {            
-            return (
-                <RestHttpHeadersComponent
-                    httpHeaders={FhirConstant.responseNoContentHeaders(DeletedResourceVersion.toString())}
-                    contentTypeElement={this.props.acceptResponseElement}
-                    acceptElement={null}
-                    color={Color}
-                />
-            )
-        }
-
+        
         const getBodyBadRequestExampleResource = (FormatType) => {
             if (FormatType === FormatSupport.FormatType.JSON) {
                 return FhirResourceExampleGenerator.getJsonOperationOutcome();
@@ -143,6 +134,21 @@ export default class RestDeleteByIdComponent extends React.Component {
             )
         }
        
+        const getStatusPreconditionFailedComponent = () => {
+            const HttpStatus = HttpConstant.getStatusCodeByNumber('412');
+            return (
+                <RestHttpStatusComponent
+                    userMessage={<div>
+                        <p>No resources are deleted as either no search parameters were supplied or a supplied search parameters was not understood by the server.</p>
+                    </div>}
+                    statusNumber={HttpStatus.number}
+                    statusText={HttpStatus.description}
+                    statusColor={HttpStatus.color}                    
+                />
+            )
+
+        }
+
         const getStatusBadRequestComponent = () => {
             const HttpStatus = HttpConstant.getStatusCodeByNumber('400');
             return (
@@ -163,31 +169,49 @@ export default class RestDeleteByIdComponent extends React.Component {
 
         const getStatusComponentArray = () => {
             const NoContent = getStatusNoContentComponent();
+            const PreconditionFailed = getStatusPreconditionFailedComponent();
             const Bad = getStatusBadRequestComponent()
 
-            return { NoContent, Bad }
+            return { NoContent, PreconditionFailed, Bad }
         }
 
 
 
         // ================= Render Table Body Setup ===========================================================
 
+        const getDeleteSearchTableDescription = () => {
+            return (
+                <Table.Row>
+                    <Table.Cell colSpan='16'>
+                        <p>Delete an existing resource based on some selection criteria, rather than by a specific logical id.
+                            To accomplish this, the client issues an HTTP DELETE as shown:</p>
+                        <p><code><b>DELETE:</b>{`/${this.props.resourceName}?{search parameters}`}</code></p>
+                        <p>When the server processes this delete, it performs a search as specified using the standard search
+                            facilities for the resource type. The action it takes depends on how many matches are found:</p>
+                        <List bulleted>
+                            <List.Item><b>No matches or One match:</b> The server performs an ordinary delete on the matching resource</List.Item>                            
+                            <List.Item><b>Multiple matches:</b> The servers deletes all the matching resources.</List.Item>
+                        </List>
+                        <p>This server also has a extra rule not documented in the FHIR specification. This delete operation must be given at least one
+                            resource defined search parameter to work and all parameters must be understood by the server. If not a HTTP status code
+                            of 412 Precondition Failed will be returned.<br /></p>                            
+                    </Table.Cell>
+                </Table.Row>
+            )
+        }
 
-        const renderGetSearchTableBody = (Expand) => {
+        const renderDeleteSearchTableBody = (Expand) => {
             if (Expand) {
                 const StatusComponentArray = getStatusComponentArray();
                 return (
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell colSpan='16'>{Description}</Table.Cell>
-                        </Table.Row>
+                        {getDeleteSearchTableDescription()}
                         <Table.Row>
                             <Table.Cell colSpan='16'>
                                 <RequestComponent
                                     exampleComponet={getRequestExampleURL()}
                                     headersComponent={getRequestHttpHeadersComponent()}
-                                    // SearchParametersComponent={getRequestSearchParametersComponent()}
-                                    // bodyComponent={getRequestBodyComponent()}
+                                    SearchParametersComponent={getRequestSearchParametersComponent()}                                    
                                 />
                             </Table.Cell>
                         </Table.Row>
@@ -217,11 +241,11 @@ export default class RestDeleteByIdComponent extends React.Component {
 
         return (
             <Expandable_Table
-                tableHeadingComponent={renderTableHeader(VerbName, VerbColor, this.props.resourceName)}
+                tableHeadingComponent={renderTableHeader(VerbName, VerbColor, VerbPath)}
                 tableHeadingTitle={VerbName}
                 tableColorType={VerbColor}
                 tableColorInverted={false}
-                tableRowsFunction={renderGetSearchTableBody}
+                tableRowsFunction={renderDeleteSearchTableBody}
             />
         )
     }
