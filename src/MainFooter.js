@@ -7,9 +7,12 @@ class MainFooter extends React.Component{
     render() {
         return (           
             <Segment
+            // basic    
                 inverted
                 vertical
-                style={{ margin: '5em 0em 0em', padding: '5em 0em' }}>
+                //              Top Right Bottom Left
+                // style={{ margin: '5em 0em 0em 0em', padding: '5em 0em 0em 0em' }}
+            >
                 
                 <Container textAlign='center'>
                     <Grid divided inverted stackable centered>

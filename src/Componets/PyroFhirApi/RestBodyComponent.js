@@ -15,28 +15,28 @@ import { vs } from 'react-syntax-highlighter/styles/hljs';
 import Expandable_Table from '../Reusable/Table/Expandable_Table'
 
 export default class RestBodyComponent extends React.Component {
-    
-    static propTypes = {        
-        resourceName: PropTypes.string.isRequired,  
-        resourceData: PropTypes.string.isRequired,  
+
+    static propTypes = {
+        resourceName: PropTypes.string.isRequired,
+        resourceData: PropTypes.string.isRequired,
         formatType: PropTypes.object.isRequired,
         userMessage: PropTypes.element,
         isBundleResource: PropTypes.bool,
         color: PropTypes.string,
     }
 
-    static defaultProps = {        
+    static defaultProps = {
         isBundleResource: false,
     }
 
     constructor(props) {
-        super(props);       
+        super(props);
     }
 
     // static SupportedSyntaxLanguages = { json: 'json', xml: 'xml' };
 
     render() {
-        
+
         const resolveExampleResource = () => {
             let RenderSyntaxLanguage;
             //Resolve and setup for requested Syntac Language
@@ -48,33 +48,33 @@ export default class RestBodyComponent extends React.Component {
                 RenderSyntaxLanguage = FormatSupport.FormatType.XML
             } else {
                 return `unkown props syntaxLanguage of ${this.props.formatType.toString()}, expected [${FormatSupport.FormatType.JSON.code}|${FormatSupport.FormatType.XML.code}] `;
-            }            
+            }
 
             return (
                 <SyntaxHighlighter
-                language={RenderSyntaxLanguage.code}
-                style={vs}
-                wrapLines={true}
-                showLineNumbers >               
-                {this.props.resourceData}
-            </SyntaxHighlighter>
+                    language={RenderSyntaxLanguage.code}
+                    style={vs}
+                    wrapLines={true}
+                    showLineNumbers >
+                    {this.props.resourceData}
+                </SyntaxHighlighter>
             )
-        }        
+        }
 
-        const resolveMessage =() => {
+        const resolveMessage = () => {
             if (this.props.isBundleResource) {
                 return (
                     <div>
-                      <p>Please refer to the FHIR specification for a detailed docuemntation on how Bundle resources are structured. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/bundle.html`} display={'Go-to FHIR Specification for the Bundle resource'} /></p>                        
-                      <p>Or click here to refer to the FHIR specification for detailed docuemntation about {this.props.resourceName} resources. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${this.props.resourceName}.html`} display={`Go-to FHIR Specification for the ${this.props.resourceName} resource`}/></p>
+                        <p>Please refer to the FHIR specification for a detailed docuemntation on how Bundle resources are structured. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/bundle.html`} display={'Go-to FHIR Specification for the Bundle resource'} /></p>
+                        <p>Or click here to refer to the FHIR specification for detailed docuemntation about {this.props.resourceName} resources. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${this.props.resourceName}.html`} display={`Go-to FHIR Specification for the ${this.props.resourceName} resource`} /></p>
                     </div>
                 )
-            } else {                
-                return <p>Please refer to the FHIR specification for a detailed docuemntation of how to structure a {this.props.resourceName} resource. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${this.props.resourceName}.html`} display={`Go-to FHIR Specification for the ${this.props.resourceName} resource`}/></p>
+            } else {
+                return <p>Please refer to the FHIR specification for a detailed docuemntation of how to structure a {this.props.resourceName} resource. <br /><WebLink url={`${FhirConstant.STU3_SpecWebsiteUrl}/${this.props.resourceName}.html`} display={`Go-to FHIR Specification for the ${this.props.resourceName} resource`} /></p>
             }
         }
 
-        const resolveExampleMessage =() => {
+        const resolveExampleMessage = () => {
             if (!isNil(this.props.userMessage)) {
                 return (
                     <Table.Row colSpan='3'>
@@ -97,14 +97,14 @@ export default class RestBodyComponent extends React.Component {
                             <Message
                                 icon='info'
                                 content={resolveMessage()}
-                            />                            
+                            />
                         </Table.Cell>
-                    </Table.Row>
+                    </Table.Row>                    
                     <Table.Row colSpan='3'>
-                        <Table.Cell colSpan='3' width='16' verticalAlign='top' >                            
+                        <Table.Cell colSpan='3' width='16' verticalAlign='top' >
                             <Grid>
-                                <Grid.Row only='tablet computer' >
-                                    <div style={{ width: '800px' }}>
+                                <Grid.Row only='computer' >
+                                <div style={{ width: '1000px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
                                         {resolveExampleResource()}
                                     </div>
                                 </Grid.Row>
@@ -112,21 +112,33 @@ export default class RestBodyComponent extends React.Component {
                         </Table.Cell>
                     </Table.Row>
                     <Table.Row colSpan='3'>
-                        <Table.Cell colSpan='3' width='16' verticalAlign='top' >                           
+                        <Table.Cell colSpan='3' width='16' verticalAlign='top' >
                             <Grid>
-                            <Grid.Row only='mobile' >
-                                <div style={{ width: '500px' }}>
-                                    {resolveExampleResource()}
-                                </div>
-                            </Grid.Row>
-                        </Grid>
+                                <Grid.Row only='tablet' >
+                                <div style={{ width: '650px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
+                                        {resolveExampleResource()}
+                                    </div>
+                                </Grid.Row>
+                            </Grid>
+                        </Table.Cell>
+                    </Table.Row>
+                    <Table.Row colSpan='3'>
+                        <Table.Cell colSpan='3' width='16' verticalAlign='top' >
+                            <Grid >
+                                <Grid.Row only='mobile'>
+                                    <div style={{ width: '250px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
+                                        {resolveExampleResource()}
+                                    </div>
+                                </Grid.Row>
+                            </Grid>
                         </Table.Cell>
                     </Table.Row>
                 </Table.Body>
             )
 
         };
-
+        {/* Top Right Bottom Left */ }
+        //style={{ width: '250px' }}
         const renderParametersRowsBody = (Expand) => {
             if (Expand) {
                 return renderParameterRows()
@@ -138,7 +150,7 @@ export default class RestBodyComponent extends React.Component {
         return (
             <Expandable_Table
                 tableHeadingTitle='Body'
-                tableHeadingIconType='code'                
+                tableHeadingIconType='code'
                 tableRowsFunction={renderParametersRowsBody}
                 tableColorType={this.props.color}
             />

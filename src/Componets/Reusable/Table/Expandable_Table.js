@@ -80,7 +80,7 @@ class Expandable_Table extends React.Component {
 
 
         return (
-            <Table padded color={this.props.tableColorType} inverted={this.props.tableColorInverted} >
+            <Table  color={this.props.tableColorType} inverted={this.props.tableColorInverted} >
                 <Table.Header>
                     <Table.Row positive={this.state.rowActive} onMouseOver={this.mouseOverExpandEvent} onMouseOut={this.mouseOutRowEvent} onClick={this.onClickExpand}>
                         <Table.HeaderCell colSpan='2' singleLine>

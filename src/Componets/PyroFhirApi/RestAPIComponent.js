@@ -92,22 +92,20 @@ export default class RestAPIComponent extends React.Component {
                     acceptResponseElement={this.props.acceptResponseElement}
                 />
                 <Divider />
-                <Grid columns={1}>
-                    <Grid.Column width={16}>
-                        <RestPostComponent
-                            resourceName={_resourceName}
-                            endpointUrl={this.props.endpointUrl}
-                            searchParameters={_searchParameters}
-                            contentTypeElement={this.props.contentTypeElement}
-                            acceptElement={this.props.acceptElement}
-                            acceptResponseElement={this.props.acceptResponseElement}
-                        />
-                    </Grid.Column>
-                </Grid>
+
+                <RestPostComponent
+                    resourceName={_resourceName}
+                    endpointUrl={this.props.endpointUrl}
+                    searchParameters={_searchParameters}
+                    contentTypeElement={this.props.contentTypeElement}
+                    acceptElement={this.props.acceptElement}
+                    acceptResponseElement={this.props.acceptResponseElement}
+                />
+
                 <Divider />
                 <RestPutBySearchComponent
                     resourceName={_resourceName}
-                    endpointUrl={this.props.endpointUrl}        
+                    endpointUrl={this.props.endpointUrl}
                     searchParameters={_searchParameters}
                     contentTypeElement={this.props.contentTypeElement}
                     acceptElement={this.props.acceptElement}
@@ -116,27 +114,27 @@ export default class RestAPIComponent extends React.Component {
                 <Divider />
                 <RestPutByIdComponent
                     resourceName={_resourceName}
-                    endpointUrl={this.props.endpointUrl}                    
+                    endpointUrl={this.props.endpointUrl}
                     contentTypeElement={this.props.contentTypeElement}
                     acceptElement={this.props.acceptElement}
                     acceptResponseElement={this.props.acceptResponseElement}
                 />
                 <Divider />
                 <RestDeleteByIdComponent
-                   resourceName={_resourceName}
-                   endpointUrl={this.props.endpointUrl}                       
-                   contentTypeElement={this.props.contentTypeElement}
-                   acceptElement={this.props.acceptElement}
-                   acceptResponseElement={this.props.acceptResponseElement}
+                    resourceName={_resourceName}
+                    endpointUrl={this.props.endpointUrl}
+                    contentTypeElement={this.props.contentTypeElement}
+                    acceptElement={this.props.acceptElement}
+                    acceptResponseElement={this.props.acceptResponseElement}
                 />
                 <Divider />
                 <RestDeleteBySearchComponent
-                   resourceName={_resourceName}
-                   endpointUrl={this.props.endpointUrl}        
-                   searchParameters={_searchParameters}
-                   contentTypeElement={this.props.contentTypeElement}
-                   acceptElement={this.props.acceptElement}
-                   acceptResponseElement={this.props.acceptResponseElement}
+                    resourceName={_resourceName}
+                    endpointUrl={this.props.endpointUrl}
+                    searchParameters={_searchParameters}
+                    contentTypeElement={this.props.contentTypeElement}
+                    acceptElement={this.props.acceptElement}
+                    acceptResponseElement={this.props.acceptResponseElement}
                 />
             </Segment>
         )

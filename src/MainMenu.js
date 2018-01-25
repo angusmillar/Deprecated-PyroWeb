@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 class MainMenu extends React.Component{    
     render() {
         return (                       
-            <Menu fixed='top' inverted>                
+            <Menu fixed='top' inverted >                
                 <Container>
                     <Menu.Item as={Link} to='/' header>
                         <Image
