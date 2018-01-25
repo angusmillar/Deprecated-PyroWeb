@@ -99,32 +99,20 @@ export default class RestBodyComponent extends React.Component {
                                 content={resolveMessage()}
                             />
                         </Table.Cell>
-                    </Table.Row>                    
+                    </Table.Row>
                     <Table.Row colSpan='3'>
                         <Table.Cell colSpan='3' width='16' verticalAlign='top' >
                             <Grid>
                                 <Grid.Row only='computer' >
-                                <div style={{ width: '1000px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
+                                    <div style={{ width: '1000px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
                                         {resolveExampleResource()}
                                     </div>
                                 </Grid.Row>
-                            </Grid>
-                        </Table.Cell>
-                    </Table.Row>
-                    <Table.Row colSpan='3'>
-                        <Table.Cell colSpan='3' width='16' verticalAlign='top' >
-                            <Grid>
                                 <Grid.Row only='tablet' >
-                                <div style={{ width: '650px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
+                                    <div style={{ width: '650px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
                                         {resolveExampleResource()}
                                     </div>
                                 </Grid.Row>
-                            </Grid>
-                        </Table.Cell>
-                    </Table.Row>
-                    <Table.Row colSpan='3'>
-                        <Table.Cell colSpan='3' width='16' verticalAlign='top' >
-                            <Grid >
                                 <Grid.Row only='mobile'>
                                     <div style={{ width: '250px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
                                         {resolveExampleResource()}
@@ -132,7 +120,7 @@ export default class RestBodyComponent extends React.Component {
                                 </Grid.Row>
                             </Grid>
                         </Table.Cell>
-                    </Table.Row>
+                    </Table.Row>                    
                 </Table.Body>
             )
 
