@@ -39,7 +39,7 @@ export default class RestDeleteBySearchComponent extends React.Component {
 
         const VerbName = 'DELETE';
         const VerbColor = 'red';
-        const VerbPath = `/${this.props.resourceName}?{search}`;
+        const VerbPath = `${this.props.resourceName}?{search}`;
         
         // ================= Request Setup ===========================================================
 
