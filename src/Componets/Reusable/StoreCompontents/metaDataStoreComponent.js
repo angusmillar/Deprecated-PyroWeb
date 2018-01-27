@@ -84,20 +84,10 @@ export default class MetaDataStoreComponent extends React.Component {
                             </Header.Content>
                         </Header>
                     </Grid.Column>
-                </Grid.Row>
-                {/* <Divider hidden /> */}
-                <Grid.Row only='tablet computer' >
-                    <Grid.Column width={16} >
-                        {/* <div style={{ width: '1000px' }}> */}
-                            {Body}
-                        {/* </div> */}
-                    </Grid.Column>
-                </Grid.Row>
-                <Grid.Row only='mobile' >
-                    <Grid.Column width={16} >
-                        {/* <div style={{ width: '640px' }}> */}
-                            {Body}
-                        {/* </div> */}
+                </Grid.Row>                
+                <Grid.Row>
+                    <Grid.Column width={16} >                        
+                            {Body}                        
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
