@@ -169,7 +169,7 @@ export default class PyroServerApi extends React.Component {
         // });
 
         const HeadingSize = 'medium';
-        const HeadingColor = 'black';
+        const HeadingColor = 'grey';
         const serviceRootUrl = FhirResource.implementation.url;
         const apiDescription = FhirResource.implementation.description;
         const apiContacts = FhirResource.contact;
@@ -179,10 +179,6 @@ export default class PyroServerApi extends React.Component {
         const AcceptResponseElement = renderResponseAcceptDropdown();
         const EndpointUrl = renderEndpointUrl(serviceRootUrl);
 
-
-
-
-
         return (
             <div>
                 <Segment>
@@ -190,11 +186,11 @@ export default class PyroServerApi extends React.Component {
                     <Grid.Row columns={16} stretched>
                         <Grid.Column width={16}>
                             <Header color={HeadingColor} dividing size={HeadingSize}>Implementation Description</Header>
-                            <br />
+                            {/* <br /> */}
                         </Grid.Column>
-                        <Grid.Column width={3} floated='left' >
+                        {/* <Grid.Column width={3} floated='left' >
                             <b>Description</b>
-                        </Grid.Column>
+                        </Grid.Column> */}
                         <Grid.Column width={13} floated='left'>
                             <p>{apiDescription}</p>
                         </Grid.Column>
@@ -203,7 +199,7 @@ export default class PyroServerApi extends React.Component {
                     <Grid.Row columns={16} stretched>
                         <Grid.Column width={16}>
                             <Header color={HeadingColor} dividing size={HeadingSize} >FHIR endpoint</Header>
-                            <br />
+                            {/* <br /> */}
                         </Grid.Column>
                         <Grid.Column width={3} floated='left' >
                             <b>Schema</b>
@@ -237,22 +233,22 @@ export default class PyroServerApi extends React.Component {
                     <Grid.Row columns={16} stretched>
                         <Grid.Column width={16}>
                             <Header color={HeadingColor} dividing size={HeadingSize}>Content-Type &amp; Accept Headers</Header>
-                            <br />
+                            {/* <br /> */}
                         </Grid.Column>
                         <Grid.Column width={3} floated='left'>
                             <b>Content-Type</b>
                         </Grid.Column>
-                        <Grid.Column width={7} floated='left' >
+                        <Grid.Column width={5} floated='left' >
                             {ContentTypeElement}
                         </Grid.Column>
-                        <Grid.Column width={6} floated='left'>
+                        <Grid.Column width={8} floated='left'>
                             <p>The format of the data you are sending to the server</p>
                         </Grid.Column>
 
                         <Grid.Column width={3} floated='left'>
                             <b>Accept</b>
                         </Grid.Column>
-                        <Grid.Column width={7} floated='left' >
+                        <Grid.Column width={5} floated='left' >
                             <Dropdown
                                 options={this.formatArray}
                                 floating
@@ -260,7 +256,7 @@ export default class PyroServerApi extends React.Component {
                                 onChange={this.handleAcceptChange}
                             />
                         </Grid.Column>
-                        <Grid.Column width={6} floated='left'>
+                        <Grid.Column width={8} floated='left'>
                             <p>The format you are asking the server to return</p>
                         </Grid.Column>
                     </Grid.Row>
@@ -274,9 +270,22 @@ export default class PyroServerApi extends React.Component {
                             {renderContact(apiContacts)}
                         </Grid.Column>
                     </Grid.Row>                
-                </Grid>
+
+                    <Grid.Row columns={16} stretched>
+                        <Grid.Column width={16}>
+                            <Header color={HeadingColor} dividing size={HeadingSize}>Resources</Header>
+                            <br />
+                        </Grid.Column>
+                        <Grid.Column width={16} >
+                          {renderResources(apiResources)}
+                        </Grid.Column>
+                    </Grid.Row>                
+
+
+                    </Grid>
+
                 </Segment>
-                {renderResources(apiResources)}
+                
             </div>
         )
 
