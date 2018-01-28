@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { Link } from 'react-router-dom'
-import { Grid, Header, Image, Icon, List } from 'semantic-ui-react';
+import { Grid, Header, Image, Icon, List, Message } from 'semantic-ui-react';
 import Segment from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
 import FhirServerConstant from './Constants/FhirServerConstant';
 import FhirConstant from './Constants/FhirConstant';
 import WebLink from './Componets/Reusable/WebLink/WebLink';
-// import GridColumn from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
 
 export default class Home extends React.Component {
 
@@ -24,10 +22,10 @@ export default class Home extends React.Component {
     }
 
     render() {
-        return (             
+        return (
             <Grid stackable >
-                
-                <Grid.Row  columns={16} style={{ marginLeft: '2em' }} >                
+
+                <Grid.Row columns={16} style={{ marginLeft: '2em' }} >
                     <Grid.Column width={2} >
                         <Image src={this.props.siteIcon} size='tiny' verticalAlign='middle' />
                     </Grid.Column>
@@ -36,9 +34,9 @@ export default class Home extends React.Component {
                             Pyro Server
                             </Header>
                         FHIR Server Implementation
-                        </Grid.Column>                
+                        </Grid.Column>
                 </Grid.Row>
-                
+
 
                 <Grid.Row>
                     <Grid.Column width={16} >
@@ -73,8 +71,16 @@ export default class Home extends React.Component {
                                 <List.Item>Operation: Validate a resource</List.Item>
                                 <List.Item>Bundle Transactions</List.Item>
                             </List>
-                            <p>The server supports CRUD, vread and all search parameters and resources as of the release.</p>
-                            <p>This server is used for testing only and its resources may be removed and reset at any time.</p>
+                            <Message
+                                info
+                                icon>
+                                <Icon name='warning sign' />
+                                <Message.Content>
+                                  <Message.Header>Warning</Message.Header>
+                                    <p>This server is used for testing only and its resources may be removed or reset at any time.</p>
+                                </Message.Content>    
+                            </Message>
+
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -86,11 +92,11 @@ export default class Home extends React.Component {
                                 <Header.Content>
                                     Who am I
                                 </Header.Content>
-                            </Header>  
-                            <p><WebLink newTab={true} url={'https://www.linkedin.com/in/angus-millar-64298342/'} display={'Angus Millar'}/> I&#39;m an Australian integration specialist with a passion for HL7 integration and informatics.</p>
-                            <p>My passion grew from many years working in pathology laboratories later moving into Laboratory Information Systems (LIS) support and development at <WebLink newTab={true} url={'http://www.kestral.com.au/'} display={'Kestral Computing'}/>.</p>
-                            <p>More recently I have worked on EMR integration at QLD Health and currently, work as a Solution Architect at the <WebLink newTab={true} url={'https://www.digitalhealth.gov.au/'} display={'Australian Digital Health Agency'}/> (formally known as NeHTA).</p>
-                            <p>I regularly attend the Australian FHIR Connectathons and run the beginner streams helping educate newcomers to the FHIR specification.</p>                                                        
+                            </Header>
+                            <p><WebLink newTab={true} url={'https://www.linkedin.com/in/angus-millar-64298342/'} display={'Angus Millar'} /> I&#39;m an Australian integration specialist with a passion for HL7 integration and informatics.
+                            My passion grew from many years working in pathology laboratories later moving into Laboratory Information Systems (LIS) support and development at <WebLink newTab={true} url={'http://www.kestral.com.au/'} display={'Kestral Computing'} />.
+                            More recently I have worked on EMR integration at QLD Health and currently, work as a Solution Architect at the <WebLink newTab={true} url={'https://www.digitalhealth.gov.au/'} display={'Australian Digital Health Agency'} /> (formally known as NeHTA).
+                            I regularly attend the Australian FHIR Connectathons and run the beginner streams helping educate newcomers to the FHIR specification.</p>
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
