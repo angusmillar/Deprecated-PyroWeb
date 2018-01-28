@@ -4,7 +4,7 @@ import MainMenu from 'MainMenu';
 import MainFooter from 'MainFooter';
 import Home from 'Home';
 import FluxTest from 'FluxTest';
-import { Grid, Container } from 'semantic-ui-react'
+// import { Grid, Container } from 'semantic-ui-react'
 import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/MetaDataStoreComponent';
 
 import AppActionsMetadata from 'Actions/AppActionsMetadata';
@@ -68,12 +68,14 @@ export default class MainLayoutTwo extends React.Component {
             <Router>
                 <div>
                     <MainMenu siteIcon={this.props.siteIcon} />
-                    <div style={{ margin: '5em 0em 2em 0em', padding: '0em 0.5em 0em 0.5em' }}>
+                    <div style={{ margin: '5em 0em 2em 0em', padding: '0em 3em 0em 3em' }}>
+                        <div>
                             <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />
                             <Route exact path="/FluxTest-content" component={FluxTest} />
                             <Route exact path="/metadata-content" render={(props) => renderFhirServerConformanceStatmentComponent(props, MetaDataStoreComponent)} />
                             <Route exact path="/pyro-fhir-api" render={(props) => renderFhirServerApiComponent(props, MetaDataStoreComponent)} />
-                    </div>    
+                        </div>
+                    </div>
                     <MainFooter siteIcon={this.props.siteIcon} />
                 </div>
             </Router>
