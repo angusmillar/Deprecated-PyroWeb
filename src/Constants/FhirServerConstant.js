@@ -8,7 +8,8 @@ export default class FhirServerConstant {
     // static PrimaryFhirServerEndpoint = 'http://nowherex'
 
     // PyroHealth
-    static PrimaryFhirServerEndpoint = 'https://pyrohealth.net/test/stu3/fhir'
+    // static PrimaryFhirServerEndpoint = 'https://pyrohealth.net/test/stu3/fhir'
+    static PrimaryFhirServerEndpoint = 'https://stu3.test.pyrohealth.net/fhir'
     static RequestTimeout = 40000;
 
 }
