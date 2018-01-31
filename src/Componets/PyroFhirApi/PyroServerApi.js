@@ -16,11 +16,10 @@ export default class PyroServerApi extends React.Component {
 
     static propTypes = {
         ConformanceStatmentResource: PropTypes.object.isRequired,
-        apiSchema: PropTypes.array.isRequired,
     }
 
     static defaultProps = {
-        apiSchema: [{ key: 'https', text: 'https', value: 'https' }, { key: 'http', text: 'http', value: 'http' }],
+        // apiSchema: [{ key: 'https', text: 'https', value: 'https' }, { key: 'http', text: 'http', value: 'http' }],
     }
 
     constructor(props) {
@@ -34,16 +33,10 @@ export default class PyroServerApi extends React.Component {
             { key: FhirConstant.DefaultFhirXmlFormat, text: FhirConstant.DefaultFhirXmlFormat, value: FhirConstant.DefaultFhirXmlFormat }],
 
             this.state = {
-                selectedSchema: this.props.apiSchema[0],
                 selectedContentType: find(this.formatArray, ['value', FhirConstant.DefaultFhirJsonFormat]).value,
                 selectedAccept: find(this.formatArray, ['value', FhirConstant.DefaultFhirJsonFormat]).value,
                 selectedResponseAccept: find(this.AcceptResponseformatArray, ['value', FhirConstant.DefaultFhirJsonFormat]).value,
             };
-    }
-
-    handleSchemaChange = (e, { value }) => {
-        const x = find(this.props.apiSchema, ['value', value])
-        this.setState(() => ({ selectedSchema: x }));
     }
 
     handleContentTypeChange = (e, { value }) => {
@@ -90,16 +83,6 @@ export default class PyroServerApi extends React.Component {
                         )
                     }
                     ))
-            }
-        };
-
-        const renderEndpointUrl = (ServiceRootUrl) => {
-            if (isNil(this.props.apiSchema) || isNil(ServiceRootUrl)) {
-                return null
-            }
-            else {
-                const FullUrl = `${this.state.selectedSchema.value}://${ServiceRootUrl}`;
-                return FullUrl;
             }
         };
 
@@ -162,12 +145,6 @@ export default class PyroServerApi extends React.Component {
         };
 
         const FhirResource = this.props.ConformanceStatmentResource;
-        const currentSchemaValue = this.state.selectedSchema;
-        // const currentContentType = this.state.selectedContentType;
-        // const formatArray = transform(FhirResource.format, (result, form) => {
-        //     result.push({ key: form, text: form, value: form });
-        // });
-
         const HeadingSize = 'medium';
         const HeadingColor = 'grey';
         const serviceRootUrl = FhirResource.implementation.url;
@@ -177,115 +154,89 @@ export default class PyroServerApi extends React.Component {
         const ContentTypeElement = renderContentTypeDropdown();
         const AcceptElement = renderAcceptDropdown();
         const AcceptResponseElement = renderResponseAcceptDropdown();
-        const EndpointUrl = renderEndpointUrl(serviceRootUrl);
+        const EndpointUrl = serviceRootUrl;
 
         return (
             <div>
                 <Segment>
-                <Grid stackable>
-                    <Grid.Row columns={16} stretched>
-                        <Grid.Column width={16}>
-                            <Header color={HeadingColor} dividing size={HeadingSize}>Implementation Description</Header>
-                            {/* <br /> */}
-                        </Grid.Column>
-                        {/* <Grid.Column width={3} floated='left' >
-                            <b>Description</b>
-                        </Grid.Column> */}
-                        <Grid.Column width={13} floated='left'>
-                            <p>{apiDescription}</p>
-                        </Grid.Column>
-                    </Grid.Row>
+                    <Grid stackable>
+                        <Grid.Row columns={16} stretched>
+                            <Grid.Column width={16}>
+                                <Header color={HeadingColor} dividing size={HeadingSize}>Implementation Description</Header>
+                            </Grid.Column>
+                            <Grid.Column width={13} floated='left'>
+                                <p>{apiDescription}</p>
+                            </Grid.Column>
+                        </Grid.Row>
 
-                    <Grid.Row columns={16} stretched>
-                        <Grid.Column width={16}>
-                            <Header color={HeadingColor} dividing size={HeadingSize} >FHIR endpoint</Header>
-                            {/* <br /> */}
-                        </Grid.Column>
-                        <Grid.Column width={3} floated='left' >
-                            <b>Schema</b>
-                        </Grid.Column>
-                        <Grid.Column width={13} floated='left'>
-                            <Dropdown
-                                options={this.props.apiSchema}
-                                value={currentSchemaValue.value}
-                                onChange={this.handleSchemaChange} />
-                        </Grid.Column>
-                        <Grid.Column width={3} floated='left' >
-                            <b>Endpoint Url</b>
-                        </Grid.Column>
-                        <Grid.Column width={13} floated='left'>
-                            <Popup
-                                trigger={<code>{EndpointUrl}</code>}
-                                content='The FHIR server&#39;s service base Url with the schema pre-pended'
-                            />
-                        </Grid.Column>
-                        <Grid.Column width={3} floated='left'>
-                            <b>Service base Url</b>
-                        </Grid.Column>
-                        <Grid.Column width={13} floated='left'>
-                            <Popup
-                                trigger={<code>{serviceRootUrl}</code>}
-                                content='The FHIR server&#39;s service base Url'
-                            />
-                        </Grid.Column>
-                    </Grid.Row>
+                        <Grid.Row columns={16} stretched>
+                            <Grid.Column width={16}>
+                                <Header color={HeadingColor} dividing size={HeadingSize} >FHIR endpoint</Header>
+                            </Grid.Column>
+                            <Grid.Column width={3} floated='left' >
+                                <b>Endpoint Url</b>
+                            </Grid.Column>
+                            <Grid.Column width={13} floated='left'>
+                                <Popup
+                                    trigger={<code>{EndpointUrl}</code>}
+                                    content='The FHIR server&#39;s service base Url with the schema pre-pended'
+                                />
+                            </Grid.Column>
+                        </Grid.Row>
 
-                    <Grid.Row columns={16} stretched>
-                        <Grid.Column width={16}>
-                            <Header color={HeadingColor} dividing size={HeadingSize}>Content-Type &amp; Accept Headers</Header>
-                            {/* <br /> */}
-                        </Grid.Column>
-                        <Grid.Column width={3} floated='left'>
-                            <b>Content-Type</b>
-                        </Grid.Column>
-                        <Grid.Column width={5} floated='left' >
-                            {ContentTypeElement}
-                        </Grid.Column>
-                        <Grid.Column width={8} floated='left'>
-                            <p>The format of the data you are sending to the server</p>
-                        </Grid.Column>
+                        <Grid.Row columns={16} stretched>
+                            <Grid.Column width={16}>
+                                <Header color={HeadingColor} dividing size={HeadingSize}>Content-Type &amp; Accept Headers</Header>
+                                {/* <br /> */}
+                            </Grid.Column>
+                            <Grid.Column width={3} floated='left'>
+                                <b>Content-Type</b>
+                            </Grid.Column>
+                            <Grid.Column width={5} floated='left' >
+                                {ContentTypeElement}
+                            </Grid.Column>
+                            <Grid.Column width={8} floated='left'>
+                                <p>The format of the data you are sending to the server</p>
+                            </Grid.Column>
 
-                        <Grid.Column width={3} floated='left'>
-                            <b>Accept</b>
-                        </Grid.Column>
-                        <Grid.Column width={5} floated='left' >
-                            <Dropdown
-                                options={this.formatArray}
-                                floating
-                                value={this.state.selectedAccept}
-                                onChange={this.handleAcceptChange}
-                            />
-                        </Grid.Column>
-                        <Grid.Column width={8} floated='left'>
-                            <p>The format you are asking the server to return</p>
-                        </Grid.Column>
-                    </Grid.Row>
+                            <Grid.Column width={3} floated='left'>
+                                <b>Accept</b>
+                            </Grid.Column>
+                            <Grid.Column width={5} floated='left' >
+                                <Dropdown
+                                    options={this.formatArray}
+                                    floating
+                                    value={this.state.selectedAccept}
+                                    onChange={this.handleAcceptChange}
+                                />
+                            </Grid.Column>
+                            <Grid.Column width={8} floated='left'>
+                                <p>The format you are asking the server to return</p>
+                            </Grid.Column>
+                        </Grid.Row>
 
-                    <Grid.Row columns={16} stretched>
-                        <Grid.Column width={16}>
-                            <Header color={HeadingColor} dividing size={HeadingSize}>Contact Developer</Header>
-                            <br />
-                        </Grid.Column>
-                        <Grid.Column width={16} >
-                            {renderContact(apiContacts)}
-                        </Grid.Column>
-                    </Grid.Row>                
+                        <Grid.Row columns={16} stretched>
+                            <Grid.Column width={16}>
+                                <Header color={HeadingColor} dividing size={HeadingSize}>Contact Developer</Header>
+                                <br />
+                            </Grid.Column>
+                            <Grid.Column width={16} >
+                                {renderContact(apiContacts)}
+                            </Grid.Column>
+                        </Grid.Row>
 
-                    <Grid.Row columns={16} stretched>
-                        <Grid.Column width={16}>
-                            <Header color={HeadingColor} dividing size={HeadingSize}>Resources</Header>
-                            <br />
-                        </Grid.Column>
-                        <Grid.Column width={16} >
-                          {renderResources(apiResources)}
-                        </Grid.Column>
-                    </Grid.Row>                
-
+                        <Grid.Row columns={16} stretched>
+                            <Grid.Column width={16}>
+                                <Header color={HeadingColor} dividing size={HeadingSize}>Resources</Header>
+                                <br />
+                            </Grid.Column>
+                            <Grid.Column width={16} >
+                                {renderResources(apiResources)}
+                            </Grid.Column>
+                        </Grid.Row>
 
                     </Grid>
-
                 </Segment>
-                
             </div>
         )
 
