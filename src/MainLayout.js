@@ -4,7 +4,7 @@ import MainMenu from 'MainMenu';
 import MainFooter from 'MainFooter';
 import Home from 'Home';
 import FluxTest from 'FluxTest';
-// import { Grid, Container } from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
 import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/MetaDataStoreComponent';
 
 import AppActionsMetadata from 'Actions/AppActionsMetadata';
@@ -64,18 +64,18 @@ export default class MainLayoutTwo extends React.Component {
             return (<Component {...props} renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment} store={this.state.store} />)
         };
 
+        // Top Right Bottom Left
         return (
             <Router>
                 <div>
                     <MainMenu siteIcon={this.props.siteIcon} />
-                    <div style={{ margin: '5em 0em 2em 0em', padding: '0em 3em 0em 3em' }}>
-                        <div>
-                            <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />
-                            <Route exact path="/FluxTest-content" component={FluxTest} />
-                            <Route exact path="/metadata-content" render={(props) => renderFhirServerConformanceStatmentComponent(props, MetaDataStoreComponent)} />
-                            <Route exact path="/pyro-fhir-api" render={(props) => renderFhirServerApiComponent(props, MetaDataStoreComponent)} />
-                        </div>
-                    </div>
+                    <Container style={{ marginBottom: '5em', marginTop: '7em' }}>
+                        {/* <div style={{ margin: '5em 0em 2em 0em', padding: '0em 3em 0em 3em' }}> */}
+                        <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />
+                        <Route exact path="/FluxTest-content" component={FluxTest} />
+                        <Route exact path="/metadata-content" render={(props) => renderFhirServerConformanceStatmentComponent(props, MetaDataStoreComponent)} />
+                        <Route exact path="/pyro-fhir-api" render={(props) => renderFhirServerApiComponent(props, MetaDataStoreComponent)} />
+                    </Container>
                     <MainFooter siteIcon={this.props.siteIcon} />
                 </div>
             </Router>

@@ -104,12 +104,12 @@ export default class RestBodyComponent extends React.Component {
                         <Table.Cell colSpan='3' width='16' verticalAlign='top' >
                             <Grid>
                                 <Grid.Row only='computer' >
-                                    <div style={{ width: '1000px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
+                                    <div style={{ width: '800px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
                                         {resolveExampleResource()}
                                     </div>
                                 </Grid.Row>
                                 <Grid.Row only='tablet' >
-                                    <div style={{ width: '650px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
+                                    <div style={{ width: '580px', margin: '0em 0em 0em 0em', padding: '0em 0em 0em 0.5em' }}>
                                         {resolveExampleResource()}
                                     </div>
                                 </Grid.Row>

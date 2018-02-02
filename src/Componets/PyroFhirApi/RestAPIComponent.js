@@ -171,15 +171,25 @@ export default class RestAPIComponent extends React.Component {
                                     </Grid>
                                 </Popup>
                             </Grid.Column>
-                            <Grid.Column width={7}>
+                            {/* <Grid.Column width={7}>
                                 <span>
-                                    <Label horizontal color={'blue'}><code>{'GET'}</code></Label>
+                                    <Label size='tiny' color={'blue'}><code>{' '}</code></Label>
+                                    <Label size='tiny' color={'green'}><code>{' '}</code></Label>
+                                    <Label size='tiny' color={'orange'}><code>{' '}</code></Label>
+                                    <Label size='tiny' color={'red'}><code>{' '}</code></Label> */}
+
+                            {/* <Label horizontal color={'blue'}><code>{'GET'}</code></Label>
                                     <Label horizontal color={'green'}><code>{'POST'}</code></Label>
                                     <Label horizontal color={'orange'}><code>{'PUT'}</code></Label>
-                                    <Label horizontal color={'red'}><code>{'DELETE'}</code></Label>
-                                </span>
-                            </Grid.Column>
-                            <Grid.Column width={2} floated='right' textAlign='right'>
+                                    <Label horizontal color={'red'}><code>{'DELETE'}</code></Label> */}
+                            {/* </span>
+                            </Grid.Column> */}
+                            <Grid.Column width={9} floated='right' textAlign='right' verticalAlign='middle'>
+                                <Label size='tiny' color={'blue'}><code>{' '}</code></Label>
+                                <Label size='tiny' color={'green'}><code>{' '}</code></Label>
+                                <Label size='tiny' color={'orange'}><code>{' '}</code></Label>
+                                <Label size='tiny' color={'red'}><code>{' '}</code></Label>
+
                                 <Transition animation={this.state.animation} duration={this.state.duration} visible={this.state.visible}>
                                     <Icon name={this.state.expandIconType} size='large' color='grey' />
                                 </Transition>
@@ -206,15 +216,20 @@ export default class RestAPIComponent extends React.Component {
                                     </Grid>
                                 </Popup>
                             </Grid.Column>
-                            <Grid.Column width={7}>
+                            {/* <Grid.Column width={7}>
                                 <span>
                                     <Label horizontal color={'blue'}><code>{' '}</code></Label>
                                     <Label horizontal color={'green'}><code>{' '}</code></Label>
                                     <Label horizontal color={'orange'}><code>{' '}</code></Label>
                                     <Label horizontal color={'red'}><code>{' '}</code></Label>
                                 </span>
-                            </Grid.Column>
-                            <Grid.Column width={2} floated='right' textAlign='right'>
+                            </Grid.Column> */}
+                            <Grid.Column width={9} floated='right' textAlign='right' verticalAlign='middle'>
+                                <Label size='tiny' color={'blue'}><code>{' '}</code></Label>
+                                <Label size='tiny' color={'green'}><code>{' '}</code></Label>
+                                <Label size='tiny' color={'orange'}><code>{' '}</code></Label>
+                                <Label size='tiny' color={'red'}><code>{' '}</code></Label>
+
                                 <Transition animation={this.state.animation} duration={this.state.duration} visible={this.state.visible}>
                                     <Icon name={this.state.expandIconType} size='large' color='grey' />
                                 </Transition>
