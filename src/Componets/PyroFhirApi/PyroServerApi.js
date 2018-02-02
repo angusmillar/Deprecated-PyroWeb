@@ -6,11 +6,13 @@ import map from 'lodash/map';
 import transform from 'lodash/transform'
 import includes from 'lodash/includes';
 import toLower from 'lodash/toLower';
+import filter from 'lodash/filter';
 import { Grid, Dropdown, Header, Popup, Segment } from 'semantic-ui-react'
 
 import RestAPIComponent from './RestAPIComponent'
 import ContactDetails_Table from '../FhirComponent/ComplexType/ContactPoint/ContactDetails_Table'
 import FhirConstant from '../../Constants/FhirConstant';
+import Divider from 'semantic-ui-react/dist/commonjs/elements/Divider/Divider';
 
 export default class PyroServerApi extends React.Component {
 
@@ -19,13 +21,16 @@ export default class PyroServerApi extends React.Component {
     }
 
     static defaultProps = {
-        // apiSchema: [{ key: 'https', text: 'https', value: 'https' }, { key: 'http', text: 'http', value: 'http' }],
     }
 
     constructor(props) {
         super(props);
         this.formatArray = transform(this.props.ConformanceStatmentResource.format, (result, form) => {
             result.push({ key: form, text: form, value: form });
+        });
+
+        this.resourceNameArray = transform(this.props.ConformanceStatmentResource.rest[0].resource, (result, Resource) => {
+            result.push({ value: Resource.type, text: Resource.type, icon: 'tag' });
         });
 
         this.AcceptResponseformatArray = [
@@ -36,8 +41,13 @@ export default class PyroServerApi extends React.Component {
                 selectedContentType: find(this.formatArray, ['value', FhirConstant.DefaultFhirJsonFormat]).value,
                 selectedAccept: find(this.formatArray, ['value', FhirConstant.DefaultFhirJsonFormat]).value,
                 selectedResponseAccept: find(this.AcceptResponseformatArray, ['value', FhirConstant.DefaultFhirJsonFormat]).value,
+                selectedResourceFilterList: [],
             };
     }
+
+
+
+
 
     handleContentTypeChange = (e, { value }) => {
         this.setState(() => ({ selectedContentType: value }));
@@ -66,7 +76,19 @@ export default class PyroServerApi extends React.Component {
         this.setState(() => ({ selectedAccept: value, selectedResponseAccept: this.responseFormat(value) }));
     }
 
+    handleResourceFilterChange = (e, { value }) => {
+        this.setState(() => ({ selectedResourceFilterList: value }));
+    }
+
+
     render() {
+
+        // const resourceSelectList = () => {
+        //     return [               
+        //         { value: 'Patient', text: 'Patient' },
+        //         { value: 'Account', text: 'Account' },
+        //         { value: 'Observation', text: 'Observation' },]
+        // }
 
         const renderContact = (Contacts) => {
             if (isNil(Contacts)) {
@@ -91,23 +113,46 @@ export default class PyroServerApi extends React.Component {
                 return null
             }
             else {
-                // const ConentType = this.state.selectedContentType;
-                return (
-                    map(Resources, (Resource, Index) => {
-                        return (
-                            <RestAPIComponent
-                                key={Index}
-                                resource={Resource}
-                                endpointUrl={EndpointUrl}
-                                contentTypeElement={ContentTypeElement}
-                                acceptElement={AcceptElement}
-                                acceptResponseElement={AcceptResponseElement}
-                                selectedContentType={this.state.selectedContentType}
-                            />
+                //Only return the resources that are in the filter
+                if (this.state.selectedResourceFilterList.length > 0) {
+                    const FilteredResources = filter(Resources, (v) => includes(this.state.selectedResourceFilterList, v.type))
+                    return (
+                        map(FilteredResources, (Resource, Index) => {
+                            return (
+                                <RestAPIComponent
+                                    key={Index}
+                                    resource={Resource}
+                                    endpointUrl={EndpointUrl}
+                                    contentTypeElement={ContentTypeElement}
+                                    acceptElement={AcceptElement}
+                                    acceptResponseElement={AcceptResponseElement}
+                                    selectedContentType={this.state.selectedContentType}
+                                />
+                            )
+                        }
+
+
                         )
-                    }
                     )
-                )
+                } else {
+                    return (
+                        //Return all resource is filter is empty
+                        map(Resources, (Resource, Index) => {
+                            return (
+                                <RestAPIComponent
+                                    key={Index}
+                                    resource={Resource}
+                                    endpointUrl={EndpointUrl}
+                                    contentTypeElement={ContentTypeElement}
+                                    acceptElement={AcceptElement}
+                                    acceptResponseElement={AcceptResponseElement}
+                                    selectedContentType={this.state.selectedContentType}
+                                />
+                            )
+                        }
+                        )
+                    )
+                }
             }
         };
 
@@ -144,6 +189,12 @@ export default class PyroServerApi extends React.Component {
             )
         };
 
+        const renderLabel = (label) => ({
+            color: 'teal',
+            content: label.text,
+            icon: 'tag',
+        })
+
         const FhirResource = this.props.ConformanceStatmentResource;
         const HeadingSize = 'medium';
         const HeadingColor = 'grey';
@@ -155,6 +206,7 @@ export default class PyroServerApi extends React.Component {
         const AcceptElement = renderAcceptDropdown();
         const AcceptResponseElement = renderResponseAcceptDropdown();
         const EndpointUrl = serviceRootUrl;
+        const resourceList = this.resourceNameArray;
 
         return (
             <div>
@@ -229,6 +281,18 @@ export default class PyroServerApi extends React.Component {
                             <Grid.Column width={16}>
                                 <Header color={HeadingColor} dividing size={HeadingSize}>Resources</Header>
                                 <br />
+                                <Grid>
+                                    <Grid.Row columns={16} stretched>
+                                        <Grid.Column width={10}>
+                                            <Dropdown placeholder='Filter Resources' multiple selection search
+                                                closeOnChange
+                                                renderLabel={renderLabel}
+                                                options={resourceList}
+                                                onChange={this.handleResourceFilterChange} />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                </Grid>
+                                <Divider />
                             </Grid.Column>
                             <Grid.Column width={16} >
                                 {renderResources(apiResources)}
