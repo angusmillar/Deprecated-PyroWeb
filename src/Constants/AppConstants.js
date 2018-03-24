@@ -8,6 +8,10 @@ class AppConstants {
     static App_GetMetadata = 'App_GetMetadata';    
     static App_SetMetadata = 'App_SetMetadata';    
 
+    static App_GetHiService = 'App_GetHiService';    
+    static App_SetHiService = 'App_SetHiService';    
+    static App_SearchHiService = 'App_SearchHiService';    
+
     static APP_RESET = 'APP_RESET';  
     
 }

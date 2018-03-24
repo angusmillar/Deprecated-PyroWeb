@@ -2,24 +2,30 @@ import AppDispatcher from '../Dispatcher/AppDispatcher';
 import AppConstants from '../Constants/AppConstants';
 import PyroApi from 'API/PyroApi';
 
-const AppActionsMetadata = {
+const AppActionsHiService = {
   
   initialiseStore() {
     AppDispatcher.handleViewAction({
       actionType: AppConstants.APP_INITIALIZED
     })
   },
-  getMetadata() {
+  getHiService() {
     AppDispatcher.handleViewAction({
-      actionType: AppConstants.App_GetMetadata,      
+      actionType: AppConstants.App_GetHiService,      
     })
   },
-  setMetadata(item) {
+  setHiService(item) {
     AppDispatcher.handleViewAction({
-      actionType: AppConstants.App_SetMetadata,
+      actionType: AppConstants.App_SetHiService,
+      data: item
+    })
+  },
+  searchHiService(item) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.App_SearchHiService,
       data: item
     })
   }
 };
 
-export default AppActionsMetadata;  
+export default AppActionsHiService;  

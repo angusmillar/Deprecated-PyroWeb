@@ -25,6 +25,7 @@ class MainMenu extends React.Component{
                             {/* <Dropdown.Item as={Link} to='/dunny-content'>Dumy Content</Dropdown.Item> */}
                             <Dropdown.Item as={Link} to='/pyro-fhir-api'>Pyro Server FHIR API Documentation</Dropdown.Item>
                             <Dropdown.Item as={Link} to='/metadata-content'>FHIR Conformance Statment</Dropdown.Item>
+                            <Dropdown.Item as={Link} to='/HiService'>HI Service Search</Dropdown.Item>
                             {/* <Dropdown.Divider /> */}
                             {/* <Dropdown.Header>Header Item</Dropdown.Header> */}
                             {/* <Dropdown.Item>
