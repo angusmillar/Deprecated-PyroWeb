@@ -49,7 +49,7 @@ export default class MetaDataStoreComponent extends React.Component {
                 return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
             }
             else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {
-                // return <h2>We got no response from the Ajax call, work to do here!</h2>
+                    // return <h2>We got no response from the Ajax call, work to do here!</h2>
                 return <h2>{this.props.store.MetadataState.AjaxOutcome.ErrorMessage}</h2>
             }
             else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_CallSetupFailed) {

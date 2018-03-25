@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import MainMenu from 'MainMenu';
 import MainFooter from 'MainFooter';
 import Home from 'Home';
-import FluxTest from 'FluxTest';
 import HiServicePage from './Componets/HiService/HiServicePage';
 import { Container } from 'semantic-ui-react'
 import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/MetaDataStoreComponent';
 
-import AppActionsMetadata from 'Actions/AppActionsMetadata';
+import AppActions from './Actions/AppActions';
+// import AppActionsMetadata from 'Actions/AppActionsMetadata';
 import AppStoreMetadata from 'Store/AppStoreMetadata';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -35,8 +35,9 @@ export default class MainLayoutTwo extends React.Component {
         this.state = { store: getItemsState() };
     }
 
-    initialise() {
-        AppActionsMetadata.getMetadata()
+    initialise() {        
+        //AppActions.initialiseMetadataStore();
+        AppActions.getMetadata()
     }
 
     componentDidMount() {
@@ -54,15 +55,30 @@ export default class MainLayoutTwo extends React.Component {
     render() {
 
         const renderHomeComponent = (props, Component) => {
-            return (<Component {...props} renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment} siteIcon={this.props.siteIcon} />)
+            return (
+                <Component
+                    {...props}
+                    renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment}
+                    siteIcon={this.props.siteIcon} />
+            )
         };
 
         const renderFhirServerApiComponent = (props, Component) => {
-            return (<Component {...props} renderType={MetaDataStoreComponent.RenderType.ServerAPI} store={this.state.store} />)
+            return (
+                <Component
+                    {...props}
+                    renderType={MetaDataStoreComponent.RenderType.ServerAPI}
+                    store={this.state.store} />
+            )
         };
 
         const renderFhirServerConformanceStatmentComponent = (props, Component) => {
-            return (<Component {...props} renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment} store={this.state.store} />)
+            return (
+                <Component
+                    {...props}
+                    renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment}
+                    store={this.state.store} />
+            )
         };
 
         // Top Right Bottom Left
@@ -72,8 +88,7 @@ export default class MainLayoutTwo extends React.Component {
                     <MainMenu siteIcon={this.props.siteIcon} />
                     <Container style={{ marginBottom: '5em', marginTop: '7em' }}>
                         {/* <div style={{ margin: '5em 0em 2em 0em', padding: '0em 3em 0em 3em' }}> */}
-                        <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />
-                        <Route exact path="/FluxTest-content" component={FluxTest} />
+                        <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />                        
                         <Route exact path="/metadata-content" render={(props) => renderFhirServerConformanceStatmentComponent(props, MetaDataStoreComponent)} />
                         <Route exact path="/pyro-fhir-api" render={(props) => renderFhirServerApiComponent(props, MetaDataStoreComponent)} />
                         <Route exact path="/HiService" component={HiServicePage} />                                                

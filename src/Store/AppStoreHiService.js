@@ -13,12 +13,12 @@ function reset() {
     };
 }
 
-function pendingCall() {
-    HiServiceState = {
-        AjaxCallState: AjaxConstant.CallState.Call_Pending,
-        AjaxOutcome: null
-    };
-}
+// function pendingCall() {
+//     HiServiceState = {
+//         AjaxCallState: AjaxConstant.CallState.Call_Pending,
+//         AjaxOutcome: null
+//     };
+// }
 
 function completeCall(item) {
     HiServiceState = {
@@ -44,29 +44,43 @@ class AppStoreHiService extends FluxStore {
     }
 }
 
-const AppStoreInstance = new AppStoreHiService();
+const HiStoreInstance = new AppStoreHiService();
 
-AppStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
+HiStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
     const action = payload.action;
-    switch (action.actionType) {
-        case AppConstants.APP_INITIALIZED:
-            reset();
-            break;
-        case AppConstants.App_GetHiService:
-            pendingCall();
-            break;
-        case AppConstants.App_SetHiService:
-            completeCall(action.data);
-            break;
-        case AppConstants.App_SearchHiService:
-            searchCall(action.data);
-            break;
-        default:
-            return;
-    }
+    const source = payload.source;
+    if (source == AppConstants.SOURCE_VIEW_ACTION) {
+        switch (action.actionType) {
+            case AppConstants.App_SearchHiService:
+                searchCall(action.data);
+                break;
+            default:
+                return;
+        }
+    } else if (source == AppConstants.SOURCE_API_ACTION) {
+        switch (action.actionType) {
+            case AppConstants.App_SetHiService:
+                completeCall(action.data);
+                break;
+            default:
+                return;
+        }
+    } else if (source == AppConstants.SOURCE_APP_ACTION) {
+        switch (action.actionType) {
+            case AppConstants.App_InitialiseHiServiceStore:
+                reset();
+                break;
+            default:
+                return;
+        }
 
-    AppStoreInstance.emitChange();
+    }
+    else {
+        return;
+    }    
+
+    HiStoreInstance.emitChange();
 
 });
 
-export default AppStoreInstance;
+export default HiStoreInstance;

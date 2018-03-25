@@ -1,14 +1,13 @@
 import axios from 'axios';
-import AppActionsMetadata from 'Actions/AppActionsMetadata';
-import AppActionsHiService from '../Actions/AppActionsHiService';
+// import AppActionsMetadata from 'Actions/AppActionsMetadata';
+import AppActions from '../Actions/AppActions';
+// import AppActionsHiService from '../Actions/AppActionsHiService';
 import AppDispatcher from '../Dispatcher/AppDispatcher';
 import AppConstants from '../Constants/AppConstants';
 import FhirServerConstant from '../Constants/FhirServerConstant';
 import FhirConstant from '../Constants/FhirConstant'
 import AjaxConstants from '../Constants/AjaxConstant';
 import AjaxOutcome from '../Ajax/AjaxOutcome';
-
-import HiResourceRequest from '../Componets/HiService/TestHiServiceRequestResourceConstant';
 
 class PyroApi {
 
@@ -22,31 +21,11 @@ class PyroApi {
                 'Content-Type': FhirConstant.DefaultFhirJsonFormat
             },
             baseURL: ServerBaseUrl,
-            timeout: FhirServerConstant.RequestTimeout, 
+            timeout: FhirServerConstant.RequestTimeout,
             responseType: 'json'
         };
 
         this.dispatchToken = null;
-    }
-
-    // getPatient() {
-    //     axios.get('Patient', this.RequestConfig)
-    //         .then(function (response) {
-    //             AppActions.setPatient({ HttpStatus: response.status, Resource: response.data });
-    //         })
-    //         .catch(function (error) {
-    //             AppActions.setPatient({ HttpStatus: error.status, Resource: '' });
-    //         });
-    // }
-
-    getMetaDataOLD() {
-        axios.get('CapabilityStatement/PyroTest', this.RequestConfig)
-            .then(function (response) {
-                AppActionsMetadata.setMetadata({ HttpStatus: response.status, Resource: response.data });
-            })
-            .catch(function (error) {
-                AppActionsMetadata.setMetadata({ HttpStatus: error.status, Resource: '' });
-            });
     }
 
     getMetaData() {
@@ -58,7 +37,7 @@ class PyroApi {
                     AjaxConstants.CallCompletedState.Completed_Ok,
                     response.data,
                     null);
-                AppActionsMetadata.setMetadata(OutCome);
+                AppActions.setMetadata(OutCome);
             })
             .catch(function (error) {
                 if (error.response) {
@@ -69,8 +48,8 @@ class PyroApi {
                         error.response.status,
                         AjaxConstants.CallCompletedState.Completed_ResponseNotOk,
                         error.response.data,
-                        'HTTP Status retured was: ${error.response.status}!:${error.response.statusText}!');                    
-                    AppActionsMetadata.setMetadata(OutCome);
+                        'HTTP Status retured was: ${error.response.status}!:${error.response.statusText}!');
+                    AppActions.setMetadata(OutCome);
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -81,7 +60,7 @@ class PyroApi {
                         AjaxConstants.CallCompletedState.Completed_NoResponse,
                         null, `
                         The request was made to the server ${FhirServerConstant.PrimaryFhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
-                    AppActionsMetadata.setMetadata(OutCome);
+                    AppActions.setMetadata(OutCome);
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     const OutCome = new AjaxOutcome(
@@ -89,14 +68,14 @@ class PyroApi {
                         AjaxConstants.CallCompletedState.Completed_CallSetupFailed,
                         null,
                         'Something happened in setting up the request that triggered an Error. Message: ${error.message}!');
-                    AppActionsMetadata.setMetadata(OutCome);
+                    AppActions.setMetadata(OutCome);
                 }
             }
             )
     }
 
-    searchHiService() {
-        axios.post('Patient/$x-IHISearchOrValidate', HiResourceRequest.Resource, this.RequestConfig)
+    searchHiService(ParameterResource) {
+        axios.post('Patient/$x-IHISearchOrValidate', ParameterResource, this.RequestConfig)
             .then(function (response) {
                 //Sucessful call return the data
                 const OutCome = new AjaxOutcome(
@@ -104,7 +83,7 @@ class PyroApi {
                     AjaxConstants.CallCompletedState.Completed_Ok,
                     response.data,
                     null);
-                    AppActionsHiService.setHiService(OutCome);
+                AppActions.setHiService(OutCome);
             })
             .catch(function (error) {
                 if (error.response) {
@@ -115,8 +94,8 @@ class PyroApi {
                         error.response.status,
                         AjaxConstants.CallCompletedState.Completed_ResponseNotOk,
                         error.response.data,
-                        'HTTP Status retured was: ${error.response.status}!:${error.response.statusText}!');                    
-                        AppActionsHiService.setHiService(OutCome);
+                        'HTTP Status retured was: ${error.response.status}!:${error.response.statusText}!');
+                    AppActions.setHiService(OutCome);
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -127,7 +106,7 @@ class PyroApi {
                         AjaxConstants.CallCompletedState.Completed_NoResponse,
                         null, `
                         The request was made to the server ${FhirServerConstant.PrimaryFhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
-                        AppActionsHiService.setHiService(OutCome);
+                    AppActions.setHiService(OutCome);
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     const OutCome = new AjaxOutcome(
@@ -135,38 +114,41 @@ class PyroApi {
                         AjaxConstants.CallCompletedState.Completed_CallSetupFailed,
                         null,
                         'Something happened in setting up the request that triggered an Error. Message: ${error.message}!');
-                        AppActionsHiService.setHiService(OutCome);
+                    AppActions.setHiService(OutCome);
                 }
             }
             )
     }
-
 }
 
 const PyroApiInstance = new PyroApi();
 
 PyroApiInstance.dispatchToken = AppDispatcher.register((payload) => {
     const action = payload.action;
-    switch (action.actionType) {
-        // case AppConstants.App_GetPatient:
-        //     {
-        //         PyroApiInstance.getPatient();
-        //         break;
-        //     }
-        case AppConstants.App_GetMetadata:
-            {
+    const source = payload.source;
+    if (source == AppConstants.SOURCE_VIEW_ACTION) {
+        switch (action.actionType) {
+            case AppConstants.App_SearchHiService: {
+                PyroApiInstance.searchHiService(action.data);
+                break;
+            }
+            default:
+                return;
+        }
+    } else if (source == AppConstants.SOURCE_API_ACTION) {
+        return;
+    } else if (source == AppConstants.SOURCE_APP_ACTION) {
+        switch (action.actionType) {
+            case AppConstants.App_GetMetadata: {
                 PyroApiInstance.getMetaData();
                 break;
             }
-       case AppConstants.App_SearchHiService:
-            {
-                PyroApiInstance.searchHiService();
-                break;
-            }            
-        default:
-            return;
+            default:
+                return;
+        }
+    } else {
+        return;
     }
-
 });
 
 

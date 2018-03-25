@@ -41,19 +41,34 @@ class AppStoreMetadata extends FluxStore {
 const AppStoreInstance = new AppStoreMetadata();
 
 AppStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
-    const action = payload.action;
-    switch (action.actionType) {
-        case AppConstants.APP_INITIALIZED:
-            reset();
-            break;
-        case AppConstants.App_GetMetadata:
-            pendingCall();
-            break;
-        case AppConstants.App_SetMetadata:
-            completeCall(action.data);
-            break;
-        default:
-            return;
+    const action = payload.action;   
+    const source = payload.source;
+    if (source == AppConstants.SOURCE_VIEW_ACTION) {
+        return;
+    } else if (source == AppConstants.SOURCE_API_ACTION) {
+        switch (action.actionType) {
+            case AppConstants.App_SetMetadata:
+                completeCall(action.data);
+                break;
+            default:
+                return;
+        }
+    } else if (source == AppConstants.SOURCE_APP_ACTION) {
+        switch (action.actionType) {
+            case AppConstants.App_InitialiseMetadataStore:
+                reset();
+                break;
+            case AppConstants.App_GetMetadata:
+                pendingCall();
+                break;
+            case AppConstants.App_SetMetadata:
+                completeCall(action.data);
+                break;
+            default:
+                return;
+        }
+    } else {
+        return;
     }
 
     AppStoreInstance.emitChange();

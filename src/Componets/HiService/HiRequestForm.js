@@ -1,26 +1,56 @@
 import React, { Component } from 'react'
 import { Form, Grid } from 'semantic-ui-react'
 import replace from 'lodash/replace'
+import DatePicker from 'react-datepicker';
+//import moment from 'moment';
+import PropTypes from 'prop-types';
+import 'react-datepicker/dist/react-datepicker.css';
 
+//reactdatepicker
 
-class HiRequestForm extends Component {
-    state = {
-        family: '', given: '', gender: '', dob: '', medicare: '', dva: '', ihi: '',
-        submittedFamily: '', submittedGiven: '', submittedGender: '', submittedDob: '', submittedMedicare: '', submittedDva: '', submittedIhi: '',
-        medicareDisable: false, medicareError: false, dvaDisable: false, dvaError: false, ihiDisable: false, ihiError: false,
+export default class HiRequestForm extends Component {
+    
+    static propTypes = {
+        onSubmit: PropTypes.func.isRequired,
+        loading: PropTypes.bool,
     };
 
+    static defaultProps = {
+        loading: false
+    }
 
-    handleChange = (e) => {
+    constructor(props) {
+        super(props);
+        this.state = {
+            family: '', given: '', gender: '', dob: null, medicare: '', dva: '', ihi: '',
+            submittedFamily: '', submittedGiven: '', submittedGender: '', submittedDob: '', submittedMedicare: '', submittedDva: '', submittedIhi: '',
+            medicareDisable: false, medicareError: false, dvaDisable: false, dvaError: false, ihiDisable: false, ihiError: false,
+        };
+    }
+    
+
+    handleChange = (date) => {
+        this.setState({
+            dob: date
+        });
+    }
+
+    onChange = (e, { value }) => {
+        this.setState({
+            gender: value
+        });
+    }
+
+    handleFormChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         if (name == 'medicare') {
             const temp = replace(value, /\s/g, '');
             if (isNaN(temp)) {
-                this.setState({medicareError: true});
+                this.setState({ medicareError: true });
             } else {
-                this.setState({medicareError: false});
+                this.setState({ medicareError: false });
             }
             if (value.length < 11) {
                 this.setState({
@@ -30,12 +60,12 @@ class HiRequestForm extends Component {
         } else if (name == 'ihi') {
             const temp = replace(value, /\s/g, '');
             if (isNaN(temp)) {
-                this.setState({ihiError: true});
+                this.setState({ ihiError: true });
             } else {
-                this.setState({ihiError: false});
-            }            
+                this.setState({ ihiError: false });
+            }
             if (value.length >= 16) {
-                
+
                 if (!isNaN(temp)) {
                     value = `${temp.substring(0, 4)} ${temp.substring(4, 8)} ${temp.substring(8, 12)} ${temp.substring(12, 16)}`;
                 }
@@ -53,25 +83,26 @@ class HiRequestForm extends Component {
             this.setState({
                 [name]: value
             });
-        }       
+        }
     }
 
-    handleSubmit = () => {
+    handleSubmit = (e) => {
+        e.preventDefault();
         const { family, given, gender, dob, medicare, dva, ihi } = this.state
 
-        this.setState({
+        this.props.onSubmit({
             submittedFamily: family,
             submittedGiven: given,
             submittedGender: gender,
             submittedDob: dob,
             submittedMedicare: medicare,
             submittedDva: dva,
-            submittedIhi: ihi,
-        })
+            submittedIhi: ihi
+        });  
     }
 
     render() {
-        const { family, given, dob, medicare, dva, ihi, dvaError, ihiError, medicareError } = this.state
+        const { family, given, dob, medicare, gender, dva, ihi, dvaError, ihiError, medicareError } = this.state
 
         const options = [
             { key: 'm', text: 'Male', value: 'male' },
@@ -85,23 +116,40 @@ class HiRequestForm extends Component {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16} >
-                            <Form onSubmit={this.handleSubmit}>
-                                <Form.Group widths='equal'>
-                                <Form.Input width={6} name='ihi' required label='IHI Number' control='input' value={ihi} placeholder='8003 6000 0000 0000' error={ihiError} disabled={dva.length != 0 || medicare.length != 0} onChange={this.handleChange} />
-                                    <Form.Input width={6} name='medicare' required label='Medicare Number (Optional IRN)' placeholder='1234 56789 0 1' control='input' value={medicare} error={medicareError} disabled={dva.length != 0 || ihi.length != 0} onChange={this.handleChange} />
-                                    <Form.Input width={6} name='dva' required label='DVA Number' control='input' value={dva} placeholder='VA123456A' error={dvaError} disabled={ihi.length != 0 || medicare.length != 0} onChange={this.handleChange} />                                    
-                                </Form.Group>
+                            <Form onSubmit={this.handleSubmit} loading={this.props.loading}>
                                 <Form.Group >
-                                    <Form.Field width={6} name='family' required control='input' label='Family name' placeholder='Family' value={family} onChange={this.handleChange} />                                    
-                                    <Form.Field width={6} name='given' control='input' label='Given name' placeholder='Given' value={given} onChange={this.handleChange} />                                    
+                                    <Form.Field width={6} name='family' required control='input' label='Family' placeholder='Family' value={family} onChange={this.handleFormChange} />
+                                    <Form.Field width={6} name='given' control='input' label='Given' placeholder='Given' value={given} onChange={this.handleFormChange} />
+                                    <Form.Select width={3} name='gender' fluid required label='Gender' options={options} placeholder='Gender' selected={gender} onChange={this.onChange} />
+                                    <Form.Field width={3} required>
+                                        <label>Date of birth</label>
+                                        <DatePicker
+                                            selected={dob}
+                                            onChange={this.handleChange}
+                                            disabled={false}
+                                            showYearDropdown
+                                            dropdownMode="select"
+                                            placeholderText="DD/MM/YYYY"
+                                            dateFormat="DD/MM/YYYY"
+                                            isClearable={true} />
+                                    </Form.Field>
                                 </Form.Group>
-                                <Form.Group >                                                                        
+                                <Form.Group>
+                                    <Form.Input width={4} name='ihi' required label='IHI' control='input' value={ihi} placeholder='8003 6000 0000 0000' error={ihiError} disabled={dva.length != 0 || medicare.length != 0} onChange={this.handleFormChange} />
                                 </Form.Group>
-                                <Form.Group >
-                                    <Form.Select width={6} name='gender' fluid required label='Gender' options={options} placeholder='Gender'  />
-                                    <Form.Field width={6} name='dob' required control='input' label='Date of Birth' placeholder='Date of Birth' value={dob}  onChange={this.handleChange} />
-                                </Form.Group>                   
-                                <Form.Button content='Search' />
+                                <Form.Group>
+                                    <Form.Input width={3} name='medicare' required label='Medicare (Optional IRN)' placeholder='1234 56789 0 1' control='input' value={medicare} error={medicareError} disabled={dva.length != 0 || ihi.length != 0} onChange={this.handleFormChange} />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Input width={3} name='dva' required label='DVA' control='input' value={dva} placeholder='VA123456A' error={dvaError} disabled={ihi.length != 0 || medicare.length != 0} onChange={this.handleFormChange} />
+                                </Form.Group>
+                                <Form.Button
+                                    disabled={
+                                        !((dva.length > 0 || ihi.length > 0 || medicare.length > 0) &&
+                                            family.length > 0 &&
+                                            gender.length > 0 &&
+                                            dob != null)}
+                                    content='Search' />
                             </Form>
                         </Grid.Column>
                     </Grid.Row>
@@ -111,4 +159,3 @@ class HiRequestForm extends Component {
     }
 }
 
-export default HiRequestForm

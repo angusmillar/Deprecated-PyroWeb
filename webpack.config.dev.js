@@ -18,7 +18,7 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             '__DEV__': true
-        }),
+        }), 
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin(),
         new HtmlWebpackPlugin({
@@ -42,7 +42,11 @@ module.exports = {
                 use: ExtractTextPlugin.extract({
                     use: ['css-loader', 'less-loader']
                 })                
-            },            
+            },
+            {
+                test:/\.css$/,
+                use:['style-loader','css-loader']
+            },
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'url-loader?limit=10000&mimetype=application/font-woff'

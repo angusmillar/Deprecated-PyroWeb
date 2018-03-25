@@ -4,29 +4,57 @@ import PyroApi from 'API/PyroApi';
 
 const AppActions = {
 
-  addItem(item) {
+  //View Actions -----------------------------------------------------
+
+
+  getHiService() {
     AppDispatcher.handleViewAction({
-      actionType: AppConstants.ADD_ITEM,
-      data: item
-    });
-  },
-  initialiseStore() {
-    AppDispatcher.handleViewAction({
-      actionType: AppConstants.APP_INITIALIZED
+      actionType: AppConstants.App_GetHiService,      
     })
   },
-  getPatient(item) {
+  
+  searchHiService(item) {
     AppDispatcher.handleViewAction({
-      actionType: AppConstants.App_GetPatient,
+      actionType: AppConstants.App_SearchHiService,
       data: item
     })
   },
-  setPatient(item) {
-    AppDispatcher.handleViewAction({
-      actionType: AppConstants.App_SetPatient,
+  
+  // Api Actions -----------------------------------------------------
+  
+  setMetadata(item) {
+    AppDispatcher.handleApiAction({
+      actionType: AppConstants.App_SetMetadata,
       data: item
     })
-  }
+  },
+
+  setHiService(item) {
+    AppDispatcher.handleApiAction({
+      actionType: AppConstants.App_SetHiService,
+      data: item
+    })
+  },
+  //App Actions -----------------------------------------------------
+  
+  initialiseHiServiceStore() {
+    AppDispatcher.handleAppAction({
+      actionType: AppConstants.App_InitialiseHiServiceStore
+    })
+  },
+
+  initialiseMetadataStore() {
+    AppDispatcher.handleAppAction({
+      actionType: AppConstants.App_InitialiseMetadataStore
+    })
+  },
+
+  getMetadata() {
+    AppDispatcher.handleAppAction({
+      actionType: AppConstants.App_GetMetadata,      
+    })
+  },
+
 };
 
 export default AppActions;  
