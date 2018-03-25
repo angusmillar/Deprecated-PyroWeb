@@ -58,6 +58,10 @@ module.exports = {
                 })                
             },
             {
+                test:/\.css$/,
+                use:['style-loader','css-loader']
+            },
+            {
                 test: /\.(ttf|eot|png|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'file-loader'
             },
