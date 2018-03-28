@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Form, Grid } from 'semantic-ui-react'
+import { Form, Divider } from 'semantic-ui-react'
 import replace from 'lodash/replace'
 import DatePicker from 'react-datepicker';
 //import moment from 'moment';
@@ -9,7 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 //reactdatepicker
 
 export default class HiRequestForm extends Component {
-    
+
     static propTypes = {
         onSubmit: PropTypes.func.isRequired,
         loading: PropTypes.bool,
@@ -27,7 +27,7 @@ export default class HiRequestForm extends Component {
             medicareDisable: false, medicareError: false, dvaDisable: false, dvaError: false, ihiDisable: false, ihiError: false,
         };
     }
-    
+
 
     handleChange = (date) => {
         this.setState({
@@ -98,7 +98,7 @@ export default class HiRequestForm extends Component {
             submittedMedicare: medicare,
             submittedDva: dva,
             submittedIhi: ihi
-        });  
+        });
     }
 
     render() {
@@ -112,49 +112,48 @@ export default class HiRequestForm extends Component {
         ]
 
         return (
-            <div>
-                <Grid>
-                    <Grid.Row>
-                        <Grid.Column width={16} >
-                            <Form onSubmit={this.handleSubmit} loading={this.props.loading}>
-                                <Form.Group >
-                                    <Form.Field width={6} name='family' required control='input' label='Family' placeholder='Family' value={family} onChange={this.handleFormChange} />
-                                    <Form.Field width={6} name='given' control='input' label='Given' placeholder='Given' value={given} onChange={this.handleFormChange} />
-                                    <Form.Select width={3} name='gender' fluid required label='Gender' options={options} placeholder='Gender' selected={gender} onChange={this.onChange} />
-                                    <Form.Field width={3} required>
-                                        <label>Date of birth</label>
-                                        <DatePicker
-                                            selected={dob}
-                                            onChange={this.handleChange}
-                                            disabled={false}
-                                            showYearDropdown
-                                            dropdownMode="select"
-                                            placeholderText="DD/MM/YYYY"
-                                            dateFormat="DD/MM/YYYY"
-                                            isClearable={true} />
-                                    </Form.Field>
-                                </Form.Group>
-                                <Form.Group>
-                                    <Form.Input width={4} name='ihi' required label='IHI' control='input' value={ihi} placeholder='8003 6000 0000 0000' error={ihiError} disabled={dva.length != 0 || medicare.length != 0} onChange={this.handleFormChange} />
-                                </Form.Group>
-                                <Form.Group>
-                                    <Form.Input width={3} name='medicare' required label='Medicare (Optional IRN)' placeholder='1234 56789 0 1' control='input' value={medicare} error={medicareError} disabled={dva.length != 0 || ihi.length != 0} onChange={this.handleFormChange} />
-                                </Form.Group>
-                                <Form.Group>
-                                    <Form.Input width={3} name='dva' required label='DVA' control='input' value={dva} placeholder='VA123456A' error={dvaError} disabled={ihi.length != 0 || medicare.length != 0} onChange={this.handleFormChange} />
-                                </Form.Group>
-                                <Form.Button
-                                    disabled={
-                                        !((dva.length > 0 || ihi.length > 0 || medicare.length > 0) &&
-                                            family.length > 0 &&
-                                            gender.length > 0 &&
-                                            dob != null)}
-                                    content='Search' />
-                            </Form>
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-            </div>
+
+            <Form onSubmit={this.handleSubmit} loading={this.props.loading} size='small'>
+                <Form.Group >
+                    <Form.Field width={6} name='family' required control='input' label='Family' placeholder='Family' value={family} onChange={this.handleFormChange} />
+                    <Form.Field width={5} name='given' control='input' label='Given' placeholder='Given' value={given} onChange={this.handleFormChange} />
+                    <Form.Select width={4} name='gender' fluid required label='Gender' options={options} placeholder='Gender' selected={gender} onChange={this.onChange} />
+                </Form.Group>
+                <Form.Group>
+                    
+                    <Form.Field width={5} required>
+                        <label>Date of birth</label>
+                        <DatePicker
+                            selected={dob}
+                            onChange={this.handleChange}
+                            disabled={false}
+                            showYearDropdown
+                            dropdownMode="select"
+                            placeholderText="DD/MM/YYYY"
+                            dateFormat="DD/MM/YYYY"
+                            isClearable={true} />
+                    </Form.Field>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Input width={8} name='ihi' required label='IHI' control='input' value={ihi} placeholder='8003 6000 0000 0000' error={ihiError} disabled={dva.length != 0 || medicare.length != 0} onChange={this.handleFormChange} />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Input width={6} name='medicare' required label='Medicare (Optional IRN)' placeholder='1234 56789 0 1' control='input' value={medicare} error={medicareError} disabled={dva.length != 0 || ihi.length != 0} onChange={this.handleFormChange} />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Input width={6} name='dva' required label='DVA' control='input' value={dva} placeholder='VA123456A' error={dvaError} disabled={ihi.length != 0 || medicare.length != 0} onChange={this.handleFormChange} />                                        
+                </Form.Group>
+                <Divider hidden />
+                <Form.Button                       
+                    width={6}    
+                    disabled={
+                        !((dva.length > 0 || ihi.length > 0 || medicare.length > 0) &&
+                            family.length > 0 &&
+                            gender.length > 0 &&
+                            dob != null)}
+                    content='Search' />
+            </Form>
+
         )
     }
 }

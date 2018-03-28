@@ -3,28 +3,33 @@ import AppActions from 'Actions/AppActions';
 import AppStoreHiService from 'Store/AppStoreHiService';
 import AjaxConstant from 'Constants/AjaxConstant';
 import HiRequestForm from './HiRequestForm';
+import moment from 'moment';
+import SearchResultSegment from './SearchResultSegment';
 import HiServiceParameterResourceFactory from './HiServiceParameterResourceFactory';
-// import PropTypes from 'prop-types';
-import { Header, PageDimmer } from 'semantic-ui-react'
+import PropTypes from 'prop-types';
+import { Header, Grid, Card, Loader, Dimmer, Message, Divider } from 'semantic-ui-react'
 
 function getItemsState2() {
     return {
-        HiServiceState: AppStoreHiService.getState()        
+        HiServiceState: AppStoreHiService.getState()
     };
 }
 
 export default class HiServicePage extends React.Component {
 
-    // static propTypes = {
-    // };
+    static propTypes = {
+        wireframeParagraphImage: PropTypes.string,
+    };
 
-    // static defaultProps = {
-    // }
+    static defaultProps = {
+        wireframeParagraphImage: require('../../Images/wireframe/paragraph.png'),
+    }
 
     constructor(props) {
         super(props);
         this.initialise();
-        this.state = { store: getItemsState2(), Loading: false };
+        const LastSearchData = { famly: '', given: '', dob: '', gender: '', medicare: '', dva: '', ihi: '' };
+        this.state = { store: getItemsState2(), Loading: false, SearchData: LastSearchData };
         this._onChange = this._onChange.bind(this);
     }
 
@@ -41,7 +46,7 @@ export default class HiServicePage extends React.Component {
     }
 
     _onChange() {
-        this.setState(() => ({ store: getItemsState2() }));        
+        this.setState(() => ({ store: getItemsState2() }));
     }
 
     totalCount(Resource) {
@@ -53,57 +58,135 @@ export default class HiServicePage extends React.Component {
 
 
     onSubmit = (Submitted) => {
-        this.setState({ loading: true});
+        this.setState({ loading: true });
+        const LastSearchData = {
+            family: Submitted.submittedFamily,
+            given: Submitted.submittedGiven,
+            dob: Submitted.submittedDob,
+            gender: Submitted.submittedGender,
+            medicare: Submitted.submittedMedicare,
+            dva: Submitted.submittedDva,
+            ihi: Submitted.submittedIhi
+        };
+        this.setState({ loading: true, SearchData: LastSearchData });
+
         const ParametersResource = HiServiceParameterResourceFactory.resource(
             Submitted.submittedFamily,
             Submitted.submittedGiven,
             Submitted.submittedGender,
-            Submitted.submittedDob,
+            moment(Submitted.submittedDob).format('YYYY-MM-DD'),
             Submitted.submittedIhi,
             Submitted.submittedMedicare,
             Submitted.submittedDva,
             'PyroWebUser');
 
-        AppActions.searchHiService(JSON.stringify(ParametersResource));        
+        AppActions.searchHiService(JSON.stringify(ParametersResource));
     };
-   
+
 
     renderBody() {
         if (this.state.store.HiServiceState.AjaxCallState === AjaxConstant.CallState.Call_None) {
-             return null;
-            // return <h2>Test HI Service Call none</h2>
-            
+            return null;
         }
         else if (this.state.store.HiServiceState.AjaxCallState === AjaxConstant.CallState.Call_Pending) {
-            // return <PageDimmer />
-            return <h2>Pending Call dimmer</h2>
+            return (
+                <div>
+                    <Header size='small'>Health Identifier Service</Header>
+                    <Grid centered>
+                        <Grid.Row>
+
+                            <Divider hidden />
+                        </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column width={8} >
+                                <Divider hidden />
+                                <Dimmer active inverted>
+                                    <Loader size='large'>Searching Hi Service</Loader>
+                                </Dimmer>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+                </div>
+            )
         }
         else if (this.state.store.HiServiceState.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
             if (this.state.store.HiServiceState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_Ok) {
-                return <h2>Call ok render result work to be done</h2>
+                const FhirResource = this.state.store.HiServiceState.AjaxOutcome.FhirResource;
+                // const { SearchData } = this.state;
+                return (
+                    <div>
+                        <Header size='small'>Health Identifier Service</Header>
+                        <Grid centered>
+                            <Grid.Row>
+                                <Grid.Column width={8} >
+                                    <Divider hidden />
+                                    <Card.Group>
+                                        <SearchResultSegment parameterResource={FhirResource} />
+                                    </Card.Group>
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                    </div>
+                )
             }
             else if (this.state.store.HiServiceState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
-                return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
+                const FhirResource = this.state.store.HiServiceState.AjaxOutcome.FhirResource;
+                const Issue = FhirResource.issue[0];
+                const Details = Issue.details;
+                return (
+                    <Message negative>
+                        <Message.Header>Please review search item</Message.Header>
+                        <p>{Details.text}</p>
+                    </Message>
+                )
             }
-            else if (this.state.store.HiServiceState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {                
-                return <h2>{this.state.store.HiServiceState.AjaxOutcome.ErrorMessage}</h2>
+            else if (this.state.store.HiServiceState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {
+                return (
+                    <Message negative>
+                        <Message.Header>Not response from server</Message.Header>
+                        <p>{this.state.store.HiServiceState.AjaxOutcome.ErrorMessage}</p>
+                    </Message>
+                )
             }
             else if (this.state.store.HiServiceState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_CallSetupFailed) {
-                return <h2>Call Setup failed in Ajax call, work to do here!</h2>
+                return (
+                    <Message negative>
+                        <Message.Header>Web application API error</Message.Header>
+                        <p>{this.state.store.HiServiceState.AjaxOutcome.ErrorMessage}</p>
+                    </Message>
+                )
             }
             else {
-                return <h2>Unkown AjaxConstant.CallCompletedState</h2>
+                return (
+                    <Message negative>
+                        <Message.Header>Web application error</Message.Header>
+                        <p>Unfortunatly their seem to be a fatal erorr with the website API call.</p>
+                    </Message>
+                )
             }
         }
     }
 
     render() {
-        const { loading } = this.state;
+        const form = () => {
+            return (
+                <HiRequestForm onSubmit={this.onSubmit} loading={false} />
+            )
+        }
+
         return (
             <div>
-                <Header as='h1'>Hi Service IHI Search</Header>
-                <HiRequestForm onSubmit={this.onSubmit} loading={loading}/>    
-                {this.renderBody()}
+                <Grid columns={16} divided>
+                    <Grid.Row>
+                        <Grid.Column width={8} >
+                            <Header size='small'>Individual Healthcare Identifier (IHI) search</Header>
+                            {form()}
+                        </Grid.Column>
+                        <Grid.Column width={8} >
+                            {this.renderBody()}
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
             </div>
         )
     }

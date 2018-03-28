@@ -48,7 +48,7 @@ class PyroApi {
                         error.response.status,
                         AjaxConstants.CallCompletedState.Completed_ResponseNotOk,
                         error.response.data,
-                        'HTTP Status retured was: ${error.response.status}!:${error.response.statusText}!');
+                        `HTTP Status retured was: ${error.response.status}:${error.response.statusText}`);
                     AppActions.setMetadata(OutCome);
                 } else if (error.request) {
                     // The request was made but no response was received
@@ -58,8 +58,8 @@ class PyroApi {
                     const OutCome = new AjaxOutcome(
                         null,
                         AjaxConstants.CallCompletedState.Completed_NoResponse,
-                        null, `
-                        The request was made to the server ${FhirServerConstant.PrimaryFhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
+                        null,
+                        `The request was made to the server ${FhirServerConstant.PrimaryFhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
                     AppActions.setMetadata(OutCome);
                 } else {
                     // Something happened in setting up the request that triggered an Error
@@ -67,7 +67,7 @@ class PyroApi {
                         null,
                         AjaxConstants.CallCompletedState.Completed_CallSetupFailed,
                         null,
-                        'Something happened in setting up the request that triggered an Error. Message: ${error.message}!');
+                        `Something happened in setting up the request that triggered an Error. Message: ${error.message}`);
                     AppActions.setMetadata(OutCome);
                 }
             }
@@ -94,7 +94,7 @@ class PyroApi {
                         error.response.status,
                         AjaxConstants.CallCompletedState.Completed_ResponseNotOk,
                         error.response.data,
-                        'HTTP Status retured was: ${error.response.status}!:${error.response.statusText}!');
+                        `HTTP Status retured was: ${error.response.status}:${error.response.statusText}`);
                     AppActions.setHiService(OutCome);
                 } else if (error.request) {
                     // The request was made but no response was received
@@ -104,8 +104,8 @@ class PyroApi {
                     const OutCome = new AjaxOutcome(
                         null,
                         AjaxConstants.CallCompletedState.Completed_NoResponse,
-                        null, `
-                        The request was made to the server ${FhirServerConstant.PrimaryFhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
+                        null,
+                        `The request was made to the server ${FhirServerConstant.PrimaryFhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
                     AppActions.setHiService(OutCome);
                 } else {
                     // Something happened in setting up the request that triggered an Error
@@ -113,7 +113,7 @@ class PyroApi {
                         null,
                         AjaxConstants.CallCompletedState.Completed_CallSetupFailed,
                         null,
-                        'Something happened in setting up the request that triggered an Error. Message: ${error.message}!');
+                        `Something happened in setting up the request that triggered an Error. Message: ${error.message}`);
                     AppActions.setHiService(OutCome);
                 }
             }
