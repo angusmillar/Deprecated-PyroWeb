@@ -12,11 +12,10 @@ export default class HiRequestForm extends Component {
 
     static propTypes = {
         onSubmit: PropTypes.func.isRequired,
-        loading: PropTypes.bool,
     };
 
     static defaultProps = {
-        loading: false
+
     }
 
     constructor(props) {
@@ -52,11 +51,16 @@ export default class HiRequestForm extends Component {
             } else {
                 this.setState({ medicareError: false });
             }
-            if (value.length < 11) {
-                this.setState({
-                    [name]: value
-                });
+            if (!isNaN(temp)) {
+                if (temp.length >= 11) {
+                    value = `${temp.substring(0, 4)} ${temp.substring(4, 9)} ${temp.substring(9, 10)} ${temp.substring(10, 11)}`;
+                } else if (temp.length == 10) {
+                    value = `${temp.substring(0, 4)} ${temp.substring(4, 9)} ${temp.substring(9, 10)}`;
+                }                
             }
+            this.setState({
+                [name]: value
+            });
         } else if (name == 'ihi') {
             const temp = replace(value, /\s/g, '');
             if (isNaN(temp)) {
@@ -65,7 +69,6 @@ export default class HiRequestForm extends Component {
                 this.setState({ ihiError: false });
             }
             if (value.length >= 16) {
-
                 if (!isNaN(temp)) {
                     value = `${temp.substring(0, 4)} ${temp.substring(4, 8)} ${temp.substring(8, 12)} ${temp.substring(12, 16)}`;
                 }
@@ -95,7 +98,7 @@ export default class HiRequestForm extends Component {
             submittedGiven: given,
             submittedGender: gender,
             submittedDob: dob,
-            submittedMedicare: medicare,
+            submittedMedicare: replace(medicare, /\s/g, ''), //This is dumb need to improve Pyro server
             submittedDva: dva,
             submittedIhi: ihi
         });
@@ -113,14 +116,13 @@ export default class HiRequestForm extends Component {
 
         return (
 
-            <Form onSubmit={this.handleSubmit} loading={this.props.loading} size='small'>
+            <Form onSubmit={this.handleSubmit} size='small'>
                 <Form.Group >
                     <Form.Field width={6} name='family' required control='input' label='Family' placeholder='Family' value={family} onChange={this.handleFormChange} />
                     <Form.Field width={5} name='given' control='input' label='Given' placeholder='Given' value={given} onChange={this.handleFormChange} />
-                    <Form.Select width={4} name='gender' fluid required label='Gender' options={options} placeholder='Gender' selected={gender} onChange={this.onChange} />
                 </Form.Group>
                 <Form.Group>
-                    
+                    <Form.Select width={4} name='gender' fluid required label='Gender' options={options} placeholder='Gender' selected={gender} onChange={this.onChange} />
                     <Form.Field width={5} required>
                         <label>Date of birth</label>
                         <DatePicker
@@ -141,11 +143,11 @@ export default class HiRequestForm extends Component {
                     <Form.Input width={6} name='medicare' required label='Medicare (Optional IRN)' placeholder='1234 56789 0 1' control='input' value={medicare} error={medicareError} disabled={dva.length != 0 || ihi.length != 0} onChange={this.handleFormChange} />
                 </Form.Group>
                 <Form.Group>
-                    <Form.Input width={6} name='dva' required label='DVA' control='input' value={dva} placeholder='VA123456A' error={dvaError} disabled={ihi.length != 0 || medicare.length != 0} onChange={this.handleFormChange} />                                        
+                    <Form.Input width={6} name='dva' required label='DVA' control='input' value={dva} placeholder='VA123456A' error={dvaError} disabled={ihi.length != 0 || medicare.length != 0} onChange={this.handleFormChange} />
                 </Form.Group>
                 <Divider hidden />
-                <Form.Button                       
-                    width={6}    
+                <Form.Button
+                    width={6}
                     disabled={
                         !((dva.length > 0 || ihi.length > 0 || medicare.length > 0) &&
                             family.length > 0 &&

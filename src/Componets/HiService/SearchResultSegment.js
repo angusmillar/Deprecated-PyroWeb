@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Grid, Divider, Segment, Message, Label } from 'semantic-ui-react';
+import { Header, Grid, Divider, Segment, Message, Label, Icon } from 'semantic-ui-react';
 import toUpper from 'lodash/toUpper';
 import isNil from 'lodash/isNil'
 import find from 'lodash/find';
@@ -152,7 +152,7 @@ export default class SearchResultSegment extends Component {
         const ihiNumber = (Number, Status, RecordStatus) => {
             if (Number != '') {
                 const value = `${Number.substring(0, 4)} ${Number.substring(4, 8)} ${Number.substring(8, 12)} ${Number.substring(12, 16)}`;
-                
+
                 const statusColor = () => {
                     switch (Status) {
                         case 'Active':
@@ -171,8 +171,8 @@ export default class SearchResultSegment extends Component {
                 }
 
                 const recordStatusColor = () => {
-                    switch (Status) {
-                        case 'Active':
+                    switch (RecordStatus) {
+                        case 'Verified':
                             return 'green';
                         case 'Unverified':
                             return 'red';
@@ -186,23 +186,24 @@ export default class SearchResultSegment extends Component {
                     <div>
                         <Header sub>IHI</Header>
                         <span>{value}</span><br />
-                        <span><Label size='mini' color={statusColor()}>{`Status: ${Status}`}</Label><Label size='mini' color={recordStatusColor()}>{`Record: ${RecordStatus}`}</Label></span><br />                                                                  
+                        <span><Label size='mini' color={statusColor()}>{`Status: ${Status}`}</Label><Label size='mini' color={recordStatusColor()}>{`Record: ${RecordStatus}`}</Label></span><br />
                     </div>
                 )
             }
             return null;
         }
 
-       
+
         const Result = processParameterResource(this.props.parameterResource);
         if (Result.IHIFound) {
 
             return (
-                <Segment fluid color={genderColor(Result.Gender)}>
+                <Segment color={genderColor(Result.Gender)}>
                     <Grid columns={16} divided >
                         <Grid.Row>
                             <Grid.Column width={16} >
                                 <Header size='large'>
+                                    <Icon name='user circle' size='mini' />
                                     {`${toUpper(Result.Family)}, ${startCase(toLower(Result.Given))}`}
                                 </Header>
                                 <Divider />
