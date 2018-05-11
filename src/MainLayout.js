@@ -5,7 +5,7 @@ import MainFooter from 'MainFooter';
 import Home from 'Home';
 import HiServicePage from './Componets/HiService/HiServicePage';
 import { Container } from 'semantic-ui-react'
-import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/MetaDataStoreComponent';
+import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/metaDataStoreComponent';
 
 import AppActions from './Actions/AppActions';
 // import AppActionsMetadata from 'Actions/AppActionsMetadata';
@@ -25,8 +25,9 @@ export default class MainLayoutTwo extends React.Component {
         siteIcon: PropTypes.string,
     }
 
-    static defaultProps = {
-        siteIcon: require('./Images/SiteIcon/PyroIcon-100.png')
+    static defaultProps = {        
+        siteIcon: require('./Images/SiteIcon/NewPyroIconLong-200.png'),
+        siteLogo: require('./Images/SiteIcon/NewPyroLogo-100.png')
     }
 
     constructor(props) {
@@ -85,7 +86,7 @@ export default class MainLayoutTwo extends React.Component {
         return (
             <Router>
                 <div>
-                    <MainMenu siteIcon={this.props.siteIcon} />
+                    <MainMenu siteIcon={this.props.siteLogo} />
                     <Container style={{ marginBottom: '5em', marginTop: '7em' }}>
                         {/* <div style={{ margin: '5em 0em 2em 0em', padding: '0em 3em 0em 3em' }}> */}
                         <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />                        
@@ -93,7 +94,7 @@ export default class MainLayoutTwo extends React.Component {
                         <Route exact path="/pyro-fhir-api" render={(props) => renderFhirServerApiComponent(props, MetaDataStoreComponent)} />
                         <Route exact path="/HiService" component={HiServicePage} />                                                
                     </Container>
-                    <MainFooter siteIcon={this.props.siteIcon} />
+                    <MainFooter siteIcon={this.props.siteLogo} />
                 </div>
             </Router>
         )

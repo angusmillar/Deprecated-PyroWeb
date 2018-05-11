@@ -4,6 +4,9 @@ import isNil from 'lodash/isNil'
 export default class FhirConstant {
     static STU3_SpecWebsiteUrl = 'http://hl7.org/fhir/STU3';
     static STU3_SpecWebsiteDisplay = 'FHIR April 2017 V3.0.1 specification';
+
+    
+
     static fhirNetApiGitHubUrl = 'https://github.com/ewoutkramer/fhir-net-api';
 
     static DefaultFhirXmlFormat = 'application/fhir+xml';

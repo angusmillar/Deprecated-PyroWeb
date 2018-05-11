@@ -24,8 +24,7 @@ export default class Home extends React.Component {
     render() {
         return (
             <Grid stackable >
-
-                <Grid.Row columns={16} style={{ marginLeft: '2em' }} >
+                {/* <Grid.Row columns={16} style={{ marginLeft: '2em' }} >
                     <Grid.Column width={2} >
                         <Image src={this.props.siteIcon} size='tiny' verticalAlign='middle' />
                     </Grid.Column>
@@ -35,9 +34,34 @@ export default class Home extends React.Component {
                             </Header>
                         FHIR Server Implementation
                         </Grid.Column>
+                </Grid.Row> */}
+                <Grid.Row columns={16} >
+                    <Grid.Column width={16} >
+                        <Image src={this.props.siteIcon} size='medium'  centered />
+                    </Grid.Column>
+                   
                 </Grid.Row>
-
-
+               
+                
+                {/* <Grid.Row>
+                    <Grid.Column width={16} >
+                        <Segment >
+                            <Grid>
+                                <Grid.Row columns={16}  >                                
+                                    <Grid.Column width={8} >                                    
+                                        <Header size='huge'>
+                                            Pyro Server
+                                        </Header>
+                                        FHIR Server Implementation
+                                        </Grid.Column>
+                                        <Grid.Column width={4}>                                   
+                                        <Image src={this.props.siteIcon} size='tiny' verticalAlign='middle' centered />
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row> */}
                 <Grid.Row>
                     <Grid.Column width={16} >
                         <Segment >
@@ -46,8 +70,32 @@ export default class Home extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={1}>
+                    <Grid.Column width={16} >
+                        <Message icon size='tiny'>
+                            <Icon name='github' />
+                            <Message.Content>
+                                <Message.Header>GitHub: <WebLink newTab={true} url='https://github.com/angusmillar/Pyro' display='Pyro FHIR Server Repository' /></Message.Header>
+                                <p><b>Clone: </b><code>https://github.com/angusmillar/Pyro.git</code></p>
+                            </Message.Content>
+                        </Message>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={1}>
+                    <Grid.Column width={16} >
+                        <Message size='tiny'
+                            negative
+                            icon>
+                            <Icon name='warning sign' />
+                            <Message.Content>
+                                <Message.Header>Warning</Message.Header>
+                                <p>This server is used for testing only and its resources may be removed or reset at any time.</p>
+                            </Message.Content>
+                        </Message>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={1}>
                     <Grid.Column width={16}>
-                        <Segment>
+                        <Segment >
                             <Header as='h2' color='black'>
                                 <Icon name='settings' />
                                 <Header.Content>
@@ -55,7 +103,8 @@ export default class Home extends React.Component {
                                 </Header.Content>
                             </Header>
                             <p>This server implements the <WebLink newTab={true} url={FhirConstant.STU3_SpecWebsiteUrl} display={FhirConstant.STU3_SpecWebsiteDisplay} /> release, and built utilising the official <WebLink newTab={true} url={FhirConstant.fhirNetApiGitHubUrl} display={'.NET API for HL7 FHIR'} />.</p>
-                            <p>The following FHIR elements are implemented:</p>
+                            <h4><b>The following FHIR specification components are implemented</b></h4>
+
                             <List bulleted>
                                 <List.Item>All Resources types</List.Item>
                                 <List.Item>All Resources search parameters (except for composite parameters)</List.Item>
@@ -71,22 +120,38 @@ export default class Home extends React.Component {
                                 <List.Item>Operation: Validate a resource</List.Item>
                                 <List.Item>Bundle Transactions</List.Item>
                             </List>
-                            <Message
-                                info
-                                icon>
-                                <Icon name='warning sign' />
-                                <Message.Content>
-                                  <Message.Header>Warning</Message.Header>
-                                    <p>This server is used for testing only and its resources may be removed or reset at any time.</p>
-                                </Message.Content>    
-                            </Message>
-
+                            <h4><b>Operations</b></h4>
+                            <h5><b>Base Operations:</b></h5>
+                            <List bulleted>
+                                <List.Item>$server-indexes-delete-history-indexes</List.Item>
+                                <List.Item>$server-indexes-set</List.Item>
+                                <List.Item>$server-indexes-index</List.Item>
+                                <List.Item>$server-indexes-report</List.Item>
+                                <List.Item>$server-resource-report  </List.Item>
+                            </List>
+                            <h5><b>Resource Operations:</b></h5>
+                            <List bulleted>
+                                <List.Item>$server-indexes-delete-history-indexes (All ResourceTypes)</List.Item>
+                                <List.Item>$validate (All ResourceTypes)</List.Item>
+                                <List.Item>$x-ihisearchorvalidate (Patient ResourceTypes)</List.Item>
+                            </List>
+                            <h5><b>Resource Instance Operations:</b></h5>
+                            <List bulleted>
+                                <List.Item>$validate (All ResourceTypes)</List.Item>
+                                <List.Item>$x-set-compartment-active (CompartmentDefinition ResourceTypes)</List.Item>
+                                <List.Item>$x-set-compartment-inactive (CompartmentDefinition ResourceTypes)</List.Item>
+                            </List>
+                            <h4>Download the server&#39;s CapabilityStatement:</h4>
+                            <code><b>GET: </b>https://stu3.test.pyrohealth.net/fhir/metadata</code>
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
+
+
+
                 <Grid.Row columns={1}>
                     <Grid.Column width={16} >
-                        <Segment>
+                        <Segment secondary>
                             <Header as='h2' color='black'>
                                 <Icon name='user' />
                                 <Header.Content>
