@@ -208,8 +208,8 @@ export default class HiServicePage extends React.Component {
                     return (
             <div>
                             <Message info>
-                                <Message.Header>Test Enviroment Service</Message.Header>
-                                <p>This service is backed onto the HI Service test enviroment, only test patients found in this enviroment are avaliable.</p>
+                                <Message.Header>Australian HI Service test enviroment IHI Search</Message.Header>
+                                <p>This service is backed onto the test enviroment of the Australian national Healthcare Identifier Service , only test patients are found in this enviroment.</p>
                             </Message>
                             <Grid columns={16} divided>
                                 <Grid.Row>
