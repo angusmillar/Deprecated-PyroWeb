@@ -1,6 +1,7 @@
 import FluxStore from './Store';
 import AppDispatcher from '../Dispatcher/AppDispatcher';
 import AppConstants from '../Constants/AppConstants';
+import FhirServerConstant from '../Constants/FhirServerConstant';
 import AjaxConstant from '../Constants/AjaxConstant';
 
 
@@ -9,21 +10,24 @@ let MetadataState = reset();
 function reset() {
     MetadataState = {
         AjaxCallState: AjaxConstant.CallState.Call_None,
-        AjaxOutcome: null
+        AjaxOutcome: null,
+        FhirServerName: FhirServerConstant.PyroServerR4Name
     };
 }
 
 function pendingCall() {
     MetadataState = {
         AjaxCallState: AjaxConstant.CallState.Call_Pending,
-        AjaxOutcome: null
+        AjaxOutcome: null,
+        FhirServerName: FhirServerConstant.PyroServerR4Name
     };
 }
 
 function completeCall(item) {
     MetadataState = {
         AjaxCallState: AjaxConstant.CallState.Call_Complete,
-        AjaxOutcome: item
+        AjaxOutcome: item,
+        FhirServerName: FhirServerConstant.PyroServerR4Name
     }
 }
 

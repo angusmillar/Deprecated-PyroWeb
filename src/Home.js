@@ -65,7 +65,7 @@ export default class Home extends React.Component {
                 <Grid.Row>
                     <Grid.Column width={16} >
                         <Segment >
-                            <Image src={this.props.FhirIcon} size='mini' verticalAlign='bottom' /> <span><b>FHIR Endpoint: </b><code>{FhirServerConstant.PrimaryFhirServerEndpoint}</code></span>
+                            <Image src={this.props.FhirIcon} size='mini' verticalAlign='bottom' /> <span><b>FHIR Endpoint: </b><code>{FhirServerConstant.PyroStu3FhirServerEndpoint}</code></span>
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

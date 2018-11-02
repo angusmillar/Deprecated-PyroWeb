@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { Container, Dropdown, Image, Menu } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 
-class MainMenu extends React.Component{    
+class MainMenu extends React.Component {
     render() {
-        return (                       
-            <Menu fixed='top' inverted >                
+        return (
+            <Menu fixed='top' inverted >
                 <Container>
                     <Menu.Item as={Link} to='/' header>
                         <Image
@@ -17,30 +17,35 @@ class MainMenu extends React.Component{
                         />
                         Pyro Web
                     </Menu.Item>
-    
+
                     {/* <Menu.Item as={Link} to='/'>Home</Menu.Item> */}
-    
+
                     <Dropdown item simple text='Server Information'>
-                        <Dropdown.Menu>                            
-                            {/* <Dropdown.Item as={Link} to='/dunny-content'>Dumy Content</Dropdown.Item> */}
-                            <Dropdown.Item as={Link} to='/pyro-fhir-api'>Pyro Server FHIR API Documentation</Dropdown.Item>
-                            <Dropdown.Item as={Link} to='/metadata-content'>FHIR Conformance Statment</Dropdown.Item>
-                            <Dropdown.Item as={Link} to='/HiService'>HI Service Search</Dropdown.Item>
+                        <Dropdown.Menu>
                             {/* <Dropdown.Divider /> */}
                             {/* <Dropdown.Header>Header Item</Dropdown.Header> */}
-                            {/* <Dropdown.Item>
+                            <Dropdown.Item>
                                 <i className='dropdown icon' />
-                                <span className='text'>Submenu</span>
+                                <span className='text'>FHIR Server STU3</span>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item>List Item1</Dropdown.Item>
-                                    <Dropdown.Item>List Item2</Dropdown.Item>
+                                    <Dropdown.Item as={Link} to='/pyro-stu3-fhir-api'>API Documentation</Dropdown.Item>
+                                    <Dropdown.Item as={Link} to='/pyro-stu3-fhir-metadata'>Conformance Statment</Dropdown.Item>                                    
                                 </Dropdown.Menu>
                             </Dropdown.Item>
-                            <Dropdown.Item>List Item</Dropdown.Item> */}
+                            <Dropdown.Item>
+                                <i className='dropdown icon' />
+                                <span className='text'>FHIR Server R4</span>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item as={Link} to='/pyro-r4-fhir-api'>API Documentation</Dropdown.Item>
+                                    <Dropdown.Item as={Link} to='/pyro-r4-fhir-metadata'>Conformance Statment</Dropdown.Item>                                    
+                                </Dropdown.Menu>
+                            </Dropdown.Item>
+                            <Dropdown.Divider />
+                            <Dropdown.Item as={Link} to='/pyro-stu3-fhir-HiService'>HI Service Search</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
-                </Container>                
-            </Menu>                
+                </Container>
+            </Menu>
         )
     }
 }
@@ -48,12 +53,12 @@ class MainMenu extends React.Component{
 //Type Checking
 MainMenu.propTypes = {
     setCurrentPage: PropTypes.func,
-    siteIcon: PropTypes.string,     
- }
+    siteIcon: PropTypes.string,
+}
 
- //Null Ref checking
- MainMenu.propTypes = {
-    siteIcon: PropTypes.string.isRequired    
- }
- 
+//Null Ref checking
+MainMenu.propTypes = {
+    siteIcon: PropTypes.string.isRequired
+}
+
 export default MainMenu

@@ -7,11 +7,12 @@ import AjaxConstant from 'Constants/AjaxConstant';
 import PyroServerApi from '../../PyroFhirApi/PyroServerApi';
 import PyroServerConformanceStatmentComponent from '../../Conformance/PyroServerConformanceStatmentComponent'
 import PageDimmer from '../PageDimmer/PageDimmer';
+import FhirServerConstant from '../../../Constants/FhirServerConstant';
 
 export default class MetaDataStoreComponent extends React.Component {
 
     static propTypes = {
-        store: PropTypes.object.isRequired,
+        metadataState: PropTypes.object.isRequired,
         renderType: PropTypes.string.isRequired,
     };
 
@@ -29,30 +30,33 @@ export default class MetaDataStoreComponent extends React.Component {
     };
 
     renderBody() {
-        if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_None) {
+        
+        const Metadata = this.props.metadataState
+
+        if (Metadata.AjaxCallState === AjaxConstant.CallState.Call_None) {
             return null;
         }
-        else if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Pending) {
+        else if (Metadata.AjaxCallState === AjaxConstant.CallState.Call_Pending) {
             return <PageDimmer />
         }
-        else if (this.props.store.MetadataState.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
-            if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_Ok) {
+        else if (Metadata.AjaxCallState === AjaxConstant.CallState.Call_Complete) {
+            if (Metadata.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_Ok) {
                 if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerAPI) {
-                    return <PyroServerApi ConformanceStatmentResource={this.props.store.MetadataState.AjaxOutcome.FhirResource} />
+                    return <PyroServerApi ConformanceStatmentResource={Metadata.AjaxOutcome.FhirResource} FhirServerName={Metadata.FhirServerName} />
                 } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerConformanceStatment) {
-                    return <PyroServerConformanceStatmentComponent ConformanceStatmentResource={this.props.store.MetadataState.AjaxOutcome.FhirResource} />
+                    return <PyroServerConformanceStatmentComponent ConformanceStatmentResource={Metadata.AjaxOutcome.FhirResource} FhirServerName={Metadata.FhirServerName} />
                 } else {
                     return <h2>Render Type switch was not set correctly</h2>
                 }
             }
-            else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
+            else if (Metadata.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
                 return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
             }
-            else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {
+            else if (Metadata.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {
                     // return <h2>We got no response from the Ajax call, work to do here!</h2>
-                return <h2>{this.props.store.MetadataState.AjaxOutcome.ErrorMessage}</h2>
+                return <h2>{Metadata.AjaxOutcome.ErrorMessage}</h2>
             }
-            else if (this.props.store.MetadataState.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_CallSetupFailed) {
+            else if (Metadata.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_CallSetupFailed) {
                 return <h2>Call Setup failed in Ajax call, work to do here!</h2>
             }
             else {
@@ -64,9 +68,21 @@ export default class MetaDataStoreComponent extends React.Component {
     render() {
         const renderHeader = () => {
             if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerAPI) {
-                return 'FHIR API Documentation';
+                if (this.props.metadataState.FhirServerName == FhirServerConstant.PyroServerStu3Name) {
+                    return 'Pyro server STU3 API documentation';    
+                } else if (this.props.metadataState.FhirServerName == FhirServerConstant.PyroServerR4Name) {
+                    return 'Pyro server R4 API documentation';    
+                } else {
+                    return 'API documentation';    
+                }                
             } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerConformanceStatment) {
-                return 'FHIR Server Conformance Statement'
+                if (this.props.metadataState.FhirServerName == FhirServerConstant.PyroServerStu3Name) {
+                    return 'Pyro server FHIR STU3 conformance statement'
+                } else if (this.props.metadataState.FhirServerName == FhirServerConstant.PyroServerR4Name) {
+                    return 'Pyro server FHIR R4 conformance statement'
+                } else {
+                    return 'FHIR server conformance statement'
+                }                
             } else {
                 return 'Render Switch was not set correctly'
             }

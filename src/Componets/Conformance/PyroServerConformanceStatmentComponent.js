@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 export default class PyroServerConformanceStatmentComponent extends React.Component {
 
     static propTypes = {
-        ConformanceStatmentResource: PropTypes.object.isRequired,
+        ConformanceStatmentResource: PropTypes.object.isRequired,        
+        FhirServerName: PropTypes.string.isRequired
     }
 
     static defaultProps = {

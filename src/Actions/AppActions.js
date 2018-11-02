@@ -1,6 +1,7 @@
 import AppDispatcher from '../Dispatcher/AppDispatcher';
 import AppConstants from '../Constants/AppConstants';
-import PyroApi from 'API/PyroApi';
+import PyroStu3Api from 'API/PyroStu3Api';
+import PyroR4Api from 'API/PyroR4Api';
 
 const AppActions = {
 

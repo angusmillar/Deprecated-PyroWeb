@@ -18,6 +18,7 @@ export default class PyroServerApi extends React.Component {
 
     static propTypes = {
         ConformanceStatmentResource: PropTypes.object.isRequired,
+        FhirServerName: PropTypes.string.isRequired
     }
 
     static defaultProps = {

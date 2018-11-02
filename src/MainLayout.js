@@ -7,13 +7,15 @@ import HiServicePage from './Componets/HiService/HiServicePage';
 import { Container } from 'semantic-ui-react'
 import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/metaDataStoreComponent';
 import AppActions from './Actions/AppActions'
-import AppStoreMetadata from 'Store/AppStoreMetadata';
+import AppStoreStu3Metadata from 'Store/AppStoreStu3Metadata';
+import AppStoreR4Metadata from 'Store/AppStoreR4Metadata';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 function getItemsState() {
     return {
-        MetadataState: AppStoreMetadata.getState()
+        MetadataStu3State: AppStoreStu3Metadata.getState(),
+        MetadataR4State: AppStoreR4Metadata.getState()
     };
 }
 
@@ -41,11 +43,11 @@ export default class MainLayoutTwo extends React.Component {
     }
 
     componentDidMount() {
-        AppStoreMetadata.addChangeListener(this._onChange);
+        AppStoreStu3Metadata.addChangeListener(this._onChange);
     }
 
     componentWillUnmount() {
-        AppStoreMetadata.removeChangeListener(this._onChange);
+        AppStoreStu3Metadata.removeChangeListener(this._onChange);
     }
 
     _onChange = () => {
@@ -63,23 +65,42 @@ export default class MainLayoutTwo extends React.Component {
             )
         };
 
-        const renderFhirServerApiComponent = (props, Component) => {
+        const renderFhirServerStu3ApiComponent = (props, Component) => {
             return (
                 <Component
                     {...props}
                     renderType={MetaDataStoreComponent.RenderType.ServerAPI}
-                    store={this.state.store} />
+                    metadataState={this.state.store.MetadataStu3State} />
             )
         };
 
-        const renderFhirServerConformanceStatmentComponent = (props, Component) => {
+        const renderFhirServerStu3ConformanceStatmentComponent = (props, Component) => {
             return (
                 <Component
                     {...props}
                     renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment}
-                    store={this.state.store} />
+                    metadataState={this.state.store.MetadataStu3State} />
             )
         };
+
+        const renderFhirServerR4ApiComponent = (props, Component) => {
+            return (
+                <Component
+                    {...props}
+                    renderType={MetaDataStoreComponent.RenderType.ServerAPI}
+                    metadataState={this.state.store.MetadataR4State} />
+            )
+        };
+
+        const renderFhirServerR4ConformanceStatmentComponent = (props, Component) => {
+            return (
+                <Component
+                    {...props}
+                    renderType={MetaDataStoreComponent.RenderType.ServerConformanceStatment}
+                    metadataState={this.state.store.MetadataR4State} />
+            )
+        };
+
 
         // Top Right Bottom Left
         return (
@@ -89,9 +110,13 @@ export default class MainLayoutTwo extends React.Component {
                     <Container style={{ marginBottom: '5em', marginTop: '7em' }}>
                         {/* <div style={{ margin: '5em 0em 2em 0em', padding: '0em 3em 0em 3em' }}> */}
                         <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />                        
-                        <Route exact path="/metadata-content" render={(props) => renderFhirServerConformanceStatmentComponent(props, MetaDataStoreComponent)} />
-                        <Route exact path="/pyro-fhir-api" render={(props) => renderFhirServerApiComponent(props, MetaDataStoreComponent)} />
-                        <Route exact path="/HiService" component={HiServicePage} />                                                
+                        <Route exact path="/pyro-stu3-fhir-metadata" render={(props) => renderFhirServerStu3ConformanceStatmentComponent(props, MetaDataStoreComponent)} />
+                        <Route exact path="/pyro-stu3-fhir-api" render={(props) => renderFhirServerStu3ApiComponent(props, MetaDataStoreComponent)} />
+
+                        <Route exact path="/pyro-r4-fhir-metadata" render={(props) => renderFhirServerR4ConformanceStatmentComponent(props, MetaDataStoreComponent)} />
+                        <Route exact path="/pyro-r4-fhir-api" render={(props) => renderFhirServerR4ApiComponent(props, MetaDataStoreComponent)} />
+
+                        <Route exact path="/pyro-stu3-fhir-HiService" component={HiServicePage} />                                                
                     </Container>
                     <MainFooter siteIcon={this.props.siteLogo} />
                 </div>

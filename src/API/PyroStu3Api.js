@@ -9,12 +9,12 @@ import FhirConstant from '../Constants/FhirConstant'
 import AjaxConstants from '../Constants/AjaxConstant';
 import AjaxOutcome from '../Ajax/AjaxOutcome';
 
-class PyroApi {
+class PyroStu3Api {
 
     constructor() {
 
         //Pyro Server
-        const ServerBaseUrl = `${FhirServerConstant.PrimaryFhirServerEndpoint}/`;
+        const ServerBaseUrl = `${FhirServerConstant.PyroStu3FhirServerEndpoint}/`;
         this.RequestConfig = {
             headers: {
                 'Accept': FhirConstant.DefaultFhirJsonFormat,
@@ -59,7 +59,7 @@ class PyroApi {
                         null,
                         AjaxConstants.CallCompletedState.Completed_NoResponse,
                         null,
-                        `The request was made to the server ${FhirServerConstant.PrimaryFhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
+                        `The request was made to the server ${FhirServerConstant.PyroStu3FhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
                     AppActions.setMetadata(OutCome);
                 } else {
                     // Something happened in setting up the request that triggered an Error
@@ -105,7 +105,7 @@ class PyroApi {
                         null,
                         AjaxConstants.CallCompletedState.Completed_NoResponse,
                         null,
-                        `The request was made to the server ${FhirServerConstant.PrimaryFhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
+                        `The request was made to the server ${FhirServerConstant.PyroStu3FhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
                     AppActions.setHiService(OutCome);
                 } else {
                     // Something happened in setting up the request that triggered an Error
@@ -121,7 +121,7 @@ class PyroApi {
     }
 }
 
-const PyroApiInstance = new PyroApi();
+const PyroApiInstance = new PyroStu3Api();
 
 PyroApiInstance.dispatchToken = AppDispatcher.register((payload) => {
     const action = payload.action;
