@@ -6,9 +6,7 @@ import Home from 'Home';
 import HiServicePage from './Componets/HiService/HiServicePage';
 import { Container } from 'semantic-ui-react'
 import MetaDataStoreComponent from './Componets/Reusable/StoreCompontents/metaDataStoreComponent';
-
-import AppActions from './Actions/AppActions';
-// import AppActionsMetadata from 'Actions/AppActionsMetadata';
+import AppActions from './Actions/AppActions'
 import AppStoreMetadata from 'Store/AppStoreMetadata';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -23,6 +21,7 @@ export default class MainLayoutTwo extends React.Component {
 
     static propTypes = {
         siteIcon: PropTypes.string,
+        siteLogo: PropTypes.string,
     }
 
     static defaultProps = {        
