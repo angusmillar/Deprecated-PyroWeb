@@ -1,51 +1,157 @@
 import React from 'react'
 import PropTypes from 'prop-types';
-import { Container, Dropdown, Image, Menu } from 'semantic-ui-react'
+import { Container, Dropdown, Image, Menu, Grid } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 
 class MainMenu extends React.Component {
     render() {
         return (
-            <Menu fixed='top' inverted >
-                <Container>
-                    <Menu.Item as={Link} to='/' header>
-                        <Image
-                            size='mini'
-                            circular
-                            src={this.props.siteIcon}
-                            style={{ marginRight: '1.5em' }}
-                        />
-                        Pyro Web
-                    </Menu.Item>
+            <Grid stackable >
+                <Grid.Row columns={1} only='computer'>
+                    <Grid.Column width={16} >
+                        <Menu fixed='top' inverted>
+                            <Container>
+                                <Menu.Item as={Link} to='/' header>
+                                    <Image
+                                        size='mini'
+                                        circular
+                                        src={this.props.siteIcon}
+                                        style={{ marginRight: '1.5em' }}
+                                    />
+                                </Menu.Item>
+                                <Dropdown item simple text='STU3 Pyro Server'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header icon='server' content='FHIR Server (STU3)' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='info circle' text='Features' as={Link} to='/pyro-stu3-fhir-features' />
+                                        <Dropdown.Item icon='cogs' text='API Documentation' as={Link} to='/pyro-stu3-fhir-api' />
+                                        <Dropdown.Item icon='fire' text='Conformance Statment' as={Link} to='/pyro-stu3-fhir-metadata' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
 
-                    {/* <Menu.Item as={Link} to='/'>Home</Menu.Item> */}
+                                <Dropdown item simple text='R4 Pyro Server'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header icon='server' content='FHIR Server (R4)' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='info circle' text='Features' as={Link} to='/pyro-r4-fhir-features' />
+                                        <Dropdown.Item icon='cogs' text='API Documentation' as={Link} to='/pyro-r4-fhir-api' />
+                                        <Dropdown.Item icon='fire' text='Conformance Statment' as={Link} to='/pyro-r4-fhir-metadata' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
 
-                    <Dropdown item simple text='Server Information'>
-                        <Dropdown.Menu>
-                            {/* <Dropdown.Divider /> */}
-                            {/* <Dropdown.Header>Header Item</Dropdown.Header> */}
-                            <Dropdown.Item>
-                                <i className='dropdown icon' />
-                                <span className='text'>FHIR Server STU3</span>
-                                <Dropdown.Menu>
-                                    <Dropdown.Item as={Link} to='/pyro-stu3-fhir-api'>API Documentation</Dropdown.Item>
-                                    <Dropdown.Item as={Link} to='/pyro-stu3-fhir-metadata'>Conformance Statment</Dropdown.Item>                                    
-                                </Dropdown.Menu>
-                            </Dropdown.Item>
-                            <Dropdown.Item>
-                                <i className='dropdown icon' />
-                                <span className='text'>FHIR Server R4</span>
-                                <Dropdown.Menu>
-                                    <Dropdown.Item as={Link} to='/pyro-r4-fhir-api'>API Documentation</Dropdown.Item>
-                                    <Dropdown.Item as={Link} to='/pyro-r4-fhir-metadata'>Conformance Statment</Dropdown.Item>                                    
-                                </Dropdown.Menu>
-                            </Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item as={Link} to='/pyro-stu3-fhir-HiService'>HI Service Search</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
-                </Container>
-            </Menu>
+                                <Dropdown item simple text='HI Service'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header icon='server' content='HI Service' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='search' text='IHI Search' as={Link} to='/pyro-stu3-fhir-HiService' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
+
+                                <Dropdown item simple text='About'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header icon='question circle' content='About' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='user' text='Who Am I' as={Link} to='/who-am-i' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </Container>
+                        </Menu>
+                    </Grid.Column>
+                </Grid.Row>
+
+
+                <Grid.Row columns={1} only='tablet'>
+                    <Grid.Column width={16} >
+                        <Menu fixed='top' inverted>
+                            <Container>
+                                <Menu.Item as={Link} to='/' header>
+                                    <Image
+                                        size='mini'
+                                        circular
+                                        src={this.props.siteIcon}
+                                        style={{ marginRight: '1.5em' }}
+                                    />
+                                </Menu.Item>
+                                <Dropdown item simple text='STU3 Pyro Server'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header icon='server' content='FHIR Server (STU3)' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='info circle' text='Features' as={Link} to='/pyro-stu3-fhir-features' />
+                                        <Dropdown.Item icon='cogs' text='API Documentation' as={Link} to='/pyro-stu3-fhir-api' />
+                                        <Dropdown.Item icon='fire' text='Conformance Statment' as={Link} to='/pyro-stu3-fhir-metadata' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
+
+                                <Dropdown item simple text='R4 Pyro Server'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header icon='server' content='FHIR Server (R4)' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='info circle' text='Features' as={Link} to='/pyro-r4-fhir-features' />
+                                        <Dropdown.Item icon='cogs' text='API Documentation' as={Link} to='/pyro-r4-fhir-api' />
+                                        <Dropdown.Item icon='fire' text='Conformance Statment' as={Link} to='/pyro-r4-fhir-metadata' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
+
+                                <Dropdown item simple text='HI Service'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header icon='server' content='HI Service' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='search' text='IHI Search' as={Link} to='/pyro-stu3-fhir-HiService' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
+
+                                <Dropdown item simple text='About'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header icon='question circle' content='About' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='user' text='Who Am I' as={Link} to='/who-am-i' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </Container>
+                        </Menu>
+                    </Grid.Column>
+                </Grid.Row>
+
+
+                <Grid.Row columns={1} only='mobile'>
+                    <Grid.Column width={16} >
+                        <Menu fixed='top' inverted>
+                            <Container>                                
+                                <Dropdown className='icon' icon='bars' item >
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item icon='home' text='Home' as={Link} to='/' />
+
+                                        <Dropdown.Header icon='server' content='FHIR Server (STU3)' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='info circle' text='(STU3) Features' as={Link} to='/pyro-stu3-fhir-features' />
+                                        <Dropdown.Item icon='cogs' text='(STU3) API Documentation' as={Link} to='/pyro-stu3-fhir-api' />
+                                        <Dropdown.Item icon='fire' text='(STU3) Conformance Statment' as={Link} to='/pyro-stu3-fhir-metadata' />
+
+                                        <Dropdown.Header icon='server' content='FHIR Server (R4)' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='info circle' text='(R4) Features' as={Link} to='/pyro-r4-fhir-features' />
+                                        <Dropdown.Item icon='cogs' text='(R4) API Documentation' as={Link} to='/pyro-r4-fhir-api' />
+                                        <Dropdown.Item icon='fire' text='(R4) Conformance Statment' as={Link} to='/pyro-r4-fhir-metadata' />
+
+                                        <Dropdown.Header icon='server' content='HI Service' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='search' text='IHI Search' as={Link} to='/pyro-stu3-fhir-HiService' />
+
+                                        <Dropdown.Header icon='question circle' content='About' />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item icon='user' text='Who Am I' as={Link} to='/who-am-i' />
+
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                                <Menu.Item>Pyrohealth</Menu.Item>
+                            </Container>
+                        </Menu>
+                    </Grid.Column>
+                </Grid.Row>
+
+            </Grid>
+
+
         )
     }
 }

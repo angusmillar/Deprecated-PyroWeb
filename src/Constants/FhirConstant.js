@@ -2,11 +2,15 @@ import DateTimeSupport from '../SupportTools/DateTimeSupport'
 import isNil from 'lodash/isNil'
 
 export default class FhirConstant {
+    
+    static FhirSpecReleasesWebsiteUrl = 'http://hl7.org/fhir/directory.html';
+
     static STU3_SpecWebsiteUrl = 'http://hl7.org/fhir/STU3';
     static STU3_SpecWebsiteDisplay = 'FHIR April 2017 V3.0.1 specification';
 
+    static R4_SpecWebsiteUrl = 'http://hl7.org/fhir/2018Sep/index.html';
+    static R4_SpecWebsiteDisplay = 'FHIR Sept 2018 V3.5.0 specification';
     
-
     static fhirNetApiGitHubUrl = 'https://github.com/ewoutkramer/fhir-net-api';
 
     static DefaultFhirXmlFormat = 'application/fhir+xml';

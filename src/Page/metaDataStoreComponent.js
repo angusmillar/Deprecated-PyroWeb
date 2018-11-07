@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { Icon, Grid, Header } from 'semantic-ui-react'
 
 import AjaxConstant from 'Constants/AjaxConstant';
-import PyroServerApi from '../../PyroFhirApi/PyroServerApi';
-import PyroServerConformanceStatmentComponent from '../../Conformance/PyroServerConformanceStatmentComponent'
-import PageDimmer from '../PageDimmer/PageDimmer';
-import FhirServerConstant from '../../../Constants/FhirServerConstant';
+import PyroServerApi from '../Componets/PyroFhirApi/PyroServerApi';
+import PyroServerConformanceStatmentComponent from '../Componets/Conformance/PyroServerConformanceStatmentComponent'
+import PageDimmer from '../Componets/Reusable/PageDimmer/PageDimmer';
+import FhirServerConstant from '../Constants/FhirServerConstant';
 
 export default class MetaDataStoreComponent extends React.Component {
 

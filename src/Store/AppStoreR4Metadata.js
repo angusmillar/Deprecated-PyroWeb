@@ -4,6 +4,9 @@ import AppConstants from '../Constants/AppConstants';
 import FhirServerConstant from '../Constants/FhirServerConstant';
 import AjaxConstant from '../Constants/AjaxConstant';
 
+// eslint-disable-next-line no-unused-vars
+import PyroR4Api from 'API/PyroR4Api';
+
 
 let MetadataState = reset();
 
