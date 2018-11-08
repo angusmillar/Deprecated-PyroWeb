@@ -5,6 +5,7 @@ import MainFooter from 'MainFooter';
 import Home from 'Home';
 import stu3ServerFeatures from './Page/stu3ServerFeatures'
 import r4ServerFeatures from './Page/r4ServerFeatures'
+import r4ServerDocumentation from './Page/r4ServerDocumentation';
 import HiServicePage from './Componets/HiService/HiServicePage';
 import whoAmI from './Page/whoAmI';
 import { Container } from 'semantic-ui-react'
@@ -12,6 +13,7 @@ import MetaDataStoreComponent from './Page/metaDataStoreComponent';
 import AppActions from './Actions/AppActions'
 import AppStoreStu3Metadata from 'Store/AppStoreStu3Metadata';
 import AppStoreR4Metadata from 'Store/AppStoreR4Metadata';
+
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
@@ -111,6 +113,14 @@ export default class MainLayoutTwo extends React.Component {
                     siteIcon={this.props.siteIcon} />
             )
         };
+        
+        const renderServerDocumentationComponent = (props, Component) => {
+            return (
+                <Component
+                    {...props}
+                    siteIcon={this.props.siteIcon} />
+            )
+        };
 
 
         // Top Right Bottom Left
@@ -125,8 +135,10 @@ export default class MainLayoutTwo extends React.Component {
                         <Route exact path="/pyro-stu3-fhir-features" render={(props) => renderServerFeaturesComponent(props, stu3ServerFeatures)} />
                         <Route exact path="/pyro-stu3-fhir-metadata" render={(props) => renderFhirServerStu3ConformanceStatmentComponent(props, MetaDataStoreComponent)} />
                         <Route exact path="/pyro-stu3-fhir-api" render={(props) => renderFhirServerStu3ApiComponent(props, MetaDataStoreComponent)} />
-
+                        
+                        
                         <Route exact path="/pyro-r4-fhir-features" render={(props) => renderServerFeaturesComponent(props, r4ServerFeatures)} />
+                        <Route exact path="/pyro-r4-fhir-documentation" render={(props) => renderServerDocumentationComponent(props, r4ServerDocumentation)}  />
                         <Route exact path="/pyro-r4-fhir-metadata" render={(props) => renderFhirServerR4ConformanceStatmentComponent(props, MetaDataStoreComponent)} />
                         <Route exact path="/pyro-r4-fhir-api" render={(props) => renderFhirServerR4ApiComponent(props, MetaDataStoreComponent)} />
 

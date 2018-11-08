@@ -105,10 +105,10 @@ export default class r4ServerFeatures extends React.Component {
                         </Header>
                         <List bulleted >
                             <List.Item>All Resources types</List.Item>
-                            <List.Item>All Resources search parameters (except for composite parameters)</List.Item>
+                            <List.Item>All Resources search parameters</List.Item>
                             <List.Item>RESTful CRUD</List.Item>
                             <List.Item>Chained search parameters</List.Item>
-                            <List.Item>_includes &amp; _revinclude</List.Item>
+                            <List.Item>_includes &amp; _revinclude parameters</List.Item>
                             <List.Item>Custom search parameters</List.Item>
                             <List.Item>History</List.Item>
                             <List.Item>Conditional Create</List.Item>
@@ -124,8 +124,7 @@ export default class r4ServerFeatures extends React.Component {
                         <Header size={SubHeadingTwoSize}>
                             Base Operations:
                         </Header>
-                        <List bulleted>
-                            <List.Item>$server-indexes-delete-history-indexes</List.Item>
+                        <List bulleted>                            
                             <List.Item>$server-indexes-set</List.Item>
                             <List.Item>$server-indexes-index</List.Item>
                             <List.Item>$server-indexes-report</List.Item>
@@ -134,8 +133,7 @@ export default class r4ServerFeatures extends React.Component {
                         <Header size={SubHeadingTwoSize}>
                             Resource Operations:
                         </Header>
-                        <List bulleted>
-                            <List.Item>$server-indexes-delete-history-indexes (All ResourceTypes)</List.Item>
+                        <List bulleted>                            
                             <List.Item>$validate (All ResourceTypes)</List.Item>
                             <List.Item>$x-ihisearchorvalidate (Patient ResourceTypes)</List.Item>
                         </List>
