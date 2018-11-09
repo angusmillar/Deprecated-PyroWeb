@@ -25,7 +25,7 @@ export default class r4ServerDocumentation extends React.Component {
 
     render() {
 
-        const pageTitle = ' R4 Server Docuemntation';
+        const pageTitle = ' STU3 Server Docuemntation';
         const computerSize = 'large';
         const tabletSize = 'small';
         const mobileSize = 'tiny';

@@ -6,6 +6,8 @@ import Home from 'Home';
 import stu3ServerFeatures from './Page/stu3ServerFeatures'
 import r4ServerFeatures from './Page/r4ServerFeatures'
 import r4ServerDocumentation from './Page/r4ServerDocumentation';
+import stu3ServerDocumentation from './Page/st3ServerDocumentation';
+import SiteMap from './Page/SiteMap';
 import HiServicePage from './Componets/HiService/HiServicePage';
 import whoAmI from './Page/whoAmI';
 import { Container } from 'semantic-ui-react'
@@ -122,6 +124,13 @@ export default class MainLayoutTwo extends React.Component {
             )
         };
 
+        const renderSiteMapComponent = (props, Component) => {
+            return (
+                <Component
+                    {...props}
+                    siteIcon={this.props.siteIcon} />
+            )
+        };
 
         // Top Right Bottom Left
         return (
@@ -133,6 +142,7 @@ export default class MainLayoutTwo extends React.Component {
                         <Route exact path="/" render={(props) => renderHomeComponent(props, Home)} />
 
                         <Route exact path="/pyro-stu3-fhir-features" render={(props) => renderServerFeaturesComponent(props, stu3ServerFeatures)} />
+                        <Route exact path="/pyro-stu3-fhir-documentation" render={(props) => renderServerDocumentationComponent(props, stu3ServerDocumentation)}  />
                         <Route exact path="/pyro-stu3-fhir-metadata" render={(props) => renderFhirServerStu3ConformanceStatmentComponent(props, MetaDataStoreComponent)} />
                         <Route exact path="/pyro-stu3-fhir-api" render={(props) => renderFhirServerStu3ApiComponent(props, MetaDataStoreComponent)} />
                         
@@ -144,6 +154,7 @@ export default class MainLayoutTwo extends React.Component {
 
                         <Route exact path="/pyro-stu3-fhir-HiService" component={HiServicePage} />
                         <Route exact path="/who-am-i" component={whoAmI} />
+                        <Route exact path="/sitemap" render={(props) => renderSiteMapComponent(props, SiteMap)} />
                     </Container>
                     <MainFooter siteIcon={this.props.siteLogo} />
                 </div>

@@ -24,6 +24,7 @@ class MainMenu extends React.Component {
                                         <Dropdown.Header icon='server' content='FHIR Server (STU3)' />
                                         <Dropdown.Divider />
                                         <Dropdown.Item icon='info circle' text='Features' as={Link} to='/pyro-stu3-fhir-features' />
+                                        <Dropdown.Item icon='clipboard' text='Documentation' as={Link} to='/pyro-stu3-fhir-documentation' />                                        
                                         <Dropdown.Item icon='cogs' text='API Documentation' as={Link} to='/pyro-stu3-fhir-api' />
                                         <Dropdown.Item icon='fire' text='Conformance Statment' as={Link} to='/pyro-stu3-fhir-metadata' />
                                     </Dropdown.Menu>
@@ -34,8 +35,7 @@ class MainMenu extends React.Component {
                                         <Dropdown.Header icon='server' content='FHIR Server (R4)' />
                                         <Dropdown.Divider />
                                         <Dropdown.Item icon='info circle' text='Features' as={Link} to='/pyro-r4-fhir-features' />
-                                        <Dropdown.Item icon='clipboard' text='Documentation' as={Link} to='/pyro-r4-fhir-documentation' />
-                                        
+                                        <Dropdown.Item icon='clipboard' text='Documentation' as={Link} to='/pyro-r4-fhir-documentation' />                                        
                                         <Dropdown.Item icon='cogs' text='API Documentation' as={Link} to='/pyro-r4-fhir-api' />
                                         <Dropdown.Item icon='fire' text='Conformance Statment' as={Link} to='/pyro-r4-fhir-metadata' />
                                     </Dropdown.Menu>

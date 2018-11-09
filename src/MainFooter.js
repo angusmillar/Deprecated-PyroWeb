@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types';
 import { Container, Divider, Grid, Header, Image, List, Segment } from 'semantic-ui-react'
-
+import { Link } from 'react-router-dom'
+import WebLink from './Componets/Reusable/WebLink/WebLink'
 class MainFooter extends React.Component{
     
     render() {
@@ -62,9 +63,10 @@ class MainFooter extends React.Component{
                         src={this.props.siteIcon}
                     />
                     <Divider hidden  />
-                    <List horizontal inverted divided link>
-                        <List.Item as='a' href='#'>Site Map</List.Item>
-                        <List.Item as='a' href='#'>Contact Us</List.Item>                       
+                    <List horizontal  inverted divided link>
+                       {/* //Below just goes to home, ned a new page */}
+                        <List.Item  as={Link} to='/SiteMap' >SiteMap</List.Item>
+                        <List.Item><WebLink url={'angusbmillar@gmail.com'} display='Contact Us' linkType={WebLink.LinkType.mailto} /></List.Item>                       
                     </List>
                 </Container>
             </Segment>           
