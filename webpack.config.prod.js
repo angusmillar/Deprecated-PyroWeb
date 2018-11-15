@@ -37,6 +37,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'index.html', // Load a custom template
             inject: 'body', // Inject all scripts into the body
+            favicon: 'src/Images/SiteIcon/favicon.ico',
             hash: true
          }),
          new ExtractTextPlugin({

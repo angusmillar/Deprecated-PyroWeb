@@ -23,11 +23,12 @@ module.exports = {
         new webpack.NamedModulesPlugin(),
         new HtmlWebpackPlugin({
             template: 'index.html', // Load a custom template
+            favicon: 'src/Images/SiteIcon/favicon.ico',
             inject: 'body' // Inject all scripts into the body
         }),
         new ExtractTextPlugin({
             filename: '[name].[contenthash].css',
-          })
+        }),        
     ],
     module: {
         rules: [
