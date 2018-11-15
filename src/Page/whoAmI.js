@@ -47,7 +47,7 @@ export default class Home extends React.Component {
                                 </Header.Content>
                             </Header>                           
                             <p>
-                                This video is a presentation I gave as part of my role at the Australian Digital Health Agency which was a brief introduction to FHRI for beginners
+                                This video is a presentation I gave as part of my role at the Australian Digital Health Agency which was a brief introduction to FHIR for beginners
                                 while also preparing the participants for an up and coming Australian FHIR connectathon. It contains very good content for people starting out with FHIR.
                             </p>
                             <Embed
@@ -55,7 +55,7 @@ export default class Home extends React.Component {
                                 iframe={{
                                     allowFullScreen: true,
                                     style: {
-                                        padding: 10,
+                                        padding: 0,
                                     },
                                 }}
                                 placeholder={this.props.ADHAFhirIntro} source='youtube' />
