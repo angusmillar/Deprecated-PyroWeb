@@ -7,9 +7,10 @@ export default class FhirServerConstant {
     //Testing
     // static PrimaryFhirServerEndpoint = 'http://nowherex'
 
-    // PyroHealth
-    // static PrimaryFhirServerEndpoint = 'https://pyrohealth.net/test/stu3/fhir'    
-    // static PrimaryFhirServerEndpoint = 'http://localhost:8888/fhir'
+    // PyroHealth    
+    // static PyroR4FhirServerEndpoint = 'http://localhost:8888/fhir'
+    // static PyroStu3FhirServerEndpoint = 'http://localhost:8888/fhir'
+
     static PyroR4FhirServerEndpoint = 'https://r4.test.pyrohealth.net/fhir'
     static PyroStu3FhirServerEndpoint = 'https://stu3.test.pyrohealth.net/fhir'
 

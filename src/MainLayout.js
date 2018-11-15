@@ -90,6 +90,16 @@ export default class MainLayoutTwo extends React.Component {
             )
         };
 
+        const renderFhirServerStu3SearchComponent = (props, Component) => {
+            return (
+                <Component
+                    {...props}
+                    renderType={MetaDataStoreComponent.RenderType.ServerSearch}
+                    metadataState={this.state.store.MetadataStu3State} />
+            )
+        };
+
+
         const renderFhirServerR4ApiComponent = (props, Component) => {
             return (
                 <Component
@@ -107,6 +117,16 @@ export default class MainLayoutTwo extends React.Component {
                     metadataState={this.state.store.MetadataR4State} />
             )
         };
+
+        const renderFhirServerR4SearchComponent = (props, Component) => {
+            return (
+                <Component
+                    {...props}
+                    renderType={MetaDataStoreComponent.RenderType.ServerSearch}
+                    metadataState={this.state.store.MetadataR4State} />
+            )
+        };
+
 
         const renderServerFeaturesComponent = (props, Component) => {
             return (
@@ -145,12 +165,15 @@ export default class MainLayoutTwo extends React.Component {
                         <Route exact path="/pyro-stu3-fhir-documentation" render={(props) => renderServerDocumentationComponent(props, stu3ServerDocumentation)}  />
                         <Route exact path="/pyro-stu3-fhir-metadata" render={(props) => renderFhirServerStu3ConformanceStatmentComponent(props, MetaDataStoreComponent)} />
                         <Route exact path="/pyro-stu3-fhir-api" render={(props) => renderFhirServerStu3ApiComponent(props, MetaDataStoreComponent)} />
+                        <Route exact path="/pyro-stu3-fhir-search" render={(props) => renderFhirServerStu3SearchComponent(props, MetaDataStoreComponent)} />
+
                         
                         
                         <Route exact path="/pyro-r4-fhir-features" render={(props) => renderServerFeaturesComponent(props, r4ServerFeatures)} />
                         <Route exact path="/pyro-r4-fhir-documentation" render={(props) => renderServerDocumentationComponent(props, r4ServerDocumentation)}  />
                         <Route exact path="/pyro-r4-fhir-metadata" render={(props) => renderFhirServerR4ConformanceStatmentComponent(props, MetaDataStoreComponent)} />
                         <Route exact path="/pyro-r4-fhir-api" render={(props) => renderFhirServerR4ApiComponent(props, MetaDataStoreComponent)} />
+                        <Route exact path="/pyro-r4-fhir-search" render={(props) => renderFhirServerR4SearchComponent(props, MetaDataStoreComponent)} />
 
                         <Route exact path="/pyro-stu3-fhir-HiService" component={HiServicePage} />
                         <Route exact path="/who-am-i" component={whoAmI} />

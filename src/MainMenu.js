@@ -27,6 +27,7 @@ class MainMenu extends React.Component {
                                         <Dropdown.Item icon='clipboard' text='Documentation' as={Link} to='/pyro-stu3-fhir-documentation' />                                        
                                         <Dropdown.Item icon='cogs' text='API Documentation' as={Link} to='/pyro-stu3-fhir-api' />
                                         <Dropdown.Item icon='fire' text='Conformance Statment' as={Link} to='/pyro-stu3-fhir-metadata' />
+                                        <Dropdown.Item icon='search' text='Search' as={Link} to='/pyro-stu3-fhir-search' />
                                     </Dropdown.Menu>
                                 </Dropdown>
 
@@ -38,6 +39,7 @@ class MainMenu extends React.Component {
                                         <Dropdown.Item icon='clipboard' text='Documentation' as={Link} to='/pyro-r4-fhir-documentation' />                                        
                                         <Dropdown.Item icon='cogs' text='API Documentation' as={Link} to='/pyro-r4-fhir-api' />
                                         <Dropdown.Item icon='fire' text='Conformance Statment' as={Link} to='/pyro-r4-fhir-metadata' />
+                                        <Dropdown.Item icon='search' text='Search' as={Link} to='/pyro-r4-fhir-search' />
                                     </Dropdown.Menu>
                                 </Dropdown>
 
