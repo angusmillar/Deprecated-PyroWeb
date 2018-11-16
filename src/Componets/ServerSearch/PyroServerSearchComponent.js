@@ -1,18 +1,18 @@
 import React from 'react';
 
-import { Grid, Form, Label, Divider } from 'semantic-ui-react'
+import { Grid, Button, Form, Label, Divider, Header, Popup } from 'semantic-ui-react'
 
 import map from 'lodash/map';
 import filter from 'lodash/filter';
-// import filter from 'lodash/filter';
+import findIndex from 'lodash/findIndex';
 import reverse from 'lodash/reverse';
-
+import isNil from 'lodash/isNil';
 
 import PropTypes from 'prop-types';
 
 import SearchToken from '../FhirComponent/Search/SearchToken';
 import Segment from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
-import isNil from 'lodash/isNil';
+
 import UuidSupport from '../../SupportTools/UuidSupport'
 
 export default class PyroServerSearchComponent extends React.Component {
@@ -30,8 +30,9 @@ export default class PyroServerSearchComponent extends React.Component {
         // this.onTokenRemove = this.onTokenRemove.bind(this);
         this.state = {
             selectedResource: [{ key: 'none', icon: 'tag', text: 'none', value: 'none' }],
-            selectedSearch: [{ key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' }],
-            savedSearchParameters: []
+            selectedSearch: 'none',
+            SearchElement: { key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' },
+            savedSearchParameters: [],
         };
     }
 
@@ -49,13 +50,31 @@ export default class PyroServerSearchComponent extends React.Component {
 
         const searchParameter = {
             id: UuidSupport.createGUID(),
-            type: 'token',
+            type: Submitted.submittedType,
             name: Submitted.submittedName,
             system: Submitted.submittedSystem,
             code: Submitted.submittedCode
         };
         const newArray = this.state.savedSearchParameters.slice(0);
         newArray.push(searchParameter);
+
+        this.setState({ savedSearchParameters: newArray, SearchElement: null, selectedSearch: 'none' })
+    };
+
+    onTokenEdit = (Submitted) => {
+
+        const searchParameter = {
+            id: Submitted.submittedId,
+            type: Submitted.submittedType,
+            name: Submitted.submittedName,
+            system: Submitted.submittedSystem,
+            code: Submitted.submittedCode
+        };
+
+        const newArray = this.state.savedSearchParameters.slice(0);
+        const Index = findIndex(newArray, { id: searchParameter.id })
+        newArray.splice(Index, 1, searchParameter);
+
 
         this.setState({ savedSearchParameters: newArray })
     };
@@ -87,20 +106,34 @@ export default class PyroServerSearchComponent extends React.Component {
         };
 
         const renderResourceSelector = () => {
+
+            let ResourcePopupMessage = 'Select a resource to search on';
+            if (this.state.savedSearchParameters.length > 0) {
+                ResourcePopupMessage = 'You must clear all search parameters to modify the currect resource type';
+            }
+
+            let LockResourceSelector = false;
+            if (this.state.savedSearchParameters.length > 0) {
+                LockResourceSelector = true;
+            }
             return (
                 <Segment raised >
                     <Form>
-                        <Form.Group widths='equal'>
-                            <Form.Select
-                                label='Resource'
-                                fluid
-                                defaultValue='none'
-                                options={ResourceList}
-                                placeholder='Resource'
-                                search
-                                closeOnChange
-                                onChange={this.handleResourceFilterChange} />
-                        </Form.Group>
+                        <Popup trigger={
+                            <Form.Group widths='equal'>
+                                <Form.Select
+                                    disabled={LockResourceSelector}
+                                    label='Resource'
+                                    fluid
+                                    defaultValue='none'
+                                    options={ResourceList}
+                                    placeholder='Resource'
+                                    search
+                                    closeOnChange
+                                    onChange={this.handleResourceFilterChange} />
+
+                            </Form.Group>
+                        } content={ResourcePopupMessage} />
                     </Form>
                     {renderSearch()}
                     {renderSearchType()}
@@ -119,12 +152,13 @@ export default class PyroServerSearchComponent extends React.Component {
                             <Form.Select
                                 label='Search Parameter'
                                 fluid
-                                defaultValue='none'
+                                // defaultValue='none'
                                 options={searchList()}
                                 placeholder='Search Parameter'
                                 search
                                 closeOnChange
-                                onChange={this.handleSearchFilterChange} />
+                                onChange={this.handleSearchFilterChange}
+                                value={this.state.selectedSearch} />
                         </Form.Group>
                     </Form>
                     // </Segment>
@@ -136,14 +170,14 @@ export default class PyroServerSearchComponent extends React.Component {
             if (isNil(this.state.SearchElement)) {
                 return null;
             } else if (this.state.SearchElement.type == 'token') {
-                return <SearchToken onSubmit={this.onTokenSubmit} name={this.state.SearchElement.name} readOnly={false} id={UuidSupport.createGUID()} ></SearchToken>
+                return <SearchToken onSubmit={this.onTokenSubmit} name={this.state.SearchElement.name} isEditMode={false} id={UuidSupport.createGUID()} ></SearchToken>
             }
         }
 
         const renderSavedSearchPatrameterList = () => {
 
             const renderAndDivider = (Index) => {
-                if (this.state.savedSearchParameters.length > 1 & Index > 0) {
+                if (this.state.savedSearchParameters.length > 1 && Index > 0) {
                     return <Divider horizontal>And</Divider>
                 }
             }
@@ -160,7 +194,7 @@ export default class PyroServerSearchComponent extends React.Component {
                                 return (
                                     <React.Fragment key={item.id}>
                                         {renderAndDivider(Index)}
-                                        <SearchToken onSubmit={this.onTokenRemove} id={item.id} name={item.name} system={System} code={Code} readOnly={true}></SearchToken>
+                                        <SearchToken onSubmit={this.onTokenRemove} onTokenEdit={this.onTokenEdit} id={item.id} name={item.name} system={System} code={Code} isEditMode={true}></SearchToken>
                                     </React.Fragment>
                                 )
                             } else {
@@ -172,56 +206,83 @@ export default class PyroServerSearchComponent extends React.Component {
             )
         }
 
-        const renderFhirQuery = () => {
 
-            const queryElementArray = map(this.state.savedSearchParameters, (item) => {
-                if (item.type == 'token') {
-                    return `${item.name}=${item.system}|${item.code}`
-                } else {
-                    return null;
-                }
-            })
+        const queryElementArray = map(this.state.savedSearchParameters, (item) => {
+            if (item.type == 'token') {
+                return { queryString: `${item.name}=${item.system}|${item.code}`, searchType: item.type }
+            } else {
+                return null;
+            }
+        })
 
-            const query = (QueryArray) => {
-                const arrayLength = QueryArray.length;
-                let FinalQuery = '';
-                for (let i = 0; i < arrayLength; i++) {
-                    if (i == 0) {
-                        FinalQuery = FinalQuery.concat(`?${QueryArray[i]}`)
-                    } else {
-                        FinalQuery = FinalQuery.concat(`&${QueryArray[i]}`)
+        const renderQueryLabels = () => {
+            return (
+                map(queryElementArray, (item, index) => {
+                    let queryDelimiter = '&';
+                    if (index == 0) {
+                        queryDelimiter = '?';
                     }
-
-                }
-                return FinalQuery;
-            };
-
-            return query(queryElementArray);
+                    if (item.searchType == 'token') {
+                        return (
+                            <React.Fragment key={index}>
+                                <Label color='grey'>{queryDelimiter}</Label>
+                                <Label color='teal'>{item.queryString}</Label>
+                            </React.Fragment>
+                        )
+                    } else {
+                        return null;
+                    }
+                })
+            )
         }
 
         const renderFhirUrl = () => {
             if (!isNil(this.state.ResourceElement)) {
                 return (
-                    <React.Fragment>
-                        <Label size='mini' color='blue'>[Base]</Label>
-                        <Label size='mini' color='grey'>/</Label>
-                        <Label size='mini' color='violet'>{this.state.selectedResource}</Label>
-                        <Label size='mini' color='grey'>?</Label>
-                        <Label size='mini' color='teal'>{renderFhirQuery()}</Label>
-                        <Label size='mini' color='grey'>&</Label>
-                        <Label size='mini' color='purple'>{renderFhirQuery()}</Label>
-                        <Label size='mini' color='grey'>&</Label>
-                        <Label size='mini' color='brown'>{renderFhirQuery()}</Label>
-                        <Label size='mini' color='grey'>&</Label>
-                        <Label size='mini' color='olive'>{renderFhirQuery()}</Label>
+                    <Label.Group size='medium'>
+                        <Label color='black'>[Base]</Label>
+                        <Label color='grey'>/</Label>
+                        <Label color='violet'>{this.state.selectedResource}</Label>
+                        {renderQueryLabels()}
+                    </Label.Group>
 
-                    </React.Fragment>
                 )
             } else {
                 return null;
             }
         };
 
+        const renderFhirQuery = () => {
+            if (this.state.savedSearchParameters.length > 0) {
+                return (
+                    <Grid.Row columns={16}>
+                        <Grid.Column width={16}>
+                            <Segment>
+                                <Grid>
+                                    <Grid.Row columns={16}>
+                                        <Grid.Column width={16}>
+                                            <Header>FHIR Query</Header>
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                    <Grid.Row columns={16}>
+                                        <Grid.Column width={14}>
+                                            <Segment>
+                                                {renderFhirUrl()}
+                                            </Segment>
+                                        </Grid.Column>
+                                        <Grid.Column width={2} verticalAlign='middle'>
+                                            <Button floated='right' color='blue'>Send</Button>
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                </Grid>
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row >
+                )
+            } else {
+                return null;
+            }
+        }
         return (
             <Segment>
                 <Grid>
@@ -230,15 +291,7 @@ export default class PyroServerSearchComponent extends React.Component {
                             {renderResourceSelector()}
                         </Grid.Column>
                     </Grid.Row>
-                    <Grid.Row columns={16}>
-                        <Grid.Column width={16}>
-                            <Segment>
-                            <label>FHIR URL</label><br></br>
-                                {renderFhirUrl()}
-
-                            </Segment>
-                        </Grid.Column>
-                    </Grid.Row>
+                    {renderFhirQuery()}
                     {renderSavedSearchPatrameterList()}
                 </Grid>
             </Segment >

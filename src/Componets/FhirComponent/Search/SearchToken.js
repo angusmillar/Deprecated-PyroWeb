@@ -1,24 +1,28 @@
 import React from 'react';
 
-import { Grid, Form, Button, Segment, Label, Icon } from 'semantic-ui-react'
+import { Grid, Form, Button, Segment, Label, Icon, Divider } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
+import isNil from 'lodash/isNil';
 
 export default class SearchToken extends React.Component {
 
     static propTypes = {
         onSubmit: PropTypes.func,
+        onTokenEdit: PropTypes.func,
         id: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        readOnly: PropTypes.bool,
+        isEditMode: PropTypes.bool,
         system: PropTypes.string,
         code: PropTypes.string,
+        type: PropTypes.string,
     }
 
     static defaultProps = {
         readOnly: false,
         system: '',
-        code: ''
+        code: '',
+        type: 'token'
     }
 
     constructor(props) {
@@ -40,6 +44,22 @@ export default class SearchToken extends React.Component {
             [name]: value
         });
 
+        if (!isNil(this.props.onTokenEdit)) {
+            let SystemEvent = this.state.system;
+            let CodeEvent = this.state.code;
+            if (name == 'system') {
+                SystemEvent = value;
+            } else if (name == 'code') {
+                CodeEvent = value;
+            }
+            this.props.onTokenEdit({
+                submittedName: this.props.name,
+                submittedSystem: SystemEvent,
+                submittedCode: CodeEvent,
+                submittedId: this.props.id,
+                submittedType: this.props.type
+            });
+        }
     }
 
     handleSubmit = (e) => {
@@ -50,8 +70,16 @@ export default class SearchToken extends React.Component {
             submittedName: this.props.name,
             submittedSystem: this.state.system,
             submittedCode: this.state.code,
-            submittedId: this.props.id
+            submittedId: this.props.id,
+            submittedType: this.props.type,
         });
+    }
+
+    onOrButtonClick = (e) => {
+        e.preventDefault();
+        //const { system, code } = this.state
+
+        
     }
 
 
@@ -68,10 +96,10 @@ export default class SearchToken extends React.Component {
         };
 
         const renderButton = () => {
-            if (!this.props.readOnly) {
-                return <Button size='big' icon color='green' type='submit'><Icon name='add' /></Button>
-            } else {
+            if (this.props.isEditMode) {
                 return <Button size='big' icon color='red' type='submit'><Icon name='remove circle' /></Button>
+            } else {
+                return <Button size='big' icon color='green' type='submit'><Icon name='add' /></Button>
             }
 
         };
@@ -80,8 +108,9 @@ export default class SearchToken extends React.Component {
             return (
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Group widths='equal'>
-                        <Form.Field label='System' disabled={this.props.readOnly} width={5} name='system' control='input' placeholder='System' value={system} onChange={this.handleFormChange} />
-                        <Form.Field label='Code' disabled={this.props.readOnly} width={5} name='code' control='input' placeholder='Code' value={code} onChange={this.handleFormChange} />
+                        <Form.Field label='System' width={5} name='system' control='input' placeholder='System' value={system} onChange={this.handleFormChange} />
+                        <Form.Field label='Code' width={5} name='code' control='input' placeholder='Code' value={code} onChange={this.handleFormChange} />
+                        <Button size='mini' icon color='black'  onClick={this.onOrButtonClick}>OR</Button>
                         {renderButton()}
                     </Form.Group>
                 </Form>
@@ -90,24 +119,28 @@ export default class SearchToken extends React.Component {
 
 
         return (
-            <Segment padded='very' color='teal' raised={this.props.readOnly}>
+            <Segment color='teal'>
                 {renderLabelName()}
                 {renderLabelType()}
                 <Grid>
-                    <Grid.Row columns={16}>
-                        <Grid.Column width={1} verticalAlign='middle'>
-                          
-                        </Grid.Column>
-                        <Grid.Column width={14} verticalAlign='middle' >
+                    <Grid.Row columns={2}>
+                        <Grid.Column width={16} verticalAlign='middle' >
+                            <Divider horizontal hidden></Divider>
                             {renderInputs()}
                         </Grid.Column>
-                        <Grid.Column width={1} verticalAlign='middle'>
-                          
+                    </Grid.Row>
+                    <Divider horizontal>OR</Divider>
+                    <Grid.Row columns={1}>
+                        <Grid.Column width={15} verticalAlign='middle' >
+                            <Form onSubmit={this.handleSubmit}>
+                                <Form.Group widths='equal'>
+                                    <Form.Field label='System' width={5} name='system' control='input' placeholder='System' value={system} onChange={this.handleFormChange} />
+                                    <Form.Field label='Code' width={5} name='code' control='input' placeholder='Code' value={code} onChange={this.handleFormChange} />
+                                </Form.Group>
+                            </Form>
                         </Grid.Column>
-                        
                     </Grid.Row>
                 </Grid>
-
             </Segment>
         )
 
