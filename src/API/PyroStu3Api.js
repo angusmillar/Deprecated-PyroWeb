@@ -59,7 +59,7 @@ class PyroStu3Api {
                         null,
                         AjaxConstants.CallCompletedState.Completed_NoResponse,
                         null,
-                        `The request was made to the server ${FhirServerConstant.PyroStu3FhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs`);
+                        `The request was made to the server ${FhirServerConstant.PyroStu3FhirServerEndpoint} yet no response was received after ${FhirServerConstant.RequestTimeout.toString()} secs. Try refreshing the page to retry.`);
                     AppActions.setMetadata(OutCome);
                 } else {
                     // Something happened in setting up the request that triggered an Error
