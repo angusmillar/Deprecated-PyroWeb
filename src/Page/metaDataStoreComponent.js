@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Icon, Grid, Header } from 'semantic-ui-react'
+import { Icon, Grid, Header, Message } from 'semantic-ui-react'
 
 import AjaxConstant from 'Constants/AjaxConstant';
 import PyroServerApi from '../Componets/PyroFhirApi/PyroServerApi';
@@ -32,7 +32,7 @@ export default class MetaDataStoreComponent extends React.Component {
     };
 
     renderBody() {
-        
+
         const Metadata = this.props.metadataState
 
         if (Metadata.AjaxCallState === AjaxConstant.CallState.Call_None) {
@@ -50,21 +50,46 @@ export default class MetaDataStoreComponent extends React.Component {
                 } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerSearch) {
                     return <PyroServerSearchComponent ConformanceStatmentResource={Metadata.AjaxOutcome.FhirResource} FhirServerName={Metadata.FhirServerName} />
                 } else {
-                    return <h2>Render Type switch was not set correctly</h2>
+                    return (
+                        <Message negative>
+                            <Message.Header>Oh no!</Message.Header>
+                            <p>Render Type switch was not set correctly.</p>
+                        </Message>
+                    )                   
                 }
             }
             else if (Metadata.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_ResponseNotOk) {
-                return <h2>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</h2>
+                return (
+                    <Message negative>
+                        <Message.Header>Oh no!</Message.Header>
+                        <p>Response was not OK Maybe a FHIR OperationOutcome, work to do here!</p>
+                    </Message>
+                )
             }
             else if (Metadata.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_NoResponse) {
-                    // return <h2>We got no response from the Ajax call, work to do here!</h2>
-                return <h2>{Metadata.AjaxOutcome.ErrorMessage}</h2>
+                // return <h2>We got no response from the Ajax call, work to do here!</h2>
+                return (
+                    <Message negative>
+                        <Message.Header>Oh no!</Message.Header>
+                        <p>{Metadata.AjaxOutcome.ErrorMessage}</p>
+                    </Message>
+                )               
             }
             else if (Metadata.AjaxOutcome.CallCompletedState == AjaxConstant.CallCompletedState.Completed_CallSetupFailed) {
-                return <h2>Call Setup failed in Ajax call, work to do here!</h2>
+                return (
+                    <Message negative>
+                        <Message.Header>Oh no!</Message.Header>
+                        <p>Call Setup failed in Ajax call, work to do here!</p>
+                    </Message>
+                )                   
             }
             else {
-                return <h2>Unkown AjaxConstant.CallCompletedState</h2>
+                return (
+                    <Message negative>
+                        <Message.Header>Oh no!</Message.Header>
+                        <p>Unkown AjaxConstant.CallCompletedState</p>
+                    </Message>
+                )               
             }
         }
     }
@@ -73,12 +98,12 @@ export default class MetaDataStoreComponent extends React.Component {
         const renderHeader = () => {
             if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerAPI) {
                 if (this.props.metadataState.FhirServerName == FhirServerConstant.PyroServerStu3Name) {
-                    return 'Pyro server STU3 API documentation';    
+                    return 'Pyro server STU3 API documentation';
                 } else if (this.props.metadataState.FhirServerName == FhirServerConstant.PyroServerR4Name) {
-                    return 'Pyro server R4 API documentation';    
+                    return 'Pyro server R4 API documentation';
                 } else {
-                    return 'API documentation';    
-                }                
+                    return 'API documentation';
+                }
             } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerConformanceStatment) {
                 if (this.props.metadataState.FhirServerName == FhirServerConstant.PyroServerStu3Name) {
                     return 'Pyro server FHIR STU3 conformance statement'
@@ -86,7 +111,7 @@ export default class MetaDataStoreComponent extends React.Component {
                     return 'Pyro server FHIR R4 conformance statement'
                 } else {
                     return 'FHIR server conformance statement'
-                }                
+                }
             } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerSearch) {
                 if (this.props.metadataState.FhirServerName == FhirServerConstant.PyroServerStu3Name) {
                     return 'Pyro server FHIR STU3 Search'
@@ -94,7 +119,7 @@ export default class MetaDataStoreComponent extends React.Component {
                     return 'Pyro server FHIR R4 Search'
                 } else {
                     return 'FHIR server Search'
-                }                
+                }
             } else {
                 return 'Render Switch was not set correctly'
             }
@@ -112,10 +137,10 @@ export default class MetaDataStoreComponent extends React.Component {
                             </Header.Content>
                         </Header>
                     </Grid.Column>
-                </Grid.Row>                
+                </Grid.Row>
                 <Grid.Row>
-                    <Grid.Column width={16} >                        
-                            {Body}                        
+                    <Grid.Column width={16} >
+                        {Body}
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
