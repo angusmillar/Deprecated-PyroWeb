@@ -2,7 +2,7 @@ import DateTimeSupport from '../SupportTools/DateTimeSupport'
 import isNil from 'lodash/isNil'
 
 export default class FhirConstant {
-    
+
     static FhirSpecReleasesWebsiteUrl = 'http://hl7.org/fhir/directory.html';
 
     static STU3_SpecWebsiteUrl = 'http://hl7.org/fhir/STU3';
@@ -10,7 +10,7 @@ export default class FhirConstant {
 
     static R4_SpecWebsiteUrl = 'http://hl7.org/fhir/2018Sep/index.html';
     static R4_SpecWebsiteDisplay = 'FHIR Sept 2018 V3.5.0 specification';
-    
+
     static fhirNetApiGitHubUrl = 'https://github.com/ewoutkramer/fhir-net-api';
 
     static DefaultFhirXmlFormat = 'application/fhir+xml';
@@ -22,12 +22,12 @@ export default class FhirConstant {
     static PostRequestHeaders = [
         { name: 'Content-Type', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
         { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
-        { name: 'If-None-Exist', value: '[search parameters]', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#ccreate` }            
+        { name: 'If-None-Exist', value: '[search parameters]', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#ccreate` }
     ];
 
     static PutRequestHeaders = [
         { name: 'Content-Type', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
-        { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },        
+        { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
     ];
 
     static postResponseHeaders(EndpointUrl, ResourceName, ResourceId, LastModified, Version) {
@@ -35,22 +35,22 @@ export default class FhirConstant {
         if (!isNil(Version)) {
             _Version = Version;
         }
-        
+
         return [
             { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
             { name: 'ETag', value: `W/"${_Version}"`, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#versioning` },
             { name: 'Last-Modified', value: DateTimeSupport.dateTimeHttpHeader(LastModified), moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#create` },
             { name: 'Location', value: `${EndpointUrl}/${ResourceName}/${ResourceId}`, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#create` }
         ];
-    }    
+    }
 
     static responseOperationOutcomeHeaders() {
         return [
             { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
         ];
-    }   
+    }
 
-    static responseGoneHeaders(Version) {        
+    static responseGoneHeaders(Version) {
         if (!isNil(Version)) {
             return [
                 { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
@@ -58,10 +58,10 @@ export default class FhirConstant {
             ];
         } else {
             return [
-                { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },               
+                { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
             ];
-        }        
-    }   
+        }
+    }
 
     static responseNoContentHeaders(Version) {
         if (!isNil(Version)) {
@@ -71,37 +71,50 @@ export default class FhirConstant {
             ];
         } else {
             return [
-                { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },               
+                { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
             ];
-        }        
-    } 
+        }
+    }
 
     static getResponseSearchHeaders() {
         return [
-            { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },           
+            { name: 'Content-Type', value: 'NotSet', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
         ];
-    }  
+    }
 
-    static GetRequestHeaders = [        
+    static GetRequestHeaders = [
         { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
     ];
 
-    static DeleteRequestHeaders = [        
+    static DeleteRequestHeaders = [
         { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
     ];
 
-    static GetRequestByIdHeaders = [        
+    static GetRequestByIdHeaders = [
         { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` },
         { name: 'If-Modified-Since', value: 'Wed, 21 Oct 2015 07:28:00 GMT', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#cread` },
         { name: 'If-None-Match', value: 'W/"5"', moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#ccread` }
     ];
 
-    static GetRequestVReadHeaders = [        
+    static GetRequestVReadHeaders = [
         { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` }
     ];
 
-    static GetRequestVReadByVidHeaders = [        
+    static GetRequestVReadByVidHeaders = [
         { name: 'Accept', value: FhirConstant.DefaultFhirJsonFormat, moreInfo: `${FhirConstant.STU3_SpecWebsiteUrl}/http.html#mime-type` }
     ];
+
+
+    //DeviceType
+    static searchType = {
+        token: 'token',
+        number: 'number',
+        dateTime: 'dateTime',
+        string: 'string',
+        composite: 'composite',
+        quantity: 'quantity',
+        uri: 'uri',
+        special: 'special'
+    };
 
 }

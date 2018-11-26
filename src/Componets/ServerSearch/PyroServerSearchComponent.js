@@ -10,10 +10,11 @@ import isNil from 'lodash/isNil';
 
 import PropTypes from 'prop-types';
 
-import SearchToken from '../FhirComponent/Search/SearchToken';
+import TokenSearch from '../FhirComponent/Search/TokenSearch';
 import Segment from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
 
 import UuidSupport from '../../SupportTools/UuidSupport'
+import FhirConstant from '../../Constants/FhirConstant';
 
 export default class PyroServerSearchComponent extends React.Component {
 
@@ -27,7 +28,7 @@ export default class PyroServerSearchComponent extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.onTokenRemove = this.onTokenRemove.bind(this);
+        
         this.state = {
             selectedResource: [{ key: 'none', icon: 'tag', text: 'none', value: 'none' }],
             selectedSearch: 'none',
@@ -37,23 +38,25 @@ export default class PyroServerSearchComponent extends React.Component {
     }
 
     handleResourceFilterChange = (e, { value }) => {
+        e.preventDefault();
         const ResourceArray = filter(this.props.ConformanceStatmentResource.rest[0].resource, { 'type': value });
         this.setState(() => ({ selectedResource: value, ResourceElement: ResourceArray[0] }));
     }
 
     handleSearchFilterChange = (e, { value }) => {
+        e.preventDefault();
         const SearchArray = filter(this.state.ResourceElement.searchParam, { 'name': value });
         this.setState(() => ({ selectedSearch: value, SearchElement: SearchArray[0] }));
     }
 
-    onTokenSubmit = (Submitted) => {
+    onTokenAdd = (e) => {
+        // e.preventDefault();
 
         const searchParameter = {
-            id: UuidSupport.createGUID(),
-            type: Submitted.submittedType,
-            name: Submitted.submittedName,
-            system: Submitted.submittedSystem,
-            code: Submitted.submittedCode
+            id: e.eventId,
+            type: e.eventType,
+            name: e.eventName,
+            valueList: e.eventValueList
         };
         const newArray = this.state.savedSearchParameters.slice(0);
         newArray.push(searchParameter);
@@ -61,14 +64,23 @@ export default class PyroServerSearchComponent extends React.Component {
         this.setState({ savedSearchParameters: newArray, SearchElement: null, selectedSearch: 'none' })
     };
 
-    onTokenEdit = (Submitted) => {
+    onTokenRemove = (e) => {
+        // e.preventDefault();
 
+        const newArray = filter(this.state.savedSearchParameters, function (currentObject) {
+            return currentObject.id != e.eventId;
+        });
+
+        this.setState({ savedSearchParameters: newArray })
+    };
+
+    onTokenEdit = (e) => {        
+        
         const searchParameter = {
-            id: Submitted.submittedId,
-            type: Submitted.submittedType,
-            name: Submitted.submittedName,
-            system: Submitted.submittedSystem,
-            code: Submitted.submittedCode
+            id: e.eventId,
+            type: e.eventType,
+            name: e.eventName,
+            valueList: e.eventValueList,            
         };
 
         const newArray = this.state.savedSearchParameters.slice(0);
@@ -79,13 +91,7 @@ export default class PyroServerSearchComponent extends React.Component {
         this.setState({ savedSearchParameters: newArray })
     };
 
-    onTokenRemove = (Submitted) => {
-        const newArray = filter(this.state.savedSearchParameters, function (currentObject) {
-            return currentObject.id != Submitted.submittedId;
-        });
 
-        this.setState({ savedSearchParameters: newArray })
-    };
 
     render() {
 
@@ -131,7 +137,6 @@ export default class PyroServerSearchComponent extends React.Component {
                                     search
                                     closeOnChange
                                     onChange={this.handleResourceFilterChange} />
-
                             </Form.Group>
                         } content={ResourcePopupMessage} />
                     </Form>
@@ -169,8 +174,8 @@ export default class PyroServerSearchComponent extends React.Component {
         const renderSearchType = () => {
             if (isNil(this.state.SearchElement)) {
                 return null;
-            } else if (this.state.SearchElement.type == 'token') {
-                return <SearchToken onSubmit={this.onTokenSubmit} name={this.state.SearchElement.name} isEditMode={false} id={UuidSupport.createGUID()} ></SearchToken>
+            } else if (this.state.SearchElement.type == FhirConstant.searchType.token) {
+                return <TokenSearch onAddOrRemoveButtonClick={this.onTokenAdd} name={this.state.SearchElement.name} isEditMode={false} id={UuidSupport.createGUID()} ></TokenSearch>
             }
         }
 
@@ -188,13 +193,19 @@ export default class PyroServerSearchComponent extends React.Component {
                 <Grid.Row columns={16}>
                     <Grid.Column width={16}>
                         {map(revList, (item, Index) => {
-                            const System = item.system;
-                            const Code = item.code;
-                            if (item.type == 'token') {
+                            // const System = item.system;
+                            // const Code = item.code;
+                            if (item.type == FhirConstant.searchType.token) {
                                 return (
                                     <React.Fragment key={item.id}>
                                         {renderAndDivider(Index)}
-                                        <SearchToken onSubmit={this.onTokenRemove} onTokenEdit={this.onTokenEdit} id={item.id} name={item.name} system={System} code={Code} isEditMode={true}></SearchToken>
+                                        <TokenSearch
+                                            onAddOrRemoveButtonClick={this.onTokenRemove}
+                                            onTokenEdit={this.onTokenEdit}
+                                            id={item.id}
+                                            name={item.name}
+                                            isEditMode={true}
+                                            tokenElementList={item.valueList}/>
                                     </React.Fragment>
                                 )
                             } else {
@@ -208,8 +219,24 @@ export default class PyroServerSearchComponent extends React.Component {
 
 
         const queryElementArray = map(this.state.savedSearchParameters, (item) => {
-            if (item.type == 'token') {
-                return { queryString: `${item.name}=${item.system}|${item.code}`, searchType: item.type }
+            if (item.type == FhirConstant.searchType.token) {
+                let theQuery = `${item.name}=`;
+                for (let i = 0; i < item.valueList.length; i++) {
+                    if (i > 0) {
+                        if (item.valueList[i].system == '') {
+                            theQuery = theQuery.concat(`,${item.valueList[i].code}`)                                          
+                        } else {
+                            theQuery = theQuery.concat(`,${item.valueList[i].system}|${item.valueList[i].code}`)                                          
+                        }                        
+                    } else {
+                        if (item.valueList[i].system == '') {
+                            theQuery = theQuery.concat(`${item.valueList[i].code}`)                                          
+                        } else {
+                            theQuery = theQuery.concat(`${item.valueList[i].system}|${item.valueList[i].code}`)                                          
+                        }                        
+                    }                    
+                }
+                return { queryString: theQuery, searchType: item.type }
             } else {
                 return null;
             }
@@ -222,7 +249,7 @@ export default class PyroServerSearchComponent extends React.Component {
                     if (index == 0) {
                         queryDelimiter = '?';
                     }
-                    if (item.searchType == 'token') {
+                    if (item.searchType == FhirConstant.searchType.token) {
                         return (
                             <React.Fragment key={index}>
                                 <Label color='grey'>{queryDelimiter}</Label>
