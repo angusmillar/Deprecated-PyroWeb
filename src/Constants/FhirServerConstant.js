@@ -18,6 +18,19 @@ export default class FhirServerConstant {
     static PyroServerR4Name = 'Pyro Server R4'
     static PyroServerStu3Name = 'Pyro Server STU3'
 
+    static getEndpointForServerName(ServerName) {
+        switch (ServerName) {
+            case this.PyroServerStu3Name: {
+                return this.PyroStu3FhirServerEndpoint;                
+            }
+            case this.PyroServerR4Name: {
+                return this.PyroR4FhirServerEndpoint;                
+            }
+            default:
+                return 'Unknown Server Name!';
+        }
+    }
+
     static RequestTimeout = 40000;
 
 }

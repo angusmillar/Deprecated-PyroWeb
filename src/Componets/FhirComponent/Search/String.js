@@ -5,39 +5,36 @@ import { Grid, Form, Button, Icon } from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
 
-export default class Token extends React.Component {
+export default class String extends React.Component {
 
     static propTypes = {
-        onTokenEdit: PropTypes.func.isRequired,
+        onStringEdit: PropTypes.func.isRequired,
         onOrAddRemoveClick: PropTypes.func,
         id: PropTypes.string,
-        system: PropTypes.string,
-        code: PropTypes.string,
+        string: PropTypes.string,
         modifier: PropTypes.string,
         addOrButton: PropTypes.bool,
-        isFirstToken: PropTypes.bool
+        isFirstString: PropTypes.bool
     }
 
     static defaultProps = {
         id: UuidSupport.createGUID(),
-        system: '',
-        code: '',
+        string: '',
         modifier: 'none',
         addOrButton: false,
-        isFirstToken: false
+        isFirstString: false
     }
 
     constructor(props) {
         super(props);
 
         this.state = {
-            system: this.props.system,
-            code: this.props.code,
+            string: this.props.string,
             modifier: this.props.modifier
         };
     }
 
-    onTokenEdit = (e) => {
+    onStringEdit = (e) => {
         e.preventDefault();
 
         const target = e.target;
@@ -48,17 +45,14 @@ export default class Token extends React.Component {
             [name]: value
         });
 
-        let SystemEvent = this.state.system;
-        let CodeEvent = this.state.code;
-        if (name == 'system') {
-            SystemEvent = value;
-        } else if (name == 'code') {
-            CodeEvent = value;
+        let StringEvent = this.state.string;
+        if (name == 'string') {
+            StringEvent = value;
         }
-        this.props.onTokenEdit({
+
+        this.props.onStringEdit({
             submittedId: this.props.id,
-            submittedSystem: SystemEvent,
-            submittedCode: CodeEvent,
+            submittedString: StringEvent,
             submittedModifier: this.state.modifier,
         });
 
@@ -67,17 +61,24 @@ export default class Token extends React.Component {
     onModifierChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onTokenEdit({
+        this.props.onStringEdit({
             submittedId: this.props.id,
-            submittedSystem: this.state.system,
-            submittedCode: this.state.code,
+            submittedString: this.state.string,
             submittedModifier: value,
         });
 
-        this.setState({
-            modifier: value
-        });
+        if (value == 'missing') {
+            this.setState({
+                modifier: value,
+                string: ''
+            });
+        } else {
+            this.setState({
+                modifier: value
+            });
+        }
     }
+
 
     onOrAddButtonClick = (e) => {
         e.preventDefault();
@@ -100,38 +101,51 @@ export default class Token extends React.Component {
     render() {
 
         const renderRemoveOrButton = () => {
-            if (this.props.addOrButton && !this.props.isFirstToken) {
+            if (this.props.addOrButton && !this.props.isFirstString) {
                 return <Button key='3' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
             }
         }
 
         const renderOrButton = () => {
             if (this.props.addOrButton) {
-                return <Button key='1' disabled={disableCodeAndSystem()} onClick={this.onOrAddButtonClick} size='mini' icon color='green' type='submit'><Icon name='add' />{' '}OR</Button>
+                return <Button key='1' disabled={disableDueToMissing()} onClick={this.onOrAddButtonClick} size='mini' icon color='green' type='submit'><Icon name='add' />{' '}OR</Button>
             } else {
                 return <Button key='2' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
             }
         }
 
-        const { system, code, modifier } = this.state
         const modifierOptions = () => {
-            return (
-                [
-                    { key: 'none', text: 'None', value: 'none' },
-                    { key: 'missing', text: 'Missing', value: 'missing' },
-                ]
-            )
+            if (this.props.isFirstString) {
+                return (
+                    [
+                        { key: 'none', text: 'None', value: 'none' },
+                        { key: 'missing', text: 'Missing', value: 'missing' },
+                        { key: 'contains', text: 'Contains', value: 'contains' },
+                        { key: 'exact', text: 'Exact', value: 'exact' },
+                    ]
+                )
+            } else {
+                return (
+                    [
+                        { key: 'none', text: 'None', value: 'none' },
+                        { key: 'contains', text: 'Contains', value: 'contains' },
+                        { key: 'exact', text: 'Exact', value: 'exact' },
+                    ]
+                )
+            }
         }
 
        
-        const disableCodeAndSystem = () => {
-            if (this.state.modifier != 'none') {
+        const disableDueToMissing = () => {
+            if (this.state.modifier == 'missing') {
                 return true;
+            } else {
+                return false;
             }
         }
 
         const renderModifierSelector = () => {
-            if (this.props.isFirstToken) {
+            if (this.props.isFirstString) {
                 return (
                     <Grid.Row columns={3}>
                         <Grid.Column width={3} >
@@ -148,24 +162,24 @@ export default class Token extends React.Component {
             }
         }
 
+        const { string, modifier } = this.state
         return (
             <Grid>
                 {renderModifierSelector()}
                 <Grid.Row columns={3}>
-                    <Grid.Column width={13} >
+                    <Grid.Column width={14} >
                         <Form>
                             <Form.Group widths='equal'>
-                                {/* <Form.Select width={2} compact label='Modifier' value={modifier} disabled={disableModifier()} options={modifierOptions} placeholder='Modifier' onChange={this.onModifierChange} /> */}
-                                <Form.Field label='System' width={5} name='system' control='input' disabled={disableCodeAndSystem()} placeholder='System' value={system} onChange={this.onTokenEdit} />
-                                <Form.Field label='Code' width={5} name='code' control='input' disabled={disableCodeAndSystem()} placeholder='Code' value={code} onChange={this.onTokenEdit} />
+                                {/* <Form.Select width={2} compact label='Modifier' value={modifier} options={modifierOptions()} placeholder='Modifier' onChange={this.onModifierChange} /> */}
+                                <Form.Field label='String' width={10} name='string' control='input' disabled={disableDueToMissing()} placeholder='value' value={string} onChange={this.onStringEdit} />
                             </Form.Group>
                         </Form>
                     </Grid.Column>
-                    <Grid.Column width={1} floated='left' verticalAlign='middle' >
-                        <Button.Group size='mini' >
-                            {renderOrButton()}
-                            {renderRemoveOrButton()}
-                        </Button.Group>
+                    <Grid.Column width={1} verticalAlign='middle' >
+                        {renderOrButton()}
+                    </Grid.Column>
+                    <Grid.Column width={1} verticalAlign='middle' >
+                        {renderRemoveOrButton()}
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

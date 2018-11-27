@@ -4,95 +4,94 @@ import { Grid, Button, Segment, Label, Icon, Divider } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import isNil from 'lodash/isNil';
-import Token from './Token';
+import String from './String';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
 import UuidSupport from '../../../SupportTools/UuidSupport';
 import FhirConstant from '../../../Constants/FhirConstant';
-//import { isNullOrUndefined } from 'util';
 
-export default class TokenSearch extends React.Component {
+export default class StringSearch extends React.Component {
 
     static propTypes = {
+        onAddOrRemoveButtonClick: PropTypes.func,
+        onStringEdit: PropTypes.func,
         id: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        onAddOrRemoveButtonClick: PropTypes.func,
-        onTokenEdit: PropTypes.func,
         isEditMode: PropTypes.bool,
         type: PropTypes.string,
         modifier: PropTypes.string,
-        tokenElementList: PropTypes.array,
+        stringElementList: PropTypes.array,
         searchTypeColor: PropTypes.string
     }
 
     static defaultProps = {
-        type: FhirConstant.searchType.token,
-        tokenElementList: null,
-        searchTypeColor: 'teal',
-        modifier: 'none'
+        readOnly: false,
+        modifier: 'none',
+        type: FhirConstant.searchType.string,
+        stringElementList: null,
+        searchTypeColor: 'blue'
     }
 
     constructor(props) {
         super(props);
 
-        let Tokenlist = this.props.tokenElementList;
-        if (isNil(this.props.tokenElementList)) {
+        let Stringlist = this.props.stringElementList;
+        if (isNil(this.props.stringElementList)) {
             const NewGuid = UuidSupport.createGUID();
-            Tokenlist = [{ id: NewGuid, code: '', system: '' }];
+            Stringlist = [{ id: NewGuid, string: '' }];
         }
 
         this.state = {
-            tokenElementList: Tokenlist,
+            stringElementList: Stringlist,
             modifier: this.props.modifier
         };
 
     }
 
     onOrButtonClick = (e) => {
+        // e.preventDefault();
+
         if (e.eventIsAdd) {
 
-            const tokenParameter = {
+            const stringParameter = {
                 id: UuidSupport.createGUID(),
-                system: '',
-                code: ''
+                string: '',                
             };
 
-            const newArray = this.state.tokenElementList.slice(0);
-            newArray.push(tokenParameter);
-
-            this.setState({
-                tokenElementList: newArray,
-            })
+            const newArray = this.state.stringElementList.slice(0);
+            newArray.push(stringParameter);
+            this.setState({ stringElementList: newArray })
 
         } else {
-            const newArray = filter(this.state.tokenElementList, function (currentObject) {
+            const newArray = filter(this.state.stringElementList, function (currentObject) {
                 return currentObject.id != e.eventId;
             });
 
             //Tell the higer order component to rerender because we have removed an element, needed to  update the FHIR Query
             if (this.props.isEditMode) {
-                this.props.onTokenEdit({
+                this.props.onStringEdit({
                     eventId: this.props.id,
                     eventType: this.props.type,
                     eventName: this.props.name,
-                    modifier: this.state.modifier,
+                    eventModifier: this.state.modifier,
                     eventValueList: newArray
                 })
             }
 
-            this.setState({ tokenElementList: newArray })
+            this.setState({ stringElementList: newArray })
         }
     }
 
     onAddClick = () => {
+        //  e.preventDefault();
 
         this.props.onAddOrRemoveButtonClick({
             eventId: this.props.id,
             eventName: this.props.name,
             eventType: this.props.type,
             eventModifier: this.state.modifier,
-            eventValueList: this.state.tokenElementList
+            eventValueList: this.state.stringElementList
         })
     }
 
@@ -105,25 +104,24 @@ export default class TokenSearch extends React.Component {
     }
 
 
-    onTokenEdit = (e) => {
-
-        const tokenParameter = {
+    onStringEdit = (e) => {
+        
+        const stringParameter = {
             id: e.submittedId,
-            system: e.submittedSystem,
-            code: e.submittedCode,
+            string: e.submittedString
         };
 
-        let newArray = this.state.tokenElementList.slice(0);
-        const Index = findIndex(newArray, { id: tokenParameter.id })
-        newArray.splice(Index, 1, tokenParameter);
+        let newArray = this.state.stringElementList.slice(0);
+        const Index = findIndex(newArray, { id: stringParameter.id })
+        newArray.splice(Index, 1, stringParameter);
 
         //if the modifier is of type 'missing' then there can be no Values
         if (e.submittedModifier == 'missing') {
-            newArray = [{ id: UuidSupport.createGUID(), system: '', code: '' }]
-        }
+            newArray = [{ id: UuidSupport.createGUID(), string: '' }]
+        }        
 
         if (this.props.isEditMode) {
-            this.props.onTokenEdit({
+            this.props.onStringEdit({
                 eventId: this.props.id,
                 eventType: this.props.type,
                 eventName: this.props.name,
@@ -132,8 +130,7 @@ export default class TokenSearch extends React.Component {
             })
         }
 
-
-        this.setState({ tokenElementList: newArray, modifier: e.submittedModifier })
+        this.setState({ stringElementList: newArray, modifier: e.submittedModifier })
     }
 
 
@@ -156,19 +153,19 @@ export default class TokenSearch extends React.Component {
             }
         };
 
-        const renderToken = () => {
+        const renderString = () => {
             return (
                 <Grid>
-                    {map(this.state.tokenElementList, (item, Index) => {
-                        if (this.state.tokenElementList.length == 1) {
+                    {map(this.state.stringElementList, (item, Index) => {
+                        if (this.state.stringElementList.length == 1) {
                             return (
                                 <Grid.Row key={item.id} columns={1}>
-                                    <Grid.Column width={16} >
-                                        <Token isFirstToken={true} addOrButton={true} onOrAddRemoveClick={this.onOrButtonClick} id={item.id} modifier={this.state.modifier} code={item.code} system={item.system} onTokenEdit={this.onTokenEdit} />
+                                    <Grid.Column width={16} >                                     
+                                        <String isFirstString={true} addOrButton={true} onOrAddRemoveClick={this.onOrButtonClick} id={item.id} string={item.string} modifier={this.state.modifier} onStringEdit={this.onStringEdit} />
                                     </Grid.Column>
                                 </Grid.Row>
                             )
-                        } else if (Index == this.state.tokenElementList.length - 1) {
+                        } else if (Index == this.state.stringElementList.length - 1) {
                             return (
                                 <React.Fragment key={item.id}>
 
@@ -180,7 +177,7 @@ export default class TokenSearch extends React.Component {
 
                                     <Grid.Row columns={1}>
                                         <Grid.Column width={16} >
-                                            <Token isFirstString={false} addOrButton={true} onOrAddRemoveClick={this.onOrButtonClick} id={item.id} modifier={this.state.modifier} code={item.code} system={item.system} onTokenEdit={this.onTokenEdit} />
+                                            <String isFirstString={false} addOrButton={true} onOrAddRemoveClick={this.onOrButtonClick} id={item.id} string={item.string} modifier={this.state.modifier} onStringEdit={this.onStringEdit} />
                                         </Grid.Column>
                                     </Grid.Row>
 
@@ -190,8 +187,8 @@ export default class TokenSearch extends React.Component {
                             return (
                                 <React.Fragment key={item.id}>
                                     <Grid.Row columns={1}>
-                                        <Grid.Column width={16} >
-                                            <Token isFirstToken={true} addOrButton={false} onOrAddRemoveClick={this.onOrButtonClick} id={item.id} modifier={this.state.modifier} code={item.code} system={item.system} onTokenEdit={this.onTokenEdit} />
+                                        <Grid.Column width={16} >                                           
+                                            <String isFirstString={true} addOrButton={false} onOrAddRemoveClick={this.onOrButtonClick} id={item.id} string={item.string} modifier={this.state.modifier} onStringEdit={this.onStringEdit} />
                                         </Grid.Column>
                                     </Grid.Row>
                                 </React.Fragment>
@@ -208,7 +205,7 @@ export default class TokenSearch extends React.Component {
 
                                     <Grid.Row columns={1}>
                                         <Grid.Column width={16} >
-                                            <Token isFirstString={false} addOrButton={false} onOrAddRemoveClick={this.onOrButtonClick} id={item.id} modifier={this.state.modifier} code={item.code} system={item.system} onTokenEdit={this.onTokenEdit} />
+                                            <String isFirstString={false} addOrButton={false} onOrAddRemoveClick={this.onOrButtonClick} id={item.id} string={item.string} modifier={this.state.modifier} onStringEdit={this.onStringEdit} />
                                         </Grid.Column>
                                     </Grid.Row>
                                 </React.Fragment>
@@ -227,10 +224,9 @@ export default class TokenSearch extends React.Component {
                 <Grid>
                     <Grid.Row columns={16}>
                         <Grid.Column width={15} >
-                            <Divider horizontal hidden></Divider>
-                            <Segment>
-
-                                {renderToken()}
+                        <Divider horizontal hidden></Divider>
+                            <Segment>                            
+                                {renderString()}
                             </Segment>
                         </Grid.Column>
                         <Grid.Column width={1} verticalAlign='top' >
