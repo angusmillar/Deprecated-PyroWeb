@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Grid, Button, Form, Label, Divider, Header, Popup } from 'semantic-ui-react'
+import { Grid, Button, Form, Label, Divider, Header, Popup, Segment } from 'semantic-ui-react'
 
 import map from 'lodash/map';
 import filter from 'lodash/filter';
@@ -12,9 +12,8 @@ import noop from 'lodash/noop';
 
 import PropTypes from 'prop-types';
 
-import TokenSearch from '../FhirComponent/Search/TokenSearch';
-import StringSearch from '../FhirComponent/Search/StringSearch';
-import Segment from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
+import FhirQueryButton from '../FhirComponent/Search/FhirQueryButton';
+import SearchTypeFrame from '../FhirComponent/Search/SearchTypeFrame';
 
 import UuidSupport from '../../SupportTools/UuidSupport'
 import FhirConstant from '../../Constants/FhirConstant';
@@ -36,7 +35,8 @@ export default class PyroServerSearchComponent extends React.Component {
         this.state = {
             selectedResource: [{ key: 'none', icon: 'tag', text: 'none', value: 'none' }],
             selectedSearch: 'none',
-            SearchElement: { key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' },
+            SearchElement: null,
+            // SearchElement: { key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' },
             savedSearchParameters: [],
         };
     }
@@ -60,6 +60,7 @@ export default class PyroServerSearchComponent extends React.Component {
             id: e.eventId,
             type: e.eventType,
             name: e.eventName,
+            showEdit: false,
             modifier: e.eventModifier,
             valueList: e.eventValueList
         };
@@ -68,6 +69,10 @@ export default class PyroServerSearchComponent extends React.Component {
 
         this.setState({ savedSearchParameters: newArray, SearchElement: null, selectedSearch: 'none' })
     };
+
+    onCancelClick = () => {
+        this.setState({ SearchElement: null, selectedSearch: 'none' })
+    }
 
     onRemoveSearchParameter = (e) => {
         // e.preventDefault();
@@ -86,6 +91,7 @@ export default class PyroServerSearchComponent extends React.Component {
             type: e.eventType,
             name: e.eventName,
             modifier: e.eventModifier,
+            showEdit: true,
             valueList: e.eventValueList,
         };
 
@@ -100,6 +106,28 @@ export default class PyroServerSearchComponent extends React.Component {
         noop();
         //const xx = this.generateSendQuery();
     };
+
+    onShowEdit = (e) => {
+
+        const newArray = this.state.savedSearchParameters.slice(0);
+        const Index = findIndex(newArray, { id: e.eventId })
+        //toggel bolean
+        newArray[Index].showEdit = !newArray[Index].showEdit;
+
+        this.setState({ savedSearchParameters: newArray })
+
+    };
+
+    onHideEdit = (e) => {
+
+        const newArray = this.state.savedSearchParameters.slice(0);
+        const Index = findIndex(newArray, { id: e.eventId })
+        newArray[Index].showEdit = false;
+
+        this.setState({ savedSearchParameters: newArray })
+
+    };
+
 
     generateSendQuery = () => {
         let counter = 0;
@@ -141,7 +169,7 @@ export default class PyroServerSearchComponent extends React.Component {
                     }
                 }
             }
-            return { queryString: theQuery, searchType: item.type }
+            return { id: item.id, queryString: theQuery, searchType: item.type }
 
         } else if (item.type == FhirConstant.searchType.string) {
 
@@ -168,7 +196,34 @@ export default class PyroServerSearchComponent extends React.Component {
                     }
                 }
             }
-            return { queryString: theQuery, searchType: item.type }
+            return { id: item.id, queryString: theQuery, searchType: item.type }
+
+        } else if (item.type == FhirConstant.searchType.quantity) {
+
+            let theQuery = `${item.name}=`;
+            for (let i = 0; i < item.valueList.length; i++) {
+
+                if (i > 0) {
+                    if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].number) && item.valueList[i].number != '') {
+                        theQuery = theQuery.concat(`,${item.valueList[i].prefix}${item.valueList[i].number}|${item.valueList[i].system}|${item.valueList[i].code}`)
+                    }
+                } else {
+                    if (item.modifier != 'none') {
+                        if (item.modifier == 'missing') {
+                            theQuery = `${item.name}:${item.modifier}=true`;
+                        } else {
+                            if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].number) && item.valueList[i].number != '') {
+                                theQuery = `${item.name}:${item.modifier}=${item.valueList[i].prefix}${item.valueList[i].number}|${item.valueList[i].system}|${item.valueList[i].code}`;
+                            }
+                        }
+                    } else {
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].number) && item.valueList[i].number != '') {
+                            theQuery = theQuery.concat(`${item.valueList[i].prefix}${item.valueList[i].number}|${item.valueList[i].system}|${item.valueList[i].code}`)
+                        }
+                    }
+                }
+            }
+            return { id: item.id, queryString: theQuery, searchType: item.type }
 
         } else {
             return null;
@@ -207,6 +262,8 @@ export default class PyroServerSearchComponent extends React.Component {
             }
             return (
                 <Segment raised >
+                    {renderFhirQuery()}
+                    <Divider horizontal hidden></Divider>
                     <Form>
                         <Popup trigger={
                             <Form.Group widths='equal'>
@@ -254,71 +311,65 @@ export default class PyroServerSearchComponent extends React.Component {
         }
 
         const renderSearchType = () => {
+            //Non-EditMode Search Parameter Render            
             if (isNil(this.state.SearchElement)) {
                 return null;
-            } else if (this.state.SearchElement.type == FhirConstant.searchType.token) {
-                return <TokenSearch onAddOrRemoveButtonClick={this.onAddSearchParameter} name={this.state.SearchElement.name} isEditMode={false} id={UuidSupport.createGUID()} ></TokenSearch>
-            } else if (this.state.SearchElement.type == FhirConstant.searchType.string) {
-                return <StringSearch onAddOrRemoveButtonClick={this.onAddSearchParameter} name={this.state.SearchElement.name} isEditMode={false} id={UuidSupport.createGUID()} ></StringSearch>
+            } else {
+                return (
+                    <SearchTypeFrame
+                        type={this.state.SearchElement.type}
+                        onAddOrRemoveButtonClick={this.onAddSearchParameter}
+                        onCancelClick={this.onCancelClick}
+                        name={this.state.SearchElement.name}
+                        isEditMode={false}
+                        id={UuidSupport.createGUID()}
+                    />
+                )
             }
-
         }
 
         const renderSavedSearchPatrameterList = () => {
 
-            const renderAndDivider = (Index) => {
-                if (this.state.savedSearchParameters.length > 1 && Index > 0) {
+            const ShowEditCount = filter(this.state.savedSearchParameters, { 'showEdit': true }).length;
+
+            const renderAndDivider = (CurrectCounter) => {
+                if (ShowEditCount > 1 && CurrectCounter > 1) {
                     return <Divider horizontal>And</Divider>
                 }
             }
 
             const revList = this.state.savedSearchParameters.slice(0);
             reverse(revList);
+            let CurrectCounter = 0;
             return (
                 <Grid.Row columns={16}>
                     <Grid.Column width={16}>
-                        {map(revList, (item, Index) => {
-                            // const System = item.system;
-                            // const Code = item.code;
-                            if (item.type == FhirConstant.searchType.token) {
-                                return (
-                                    <React.Fragment key={item.id}>
-                                        {renderAndDivider(Index)}
-                                        <TokenSearch
-                                            onAddOrRemoveButtonClick={this.onRemoveSearchParameter}
-                                            onTokenEdit={this.onEditSearchParameter}
-                                            id={item.id}
-                                            name={item.name}
-                                            modifier={item.modifier}
-                                            isEditMode={true}
-                                            tokenElementList={item.valueList} />
-                                    </React.Fragment>
-                                )
-                            } else if (item.type == FhirConstant.searchType.string) {
-                                return (
-                                    <React.Fragment key={item.id}>
-                                        {renderAndDivider(Index)}
-                                        <StringSearch
-                                            onAddOrRemoveButtonClick={this.onRemoveSearchParameter}
-                                            onStringEdit={this.onEditSearchParameter}
-                                            id={item.id}
-                                            name={item.name}
-                                            modifier={item.modifier}
-                                            isEditMode={true}
-                                            stringElementList={item.valueList} />
-                                    </React.Fragment>
-                                )
-                            } else {
+                        {map(revList, (item) => {
+                            if (!item.showEdit) {
                                 return null;
                             }
+                            CurrectCounter++
+                            return (
+                                <React.Fragment key={item.id}>
+                                    {renderAndDivider(CurrectCounter)}
+                                    <SearchTypeFrame
+                                        type={item.type}
+                                        onAddOrRemoveButtonClick={this.onRemoveSearchParameter}
+                                        onCheckClick={this.onHideEdit}
+                                        onEdit={this.onEditSearchParameter}
+                                        id={item.id}
+                                        name={item.name}
+                                        modifier={item.modifier}
+                                        isEditMode={true}
+                                        elementList={item.valueList}
+                                    />
+                                </React.Fragment>
+                            )
                         })}
                     </Grid.Column>
                 </Grid.Row>
             )
         }
-
-
-
 
         const renderQueryLabels = () => {
             let counter = 0;
@@ -335,17 +386,36 @@ export default class PyroServerSearchComponent extends React.Component {
                         counter++;
                         if (item.searchType == FhirConstant.searchType.token) {
                             return (
-                                <React.Fragment key={index}>
-                                    <Label color='grey'>{queryDelimiter}</Label>
-                                    <Label color='teal'>{item.queryString}</Label>
-                                </React.Fragment>
+                                <FhirQueryButton
+                                    key={index}
+                                    id={item.id}
+                                    delimiter={queryDelimiter}
+                                    value={item.queryString}
+                                    color='teal'
+                                    onClick={this.onShowEdit}
+                                    onRemoveClick={this.onRemoveSearchParameter} />
                             )
                         } else if (item.searchType == FhirConstant.searchType.string) {
                             return (
-                                <React.Fragment key={index}>
-                                    <Label color='grey'>{queryDelimiter}</Label>
-                                    <Label color='blue'>{item.queryString}</Label>
-                                </React.Fragment>
+                                <FhirQueryButton
+                                    key={index}
+                                    id={item.id}
+                                    delimiter={queryDelimiter}
+                                    value={item.queryString}
+                                    color='blue'
+                                    onClick={this.onShowEdit}
+                                    onRemoveClick={this.onRemoveSearchParameter} />
+                            )
+                        } else if (item.searchType == FhirConstant.searchType.quantity) {
+                            return (
+                                <FhirQueryButton
+                                    key={index}
+                                    id={item.id}
+                                    delimiter={queryDelimiter}
+                                    value={item.queryString}
+                                    color='violet'
+                                    onClick={this.onShowEdit}
+                                    onRemoveClick={this.onRemoveSearchParameter} />
                             )
                         } else {
                             return null;
@@ -358,62 +428,58 @@ export default class PyroServerSearchComponent extends React.Component {
         const renderFhirUrl = () => {
             if (!isNil(this.state.ResourceElement)) {
                 return (
-                    <Label.Group size='medium'>
-                        <Label color='black'>[Base]</Label>
-                        <Label color='grey'>/</Label>
-                        <Label color='violet'>{this.state.selectedResource}</Label>
+                    <Label.Group>
+                        <Button basic compact size='tiny' color='black'>[Base]</Button>
+                        <Button basic compact size='tiny' color='grey'>/</Button>
+                        <Button basic compact size='tiny' color='green'>{this.state.selectedResource}</Button>
                         {renderQueryLabels()}
                     </Label.Group>
 
                 )
             } else {
-                return null;
+                return (
+                    <Label.Group>
+                        <Button basic compact size='tiny' color='black'>[Base]</Button>
+                        <Button basic compact size='tiny' color='grey'>/</Button>
+                    </Label.Group>
+                )
             }
         };
 
         const renderFhirQuery = () => {
-            if (this.state.savedSearchParameters.length > 0) {
-                return (
-                    <Grid.Row columns={16}>
-                        <Grid.Column width={16}>
-                            <Segment>
-                                <Grid>
-                                    <Grid.Row columns={16}>
-                                        <Grid.Column width={16}>
-                                            <Header>FHIR Query</Header>
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                    <Grid.Row columns={16}>
-                                        <Grid.Column width={14}>
-                                            <Segment>
-                                                {renderFhirUrl()}
-                                            </Segment>
-                                        </Grid.Column>
-                                        <Grid.Column width={2} verticalAlign='middle'>
-                                            <Button onClick={this.onSendClick} floated='right' color='blue'>Send</Button>
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                </Grid>
-                            </Segment>
-                        </Grid.Column>
-                    </Grid.Row >
-                )
-            } else {
-                return null;
-            }
+
+            return (
+                <Grid.Row columns={16}>
+                    <Grid.Column width={16}>
+                        <Header size='tiny'>FHIR Query</Header>
+                        <Grid>
+                            <Grid.Row columns={16}>
+                                <Grid.Column width={14}>
+                                    <Segment>
+                                        {renderFhirUrl()}
+                                    </Segment>
+                                </Grid.Column>
+                                <Grid.Column width={2} verticalAlign='middle'>
+                                    <Button onClick={this.onSendClick} floated='right' color='blue'>Send</Button>
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                    </Grid.Column>
+                </Grid.Row >
+            )
+
         }
         return (
-            <Segment>
-                <Grid>
-                    <Grid.Row columns={16}>
-                        <Grid.Column width={16}>
-                            {renderResourceSelector()}
-                        </Grid.Column>
-                    </Grid.Row>
-                    {renderFhirQuery()}
-                    {renderSavedSearchPatrameterList()}
-                </Grid>
-            </Segment >
+
+            <Grid>
+                <Grid.Row columns={16}>
+                    <Grid.Column width={16}>
+                        {renderResourceSelector()}
+                    </Grid.Column>
+                </Grid.Row>
+                {renderSavedSearchPatrameterList()}
+            </Grid>
+
         )
     }
 
