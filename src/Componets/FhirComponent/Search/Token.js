@@ -123,7 +123,7 @@ export default class Token extends React.Component {
             )
         }
 
-       
+
         const disableCodeAndSystem = () => {
             if (this.state.modifier != 'none') {
                 return true;
@@ -163,8 +163,8 @@ export default class Token extends React.Component {
                     </Grid.Column>
                     <Grid.Column width={1} floated='left' verticalAlign='middle' >
                         <Button.Group size='mini' >
-                            {renderOrButton()}
                             {renderRemoveOrButton()}
+                            {renderOrButton()}
                         </Button.Group>
                     </Grid.Column>
                 </Grid.Row>

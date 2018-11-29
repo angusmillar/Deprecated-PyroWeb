@@ -175,11 +175,11 @@ export default class String extends React.Component {
                             </Form.Group>
                         </Form>
                     </Grid.Column>
-                    <Grid.Column width={1} verticalAlign='middle' >
-                        {renderOrButton()}
-                    </Grid.Column>
-                    <Grid.Column width={1} verticalAlign='middle' >
-                        {renderRemoveOrButton()}
+                    <Grid.Column width={1} floated='left' verticalAlign='middle' >
+                        <Button.Group size='mini' >
+                            {renderRemoveOrButton()}
+                            {renderOrButton()}
+                        </Button.Group>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

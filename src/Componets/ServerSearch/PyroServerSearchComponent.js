@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Grid, Button, Form, Label, Divider, Header, Popup, Segment } from 'semantic-ui-react'
+import { Grid, Button, Form, Label, Divider, Header, Popup, Segment, List, Image, Icon } from 'semantic-ui-react'
 
 import map from 'lodash/map';
 import filter from 'lodash/filter';
@@ -13,20 +13,28 @@ import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 
 import FhirQueryButton from '../FhirComponent/Search/FhirQueryButton';
+import EncodingButton from '../FhirComponent/Search/EncodingButton';
+import SummaryButton from '../FhirComponent/Search/SummaryButton';
 import SearchTypeFrame from '../FhirComponent/Search/SearchTypeFrame';
+import ResponseRender from '../FhirComponent/Search/ResponseRender';
+import PublicServerResetMessage from '../../Componets/PublicServer/Messages/PublicServerResetMessage';
+import DeviceConstants from '../../Constants/DeviceConstants';
 
 import UuidSupport from '../../SupportTools/UuidSupport'
 import FhirConstant from '../../Constants/FhirConstant';
 import FhirServerConstant from '../../Constants/FhirServerConstant';
 
+
 export default class PyroServerSearchComponent extends React.Component {
 
     static propTypes = {
         ConformanceStatmentResource: PropTypes.object.isRequired,
-        FhirServerName: PropTypes.string.isRequired
+        FhirServerName: PropTypes.string.isRequired,
+        FhirIcon: PropTypes.string,
     }
 
     static defaultProps = {
+        FhirIcon: require('../../Images/FhirIcon/icon-fhir-32.png')
     }
 
     constructor(props) {
@@ -38,6 +46,8 @@ export default class PyroServerSearchComponent extends React.Component {
             SearchElement: null,
             // SearchElement: { key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' },
             savedSearchParameters: [],
+            encodingType: FhirConstant.DefaultFhirJsonFormat,
+            summaryType: FhirConstant.searchSummaryType.none,
         };
     }
 
@@ -69,6 +79,14 @@ export default class PyroServerSearchComponent extends React.Component {
 
         this.setState({ savedSearchParameters: newArray, SearchElement: null, selectedSearch: 'none' })
     };
+
+    onEncodeingClick = (e) => {
+        this.setState({ encodingType: e.encodingType }) 
+    }
+
+    onSummaryClick = (e) => {
+        this.setState({ summaryType: e.summaryType }) 
+    }
 
     onCancelClick = () => {
         this.setState({ SearchElement: null, selectedSearch: 'none' })
@@ -249,6 +267,81 @@ export default class PyroServerSearchComponent extends React.Component {
             }
         };
 
+        const renderFhirQuery = () => {
+            const ButtonSize = 'small';
+            return (
+                <Grid>
+                    <Grid.Row columns={16} only='computer'>
+                        <Grid.Column width={16}>
+                            <Header size='tiny'>FHIR Query</Header>
+                            <Segment>
+                                <Grid doubling>
+                                    <Grid.Row columns={16}>
+                                        <Grid.Column width={13}>
+                                            {renderFhirUrl(ButtonSize)}
+                                        </Grid.Column>
+                                        <Grid.Column width={3} >
+                                            <Button.Group size={ButtonSize} >                                                
+                                                <Popup trigger={<Button color='black'><Icon name='trash' /></Button>} content='Clear the query' />
+                                                <Popup trigger={<Button color='black'><Icon name='clipboard'></Icon></Button>} content='Copy to clipboard' />
+                                                <Button color='blue' onClick={this.onSendClick}>Send</Button>
+                                            </Button.Group>
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                </Grid>
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row >
+                    <Grid.Row columns={16} only='tablet'>
+                        <Grid.Column width={16}>
+                            <Header size='tiny'>FHIR Query</Header>
+                            <Segment>
+                                <Grid doubling>
+                                    <Grid.Row columns={16}>
+                                        <Grid.Column width={11}>
+                                            {renderFhirUrl(ButtonSize)}
+                                        </Grid.Column>
+                                        <Grid.Column width={5} >
+                                            <Button.Group size={ButtonSize} >
+                                                <Popup trigger={<Button color='black'><Icon name='trash' /></Button>} content='Clear the query' />
+                                                <Popup trigger={<Button color='black'><Icon name='clipboard'></Icon></Button>} content='Copy to clipboard' />
+                                                <Button color='blue' onClick={this.onSendClick}>Send</Button>
+                                            </Button.Group>
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                </Grid>
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row >
+                </Grid>
+            )
+        }
+
+        const renderServerInfo = () => {            
+            return (
+                <Grid>
+                    <Grid.Row columns={16} only='computer'>
+                        <Grid.Column width={16}>                            
+                            <Segment>                               
+                                <List verticalAlign='middle' relaxed size='medium'>
+                                    <List.Item>
+                                        <Image avatar src={this.props.FhirIcon} />
+                                        <List.Content>
+                                            <List.Header>[Base] FHIR R4 Endpoint</List.Header>
+                                            <List.Description>
+                                                <code>{FhirServerConstant.PyroR4FhirServerEndpoint}</code>
+                                            </List.Description>
+                                        </List.Content>
+                                    </List.Item>
+                                </List>
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row >
+                </Grid>
+            )
+        }
+
+
         const renderResourceSelector = () => {
 
             let ResourcePopupMessage = 'Select a resource to search on';
@@ -262,7 +355,32 @@ export default class PyroServerSearchComponent extends React.Component {
             }
             return (
                 <Segment raised >
+                    <PublicServerResetMessage deviceType={DeviceConstants.deviceType.computer} plural={false} />
                     {renderFhirQuery()}
+                    {renderServerInfo()}                    
+                    <Segment>
+                        <Grid>                           
+                            <Grid.Row columns={16}>
+                                <Grid.Column width={4}>
+                                    <EncodingButton size='tiny' onClick={this.onEncodeingClick}/>                                    
+                                </Grid.Column>
+                                <Grid.Column width={5}>
+                                <SummaryButton size='tiny' onClick={this.onSummaryClick} />
+                                    {/* <span>
+                                        <Header size='tiny'>Summary</Header>
+                                        <Button.Group size='tiny' color='black'>
+                                            <Button toggle active={true} attached='left'>None</Button>
+                                            <Button attached>True</Button>
+                                            <Button attached>Text</Button>
+                                            <Button attached>Data</Button>
+                                            <Button attached='right'>Count</Button>
+                                        </Button.Group>
+                                    </span> */}
+                                </Grid.Column>
+                            </Grid.Row>
+
+                        </Grid>
+                    </Segment>
                     <Divider horizontal hidden></Divider>
                     <Form>
                         <Popup trigger={
@@ -371,7 +489,7 @@ export default class PyroServerSearchComponent extends React.Component {
             )
         }
 
-        const renderQueryLabels = () => {
+        const renderQueryLabels = (ButtonSize) => {
             let counter = 0;
             const TempArray = this.queryElementArray();
             return (
@@ -389,6 +507,7 @@ export default class PyroServerSearchComponent extends React.Component {
                                 <FhirQueryButton
                                     key={index}
                                     id={item.id}
+                                    size={ButtonSize}
                                     delimiter={queryDelimiter}
                                     value={item.queryString}
                                     color='teal'
@@ -400,6 +519,7 @@ export default class PyroServerSearchComponent extends React.Component {
                                 <FhirQueryButton
                                     key={index}
                                     id={item.id}
+                                    size={ButtonSize}
                                     delimiter={queryDelimiter}
                                     value={item.queryString}
                                     color='blue'
@@ -411,6 +531,7 @@ export default class PyroServerSearchComponent extends React.Component {
                                 <FhirQueryButton
                                     key={index}
                                     id={item.id}
+                                    size={ButtonSize}
                                     delimiter={queryDelimiter}
                                     value={item.queryString}
                                     color='violet'
@@ -425,50 +546,38 @@ export default class PyroServerSearchComponent extends React.Component {
             )
         }
 
-        const renderFhirUrl = () => {
+        const renderFhirUrl = (ButtonSize) => {
             if (!isNil(this.state.ResourceElement)) {
                 return (
-                    <Label.Group>
-                        <Button basic compact size='tiny' color='black'>[Base]</Button>
-                        <Button basic compact size='tiny' color='grey'>/</Button>
-                        <Button basic compact size='tiny' color='green'>{this.state.selectedResource}</Button>
-                        {renderQueryLabels()}
+                    <Label.Group >
+                        <Button basic compact size={ButtonSize} color='black'>[Base]</Button>
+                        <Button basic compact size={ButtonSize} color='grey'>/</Button>
+                        <Button basic compact size={ButtonSize} color='green'>{this.state.selectedResource}</Button>
+                        {renderQueryLabels(ButtonSize)}
                     </Label.Group>
 
                 )
             } else {
                 return (
-                    <Label.Group>
-                        <Button basic compact size='tiny' color='black'>[Base]</Button>
-                        <Button basic compact size='tiny' color='grey'>/</Button>
+                    <Label.Group >
+                        <Button basic compact size={ButtonSize} color='black'>[Base]</Button>
+                        <Button basic compact size={ButtonSize} color='grey'>/</Button>
                     </Label.Group>
                 )
             }
         };
 
-        const renderFhirQuery = () => {
-
+        const renderQueryResponse = () => {
+            
             return (
                 <Grid.Row columns={16}>
                     <Grid.Column width={16}>
-                        <Header size='tiny'>FHIR Query</Header>
-                        <Grid>
-                            <Grid.Row columns={16}>
-                                <Grid.Column width={14}>
-                                    <Segment>
-                                        {renderFhirUrl()}
-                                    </Segment>
-                                </Grid.Column>
-                                <Grid.Column width={2} verticalAlign='middle'>
-                                    <Button onClick={this.onSendClick} floated='right' color='blue'>Send</Button>
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
+                        <ResponseRender/>
                     </Grid.Column>
-                </Grid.Row >
+                </Grid.Row>
             )
-
         }
+
         return (
 
             <Grid>
@@ -478,6 +587,7 @@ export default class PyroServerSearchComponent extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 {renderSavedSearchPatrameterList()}
+                {renderQueryResponse()}
             </Grid>
 
         )

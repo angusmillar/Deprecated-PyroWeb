@@ -147,7 +147,7 @@ export default class Quantity extends React.Component {
             }
         }
 
-        
+
         const modifierOptions = () => {
             return (
                 [
@@ -164,13 +164,13 @@ export default class Quantity extends React.Component {
                     { key: 'ne', text: '!=', value: 'ne' },
                     { key: 'eq', text: '=', value: 'eq' },
                     { key: 'gt', text: '>', value: 'gt' },
-                    { key: 'ge', text: '>=',value: 'ge' },
+                    { key: 'ge', text: '>=', value: 'ge' },
                     { key: 'lt', text: '<', value: 'lt' },
                     { key: 'le', text: '<=', value: 'le' },
                 ]
             )
         }
-       
+
         const disableCodeAndSystem = () => {
             if (this.state.modifier != 'none') {
                 return true;
@@ -194,7 +194,7 @@ export default class Quantity extends React.Component {
                 return null;
             }
         }
-        
+
         const { prefix, number, system, code, modifier } = this.state
 
         return (
@@ -208,14 +208,14 @@ export default class Quantity extends React.Component {
                                 {/* <Form.Field label='Prefix' width={3} name='prefix' control='input' disabled={disableCodeAndSystem()} placeholder='Prefix' value={prefix} onChange={this.onEdit} /> */}
                                 <Form.Field label='Number' width={3} name='number' control='input' disabled={disableCodeAndSystem()} placeholder='Number' value={number} onChange={this.onEdit} />
                                 <Form.Field label='System' width={5} name='system' control='input' disabled={disableCodeAndSystem()} placeholder='System' value={system} onChange={this.onEdit} />
-                                <Form.Field label='Code'   width={2} name='code'   control='input' disabled={disableCodeAndSystem()} placeholder='Code'   value={code}   onChange={this.onEdit} />
+                                <Form.Field label='Code' width={2} name='code' control='input' disabled={disableCodeAndSystem()} placeholder='Code' value={code} onChange={this.onEdit} />
                             </Form.Group>
                         </Form>
                     </Grid.Column>
                     <Grid.Column width={1} floated='left' verticalAlign='middle' >
                         <Button.Group size='mini' >
-                            {renderOrButton()}
                             {renderRemoveOrButton()}
+                            {renderOrButton()}
                         </Button.Group>
                     </Grid.Column>
                 </Grid.Row>

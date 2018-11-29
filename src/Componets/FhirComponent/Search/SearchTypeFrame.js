@@ -219,7 +219,7 @@ export default class SearchTypeFrame extends React.Component {
                 return (
                     <Grid>
                         <Grid.Row columns={16}>
-                            <Button onClick={this.onCheckClick} floated='right' size='small' icon color='green'><Icon name='check' /></Button>
+                            <Button onClick={this.onCheckClick}  size='small' icon color='green'><Icon name='check' /></Button>
                         </Grid.Row>
                     </Grid>
                 )
@@ -227,10 +227,10 @@ export default class SearchTypeFrame extends React.Component {
                 return (
                     <Grid>
                         <Grid.Row columns={16}>
-                            <Button onClick={this.onAddClick} floated='right' size='big' icon color='green'><Icon name='add' /></Button>
+                            <Button onClick={this.onAddClick}  size='small' icon color='green'><Icon name='add' /></Button>
                         </Grid.Row>
                         <Grid.Row columns={16}>
-                            <Button onClick={this.onCancelClick} floated='right' size='big' icon color='red'><Icon name='remove' /></Button>
+                            <Button onClick={this.onCancelClick}  size='small' icon color='red'><Icon name='remove' /></Button>
                         </Grid.Row>
                     </Grid>
                 )

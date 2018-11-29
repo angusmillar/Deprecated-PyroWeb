@@ -1,4 +1,5 @@
 
+
 export default class StringSupport {
    
     // Common escapes
@@ -9,6 +10,8 @@ export default class StringSupport {
         Lessthan: '<',
         SingleQuote: '\'',        
     };
+
+    
 }
 
 

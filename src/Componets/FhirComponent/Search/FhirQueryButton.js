@@ -9,6 +9,7 @@ export default class FhirQueryButton extends React.Component {
 
     static propTypes = {
         id: PropTypes.string.isRequired,
+        size: PropTypes.string.isRequired,
         delimiter: PropTypes.string.isRequired,
         value: PropTypes.string.isRequired,
         color: PropTypes.string.isRequired,
@@ -45,16 +46,16 @@ export default class FhirQueryButton extends React.Component {
 
         return (
             <React.Fragment key={this.props.id}>
-                <Button basic compact size='tiny' color='grey'>{this.props.delimiter}</Button>
-                <Button.Group size='tiny'>
-                    <Button basic compact onClick={this.onClick} color={this.props.color} animated='fade' >
+                <Button basic compact size={this.props.size} color='grey'>{this.props.delimiter}</Button>
+                <Button.Group size={this.props.size}>
+                    <Button  basic compact onClick={this.onClick} color={this.props.color} animated='fade' >
                         <Button.Content visible>{this.props.value}</Button.Content>
                         <Button.Content hidden>
                             <b>Edit{' '}</b>
                             <Icon name='edit' />
                         </Button.Content>
                     </Button>
-                    <Button icon basic compact onClick={this.onRemoveClick} color={this.props.color}><Icon name='remove circle' /></Button>
+                    <Button icon basic compact size={this.props.size} onClick={this.onRemoveClick} color={this.props.color}><Icon name='remove circle' /></Button>
                 </Button.Group>
             </React.Fragment>
         )

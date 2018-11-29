@@ -117,4 +117,14 @@ export default class FhirConstant {
         special: 'special'
     };
 
+    //DeviceType
+    static searchSummaryType = {
+        none: 'none',
+        true: 'true',
+        text: 'text',
+        data: 'data',
+        count: 'count',       
+    };
+
+
 }
