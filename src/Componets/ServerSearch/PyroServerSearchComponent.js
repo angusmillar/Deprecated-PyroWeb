@@ -81,11 +81,11 @@ export default class PyroServerSearchComponent extends React.Component {
     };
 
     onEncodeingClick = (e) => {
-        this.setState({ encodingType: e.encodingType }) 
+        this.setState({ encodingType: e.encodingType })
     }
 
     onSummaryClick = (e) => {
-        this.setState({ summaryType: e.summaryType }) 
+        this.setState({ summaryType: e.summaryType })
     }
 
     onCancelClick = () => {
@@ -243,8 +243,36 @@ export default class PyroServerSearchComponent extends React.Component {
             }
             return { id: item.id, queryString: theQuery, searchType: item.type }
 
+        } else if (item.type == FhirConstant.searchType.date) {
+
+            let theQuery = `${item.name}=`;
+
+            for (let i = 0; i < item.valueList.length; i++) {
+
+                if (i > 0) {
+                    if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].dateTimeString) && item.valueList[i].dateTimeString != '') {
+                        theQuery = theQuery.concat(`,${item.valueList[i].prefix}${item.valueList[i].dateTimeString}`)
+                    }
+                } else {
+                    if (item.modifier != 'none') {
+                        if (item.modifier == 'missing') {
+                            theQuery = `${item.name}:${item.modifier}=true`;
+                        } else {
+                            if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].dateTimeString) && item.valueList[i].dateTimeString != '') {
+                                theQuery = `${item.name}:${item.modifier}=${item.valueList[i].dateTimeString}`;
+                            }
+                        }
+                    } else {
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].dateTimeString) && item.valueList[i].dateTimeString != '') {
+                            theQuery = theQuery.concat(`${item.valueList[i].prefix}${item.valueList[i].dateTimeString}`)
+                        }
+                    }
+                }
+            }
+            return { id: item.id, queryString: theQuery, searchType: item.type }
+
         } else {
-            return null;
+            return 'notdone!!';
         }
     })
 
@@ -281,7 +309,7 @@ export default class PyroServerSearchComponent extends React.Component {
                                             {renderFhirUrl(ButtonSize)}
                                         </Grid.Column>
                                         <Grid.Column width={3} >
-                                            <Button.Group size={ButtonSize} >                                                
+                                            <Button.Group size={ButtonSize} >
                                                 <Popup trigger={<Button color='black'><Icon name='trash' /></Button>} content='Clear the query' />
                                                 <Popup trigger={<Button color='black'><Icon name='clipboard'></Icon></Button>} content='Copy to clipboard' />
                                                 <Button color='blue' onClick={this.onSendClick}>Send</Button>
@@ -317,12 +345,12 @@ export default class PyroServerSearchComponent extends React.Component {
             )
         }
 
-        const renderServerInfo = () => {            
+        const renderServerInfo = () => {
             return (
                 <Grid>
                     <Grid.Row columns={16} only='computer'>
-                        <Grid.Column width={16}>                            
-                            <Segment>                               
+                        <Grid.Column width={16}>
+                            <Segment>
                                 <List verticalAlign='middle' relaxed size='medium'>
                                     <List.Item>
                                         <Image avatar src={this.props.FhirIcon} />
@@ -357,25 +385,15 @@ export default class PyroServerSearchComponent extends React.Component {
                 <Segment raised >
                     <PublicServerResetMessage deviceType={DeviceConstants.deviceType.computer} plural={false} />
                     {renderFhirQuery()}
-                    {renderServerInfo()}                    
+                    {renderServerInfo()}
                     <Segment>
-                        <Grid>                           
+                        <Grid>
                             <Grid.Row columns={16}>
                                 <Grid.Column width={4}>
-                                    <EncodingButton size='tiny' onClick={this.onEncodeingClick}/>                                    
+                                    <EncodingButton size='tiny' onClick={this.onEncodeingClick} />
                                 </Grid.Column>
                                 <Grid.Column width={5}>
-                                <SummaryButton size='tiny' onClick={this.onSummaryClick} />
-                                    {/* <span>
-                                        <Header size='tiny'>Summary</Header>
-                                        <Button.Group size='tiny' color='black'>
-                                            <Button toggle active={true} attached='left'>None</Button>
-                                            <Button attached>True</Button>
-                                            <Button attached>Text</Button>
-                                            <Button attached>Data</Button>
-                                            <Button attached='right'>Count</Button>
-                                        </Button.Group>
-                                    </span> */}
+                                    <SummaryButton size='tiny' onClick={this.onSummaryClick} />
                                 </Grid.Column>
                             </Grid.Row>
 
@@ -409,7 +427,6 @@ export default class PyroServerSearchComponent extends React.Component {
                 return null;
             } else {
                 return (
-                    // <Segment>
                     <Form>
                         <Form.Group widths='equal'>
                             <Form.Select
@@ -422,8 +439,7 @@ export default class PyroServerSearchComponent extends React.Component {
                                 onChange={this.onSearchFilterChange}
                                 value={this.state.selectedSearch} />
                         </Form.Group>
-                    </Form>
-                    // </Segment>
+                    </Form>                    
                 )
             }
         }
@@ -538,6 +554,18 @@ export default class PyroServerSearchComponent extends React.Component {
                                     onClick={this.onShowEdit}
                                     onRemoveClick={this.onRemoveSearchParameter} />
                             )
+                        } else if (item.searchType == FhirConstant.searchType.date) {
+                            return (
+                                <FhirQueryButton
+                                    key={index}
+                                    id={item.id}
+                                    size={ButtonSize}
+                                    delimiter={queryDelimiter}
+                                    value={item.queryString}
+                                    color='purple'
+                                    onClick={this.onShowEdit}
+                                    onRemoveClick={this.onRemoveSearchParameter} />
+                            )
                         } else {
                             return null;
                         }
@@ -568,11 +596,11 @@ export default class PyroServerSearchComponent extends React.Component {
         };
 
         const renderQueryResponse = () => {
-            
+
             return (
                 <Grid.Row columns={16}>
                     <Grid.Column width={16}>
-                        <ResponseRender/>
+                        <ResponseRender />
                     </Grid.Column>
                 </Grid.Row>
             )

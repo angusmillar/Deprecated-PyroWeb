@@ -7,6 +7,7 @@ import isNil from 'lodash/isNil';
 import Token from './Token';
 import String from './String';
 import Quantity from './Quantity';
+import DateTime from './DateTime';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
@@ -25,7 +26,7 @@ export default class SearchTypeFrame extends React.Component {
         onCancelClick: PropTypes.func,
         isEditMode: PropTypes.bool,
         modifier: PropTypes.string,
-        elementList: PropTypes.array        
+        elementList: PropTypes.array
     }
 
     static defaultProps = {
@@ -60,6 +61,12 @@ export default class SearchTypeFrame extends React.Component {
                     list = [{ id: NewGuid, code: '', system: '' }];
                 }
                 break;
+            case FhirConstant.searchType.date:
+                typeColor = 'violet';
+                if (isNil(this.props.elementList)) {
+                    list = [{ id: NewGuid, prefix: 'none', dateTimeString: '' }];
+                }
+                break;
             default:
         }
 
@@ -84,6 +91,9 @@ export default class SearchTypeFrame extends React.Component {
                     break;
                 case FhirConstant.searchType.token:
                     newArray.push({ id: UuidSupport.createGUID(), system: '', code: '' });
+                    break;
+                case FhirConstant.searchType.date:
+                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', dateTimeString: '' });
                     break;
                 default:
             }
@@ -186,6 +196,19 @@ export default class SearchTypeFrame extends React.Component {
                 }
 
                 break;
+            case FhirConstant.searchType.date:
+
+                newArray.splice(Index, 1, {
+                    id: e.submittedId,
+                    dateTimeString: e.submittedDateTime,
+                    prefix: e.submittedPrefix,
+                });
+
+                if (e.submittedModifier == 'missing') {
+                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', dateTimeString: '' }]
+                }
+
+                break;
             default:
         }
 
@@ -219,7 +242,7 @@ export default class SearchTypeFrame extends React.Component {
                 return (
                     <Grid>
                         <Grid.Row columns={16}>
-                            <Button onClick={this.onCheckClick}  size='small' icon color='green'><Icon name='check' /></Button>
+                            <Button onClick={this.onCheckClick} size='small' icon color='green'><Icon name='check' /></Button>
                         </Grid.Row>
                     </Grid>
                 )
@@ -227,10 +250,10 @@ export default class SearchTypeFrame extends React.Component {
                 return (
                     <Grid>
                         <Grid.Row columns={16}>
-                            <Button onClick={this.onAddClick}  size='small' icon color='green'><Icon name='add' /></Button>
+                            <Button onClick={this.onAddClick} size='small' icon color='green'><Icon name='add' /></Button>
                         </Grid.Row>
                         <Grid.Row columns={16}>
-                            <Button onClick={this.onCancelClick}  size='small' icon color='red'><Icon name='remove' /></Button>
+                            <Button onClick={this.onCancelClick} size='small' icon color='red'><Icon name='remove' /></Button>
                         </Grid.Row>
                     </Grid>
                 )
@@ -280,6 +303,21 @@ export default class SearchTypeFrame extends React.Component {
                             onTokenEdit={this.onEdit}
                         />
                     )
+                case FhirConstant.searchType.date:
+                    
+                    return (
+                        <DateTime
+                            isFirst={isFirst}
+                            addOrButton={addOrButton}
+                            onOrAddRemoveClick={this.onOrButtonClick}
+                            id={item.id}
+                            modifier={this.state.modifier}
+                            prefix={item.prefix}
+                            dateTimeString={item.dateTimeString}                            
+                            onEdit={this.onEdit}
+                        />
+                    )
+
                 default:
             }
         }

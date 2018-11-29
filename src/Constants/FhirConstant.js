@@ -109,7 +109,7 @@ export default class FhirConstant {
     static searchType = {
         token: 'token',
         number: 'number',
-        dateTime: 'dateTime',
+        date: 'date',
         string: 'string',
         composite: 'composite',
         quantity: 'quantity',
