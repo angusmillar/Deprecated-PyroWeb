@@ -246,26 +246,111 @@ export default class PyroServerSearchComponent extends React.Component {
         } else if (item.type == FhirConstant.searchType.date) {
 
             let theQuery = `${item.name}=`;
-
             for (let i = 0; i < item.valueList.length; i++) {
 
+                let modifier = '';
+                if (item.modifier != 'none') {
+                    modifier = item.modifier
+                }
+            
+                let prefix = '';                            
+                if (item.valueList[i].prefix != 'none') {
+                    prefix = item.valueList[i].prefix;
+                }                
+
+                let zone = '';
+                if (item.valueList[i].zoneString != 'none') {
+                    zone = item.valueList[i].zoneString
+                }
+
                 if (i > 0) {
-                    if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].dateTimeString) && item.valueList[i].dateTimeString != '') {
-                        theQuery = theQuery.concat(`,${item.valueList[i].prefix}${item.valueList[i].dateTimeString}`)
+                    if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].dateString) && item.valueList[i].dateString != '') {
+                        theQuery = theQuery.concat(`,${prefix}${item.valueList[i].dateString}`)
                     }
+                    if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].timeString) && item.valueList[i].timeString != '') {
+                        theQuery = theQuery.concat(`T${item.valueList[i].timeString}`)
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].zoneString) && item.valueList[i].zoneString != '') {
+                            theQuery = theQuery.concat(`${zone}`)
+                        }
+                    }                   
                 } else {
-                    if (item.modifier != 'none') {
-                        if (item.modifier == 'missing') {
-                            theQuery = `${item.name}:${item.modifier}=true`;
-                        } else {
-                            if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].dateTimeString) && item.valueList[i].dateTimeString != '') {
-                                theQuery = `${item.name}:${item.modifier}=${item.valueList[i].dateTimeString}`;
-                            }
-                        }
+                    if (modifier == 'missing') {
+                        theQuery = `${item.name}:${modifier}=true`;
                     } else {
-                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].dateTimeString) && item.valueList[i].dateTimeString != '') {
-                            theQuery = theQuery.concat(`${item.valueList[i].prefix}${item.valueList[i].dateTimeString}`)
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].dateString) && item.valueList[i].dateString != '') {
+                            theQuery = `${item.name}${modifier}=${prefix}${item.valueList[i].dateString}`;
                         }
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].timeString) && item.valueList[i].timeString != '') {
+                            theQuery = theQuery.concat(`T${item.valueList[i].timeString}`)
+                            if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].zoneString) && item.valueList[i].zoneString != '') {
+                                theQuery = theQuery.concat(`${zone}`)
+                            }
+                        }                        
+                    }
+                }
+            }
+            return { id: item.id, queryString: theQuery, searchType: item.type }
+
+        } else if (item.type == FhirConstant.searchType.uri) {
+
+            let theQuery = `${item.name}=`;
+            for (let i = 0; i < item.valueList.length; i++) {
+
+                let modifier = '';
+                if (item.modifier != 'none') {
+                    modifier = item.modifier
+                }                           
+
+                if (i > 0) {
+                    if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].uri) && item.valueList[i].uri != '') {
+                        theQuery = theQuery.concat(`,${item.valueList[i].uri}`)
+                    }                                    
+                } else {
+                    if (modifier == 'missing') {
+                        theQuery = `${item.name}:${modifier}=true`;
+                    } else if (modifier != '') {
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].uri) && item.valueList[i].uri != '') {
+                            theQuery = `${item.name}:${modifier}=${item.valueList[i].uri}`;
+                        }   
+                    } else {
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].uri) && item.valueList[i].uri != '') {
+                            theQuery = `${item.name}=${item.valueList[i].uri}`;
+                        }                                               
+                    }
+                }
+            }
+            return { id: item.id, queryString: theQuery, searchType: item.type }
+
+        } else if (item.type == FhirConstant.searchType.number) {
+
+            let theQuery = `${item.name}=`;
+            for (let i = 0; i < item.valueList.length; i++) {
+
+                let modifier = '';
+                if (item.modifier != 'none') {
+                    modifier = item.modifier
+                }                           
+
+                let prefix = '';                            
+                if (item.valueList[i].prefix != 'none') {
+                    prefix = item.valueList[i].prefix;
+                }                
+
+                if (i > 0) {
+                    if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].number) && item.valueList[i].number != '') {
+                        theQuery = theQuery.concat(`,${prefix}${item.valueList[i].number}`)
+                    }                                    
+                } else {
+                    if (modifier == 'missing') {
+                        theQuery = `${item.name}:${modifier}=true`;
+                    } else if (modifier != '') {
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].number) && item.valueList[i].number != '') {
+                            theQuery = `${item.name}:${modifier}=${prefix}${item.valueList[i].number}`;
+                        }   
+                    } else {
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].number) && item.valueList[i].number != '') {
+                            theQuery = `${item.name}=${prefix}${item.valueList[i].number}`;
+                        }                                               
                     }
                 }
             }
@@ -439,7 +524,7 @@ export default class PyroServerSearchComponent extends React.Component {
                                 onChange={this.onSearchFilterChange}
                                 value={this.state.selectedSearch} />
                         </Form.Group>
-                    </Form>                    
+                    </Form>
                 )
             }
         }
@@ -563,6 +648,30 @@ export default class PyroServerSearchComponent extends React.Component {
                                     delimiter={queryDelimiter}
                                     value={item.queryString}
                                     color='purple'
+                                    onClick={this.onShowEdit}
+                                    onRemoveClick={this.onRemoveSearchParameter} />
+                            )
+                        } else if (item.searchType == FhirConstant.searchType.uri) {
+                            return (
+                                <FhirQueryButton
+                                    key={index}
+                                    id={item.id}
+                                    size={ButtonSize}
+                                    delimiter={queryDelimiter}
+                                    value={item.queryString}
+                                    color='pink'
+                                    onClick={this.onShowEdit}
+                                    onRemoveClick={this.onRemoveSearchParameter} />
+                            )
+                        } else if (item.searchType == FhirConstant.searchType.number) {
+                            return (
+                                <FhirQueryButton
+                                    key={index}
+                                    id={item.id}
+                                    size={ButtonSize}
+                                    delimiter={queryDelimiter}
+                                    value={item.queryString}
+                                    color='brown'
                                     onClick={this.onShowEdit}
                                     onRemoveClick={this.onRemoveSearchParameter} />
                             )

@@ -8,6 +8,8 @@ import Token from './Token';
 import String from './String';
 import Quantity from './Quantity';
 import DateTime from './DateTime';
+import Uri from './Uri';
+import Number from './Number';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
@@ -62,9 +64,21 @@ export default class SearchTypeFrame extends React.Component {
                 }
                 break;
             case FhirConstant.searchType.date:
-                typeColor = 'violet';
+                typeColor = 'purple';
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, prefix: 'none', dateTimeString: '' }];
+                    list = [{ id: NewGuid, prefix: 'none', dateString: '', timeString: '', zoneString: '' }];
+                }
+                break;
+            case FhirConstant.searchType.uri:
+                typeColor = 'pink';
+                if (isNil(this.props.elementList)) {
+                    list = [{ id: NewGuid, uri: '' }];
+                }
+                break;
+            case FhirConstant.searchType.number:
+                typeColor = 'brown';
+                if (isNil(this.props.elementList)) {
+                    list = [{ id: NewGuid, prefix: 'none', number: '' }];
                 }
                 break;
             default:
@@ -93,7 +107,13 @@ export default class SearchTypeFrame extends React.Component {
                     newArray.push({ id: UuidSupport.createGUID(), system: '', code: '' });
                     break;
                 case FhirConstant.searchType.date:
-                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', dateTimeString: '' });
+                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', dateString: '', timeString: '', zoneString: '' });
+                    break;
+                case FhirConstant.searchType.uri:
+                    newArray.push({ id: UuidSupport.createGUID(), uri: '' });
+                    break;
+                case FhirConstant.searchType.number:
+                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', number: '' });
                     break;
                 default:
             }
@@ -200,12 +220,39 @@ export default class SearchTypeFrame extends React.Component {
 
                 newArray.splice(Index, 1, {
                     id: e.submittedId,
-                    dateTimeString: e.submittedDateTime,
+                    dateString: e.submittedDate,
+                    timeString: e.submittedTime,
+                    zoneString: e.submittedZone,
                     prefix: e.submittedPrefix,
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', dateTimeString: '' }]
+                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', dateString: '', timeString: '', zoneString: '' }]
+                }
+
+                break;
+            case FhirConstant.searchType.uri:
+
+                newArray.splice(Index, 1, {
+                    id: e.submittedId,
+                    uri: e.submittedUri,
+                });
+
+                if (e.submittedModifier == 'missing') {
+                    newArray = [{ id: UuidSupport.createGUID(), uri: '' }]
+                }
+
+                break;
+            case FhirConstant.searchType.number:
+
+                newArray.splice(Index, 1, {
+                    id: e.submittedId,
+                    prefix: e.submittedPrefix,
+                    number: e.submittedNumber,
+                });
+
+                if (e.submittedModifier == 'missing') {
+                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', number: '' }]
                 }
 
                 break;
@@ -304,7 +351,6 @@ export default class SearchTypeFrame extends React.Component {
                         />
                     )
                 case FhirConstant.searchType.date:
-                    
                     return (
                         <DateTime
                             isFirst={isFirst}
@@ -313,7 +359,34 @@ export default class SearchTypeFrame extends React.Component {
                             id={item.id}
                             modifier={this.state.modifier}
                             prefix={item.prefix}
-                            dateTimeString={item.dateTimeString}                            
+                            dateString={item.dateString}
+                            timeString={item.timeString}
+                            zoneString={item.zoneString}
+                            onEdit={this.onEdit}
+                        />
+                    )
+                case FhirConstant.searchType.uri:
+                    return (
+                        <Uri
+                            isFirst={isFirst}
+                            addOrButton={addOrButton}
+                            onOrAddRemoveClick={this.onOrButtonClick}
+                            id={item.id}
+                            modifier={this.state.modifier}
+                            uri={item.uri}
+                            onEdit={this.onEdit}
+                        />
+                    )
+                case FhirConstant.searchType.number:
+                    return (
+                        <Number
+                            isFirst={isFirst}
+                            addOrButton={addOrButton}
+                            onOrAddRemoveClick={this.onOrButtonClick}
+                            id={item.id}
+                            modifier={this.state.modifier}
+                            prefix={item.prefix}
+                            number={item.number}
                             onEdit={this.onEdit}
                         />
                     )
