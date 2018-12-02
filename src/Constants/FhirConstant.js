@@ -114,8 +114,35 @@ export default class FhirConstant {
         composite: 'composite',
         quantity: 'quantity',
         uri: 'uri',
+        reference: 'reference',
         special: 'special'
     };
+
+    static getColorForSearchType(searchType) {
+        switch (searchType) {
+            case this.searchType.token:
+                return 'teal'
+            case this.searchType.number:
+                return 'brown'
+                case this.searchType.date:
+                return 'purple'
+                case this.searchType.string:
+                return 'blue'
+                case this.searchType.composite:
+                return 'black'
+                case this.searchType.quantity:
+                return 'violet'
+                case this.searchType.uri:
+                return 'pink'
+                case this.searchType.reference:
+                return 'olive'
+                case this.searchType.special:
+                return 'black'
+            default:
+                return 'black'
+        }            
+    }
+
 
     //DeviceType
     static searchSummaryType = {

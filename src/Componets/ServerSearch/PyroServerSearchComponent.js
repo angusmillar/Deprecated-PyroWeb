@@ -356,6 +356,36 @@ export default class PyroServerSearchComponent extends React.Component {
             }
             return { id: item.id, queryString: theQuery, searchType: item.type }
 
+        } else if (item.type == FhirConstant.searchType.reference) {
+
+            let theQuery = `${item.name}=`;
+            for (let i = 0; i < item.valueList.length; i++) {
+
+                let modifier = '';
+                if (item.modifier != 'none') {
+                    modifier = item.modifier
+                }                           
+
+                if (i > 0) {
+                    if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].resourceId) && item.valueList[i].resourceId != '') {
+                        theQuery = theQuery.concat(`,${item.valueList[i].resourceId}`)
+                    }                                    
+                } else {
+                    if (modifier == 'missing') {
+                        theQuery = `${item.name}:${modifier}=true`;
+                    } else if (modifier != '') {
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].resourceId) && item.valueList[i].resourceId != '') {
+                            theQuery = `${item.name}:${modifier}=${item.valueList[i].resourceId}`;
+                        }   
+                    } else {
+                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].resourceId) && item.valueList[i].resourceId != '') {
+                            theQuery = `${item.name}=${item.valueList[i].resourceId}`;
+                        }                                               
+                    }
+                }
+            }
+            return { id: item.id, queryString: theQuery, searchType: item.type }
+
         } else {
             return 'notdone!!';
         }
@@ -603,81 +633,17 @@ export default class PyroServerSearchComponent extends React.Component {
                     //Below checks is the query is empty and does not render it if it is as it means nothing
                     if (!endsWith(item.queryString, '=', item.queryString.length)) {
                         counter++;
-                        if (item.searchType == FhirConstant.searchType.token) {
-                            return (
-                                <FhirQueryButton
-                                    key={index}
-                                    id={item.id}
-                                    size={ButtonSize}
-                                    delimiter={queryDelimiter}
-                                    value={item.queryString}
-                                    color='teal'
-                                    onClick={this.onShowEdit}
-                                    onRemoveClick={this.onRemoveSearchParameter} />
-                            )
-                        } else if (item.searchType == FhirConstant.searchType.string) {
-                            return (
-                                <FhirQueryButton
-                                    key={index}
-                                    id={item.id}
-                                    size={ButtonSize}
-                                    delimiter={queryDelimiter}
-                                    value={item.queryString}
-                                    color='blue'
-                                    onClick={this.onShowEdit}
-                                    onRemoveClick={this.onRemoveSearchParameter} />
-                            )
-                        } else if (item.searchType == FhirConstant.searchType.quantity) {
-                            return (
-                                <FhirQueryButton
-                                    key={index}
-                                    id={item.id}
-                                    size={ButtonSize}
-                                    delimiter={queryDelimiter}
-                                    value={item.queryString}
-                                    color='violet'
-                                    onClick={this.onShowEdit}
-                                    onRemoveClick={this.onRemoveSearchParameter} />
-                            )
-                        } else if (item.searchType == FhirConstant.searchType.date) {
-                            return (
-                                <FhirQueryButton
-                                    key={index}
-                                    id={item.id}
-                                    size={ButtonSize}
-                                    delimiter={queryDelimiter}
-                                    value={item.queryString}
-                                    color='purple'
-                                    onClick={this.onShowEdit}
-                                    onRemoveClick={this.onRemoveSearchParameter} />
-                            )
-                        } else if (item.searchType == FhirConstant.searchType.uri) {
-                            return (
-                                <FhirQueryButton
-                                    key={index}
-                                    id={item.id}
-                                    size={ButtonSize}
-                                    delimiter={queryDelimiter}
-                                    value={item.queryString}
-                                    color='pink'
-                                    onClick={this.onShowEdit}
-                                    onRemoveClick={this.onRemoveSearchParameter} />
-                            )
-                        } else if (item.searchType == FhirConstant.searchType.number) {
-                            return (
-                                <FhirQueryButton
-                                    key={index}
-                                    id={item.id}
-                                    size={ButtonSize}
-                                    delimiter={queryDelimiter}
-                                    value={item.queryString}
-                                    color='brown'
-                                    onClick={this.onShowEdit}
-                                    onRemoveClick={this.onRemoveSearchParameter} />
-                            )
-                        } else {
-                            return null;
-                        }
+                        return (
+                            <FhirQueryButton
+                                key={index}
+                                id={item.id}
+                                size={ButtonSize}
+                                delimiter={queryDelimiter}
+                                value={item.queryString}
+                                color={FhirConstant.getColorForSearchType(item.searchType)}
+                                onClick={this.onShowEdit}
+                                onRemoveClick={this.onRemoveSearchParameter} />
+                        )                                                
                     }
                 })
             )

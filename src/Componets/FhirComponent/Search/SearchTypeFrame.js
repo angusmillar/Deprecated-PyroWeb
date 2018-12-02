@@ -10,6 +10,7 @@ import Quantity from './Quantity';
 import DateTime from './DateTime';
 import Uri from './Uri';
 import Number from './Number';
+import Reference from './Reference';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
@@ -40,45 +41,43 @@ export default class SearchTypeFrame extends React.Component {
     constructor(props) {
         super(props);
 
-        let list = this.props.elementList;
-        let typeColor = 'black';
+        let list = this.props.elementList;        
         const NewGuid = UuidSupport.createGUID();
-
+        const typeColor = FhirConstant.getColorForSearchType(this.props.type);
         switch (this.props.type) {
-            case FhirConstant.searchType.quantity:
-                typeColor = 'violet';
+            case FhirConstant.searchType.quantity:                
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, prefix: '', number: '', code: '', system: '' }];
                 }
                 break;
-            case FhirConstant.searchType.string:
-                typeColor = 'blue';
+            case FhirConstant.searchType.string:                
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, string: '' }];
                 }
                 break;
-            case FhirConstant.searchType.token:
-                typeColor = 'teal';
+            case FhirConstant.searchType.token:                
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, code: '', system: '' }];
                 }
                 break;
-            case FhirConstant.searchType.date:
-                typeColor = 'purple';
+            case FhirConstant.searchType.date:                
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, prefix: 'none', dateString: '', timeString: '', zoneString: '' }];
                 }
                 break;
-            case FhirConstant.searchType.uri:
-                typeColor = 'pink';
+            case FhirConstant.searchType.uri:                
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, uri: '' }];
                 }
                 break;
-            case FhirConstant.searchType.number:
-                typeColor = 'brown';
+            case FhirConstant.searchType.number:                
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, prefix: 'none', number: '' }];
+                }
+                break;
+            case FhirConstant.searchType.reference:                
+                if (isNil(this.props.elementList)) {
+                    list = [{ id: NewGuid, prefix: 'none', resource: '', resourceId: '' }];
                 }
                 break;
             default:
@@ -114,6 +113,9 @@ export default class SearchTypeFrame extends React.Component {
                     break;
                 case FhirConstant.searchType.number:
                     newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', number: '' });
+                    break;
+                case FhirConstant.searchType.reference:
+                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', resource: '', resourceId: '' });
                     break;
                 default:
             }
@@ -254,7 +256,18 @@ export default class SearchTypeFrame extends React.Component {
                 if (e.submittedModifier == 'missing') {
                     newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', number: '' }]
                 }
+                break;
+            case FhirConstant.searchType.reference:
 
+                newArray.splice(Index, 1, {
+                    id: e.submittedId,
+                    resource: e.submittedResource,
+                    resourceId: e.submittedResourceId,
+                });
+
+                if (e.submittedModifier == 'missing') {
+                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', resource: '', resourceId: '' }]
+                }
                 break;
             default:
         }
@@ -390,7 +403,20 @@ export default class SearchTypeFrame extends React.Component {
                             onEdit={this.onEdit}
                         />
                     )
-
+                case FhirConstant.searchType.reference:
+                    return (
+                        <Reference
+                            isFirst={isFirst}
+                            addOrButton={addOrButton}
+                            onOrAddRemoveClick={this.onOrButtonClick}
+                            id={item.id}
+                            modifier={this.state.modifier}
+                            prefix={item.prefix}
+                            resource={item.resource}
+                            resourceId={item.resourceId}
+                            onEdit={this.onEdit}
+                        />
+                    )
                 default:
             }
         }
