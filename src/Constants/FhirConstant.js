@@ -135,7 +135,7 @@ export default class FhirConstant {
                 case this.searchType.uri:
                 return 'pink'
                 case this.searchType.reference:
-                return 'olive'
+                return 'orange'
                 case this.searchType.special:
                 return 'black'
             default:
