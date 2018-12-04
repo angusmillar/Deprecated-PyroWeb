@@ -39,22 +39,7 @@ export default class ResponseRender extends React.Component {
             codeString = codeString.concat('Accept: application/fhir+xml;q=1.0, application/fhir+json;q=1.0, application/xml+fhir;q=0.9, application/json+fhir;q=0.9 \n');
             codeString = codeString.concat('User-Agent: HAPI-FHIR/3.7.0-SNAPSHOT (FHIR Client; FHIR 3.0.1/DSTU3; apache)\n');
             codeString = codeString.concat('Accept-Encoding: gzip\n');
-            codeString = codeString.concat('\n');
-            codeString = codeString.concat('{\n');
-            codeString = codeString.concat('    "resourceType": "OperationOutcome",\n');
-            codeString = codeString.concat('    "text": {\n');
-            codeString = codeString.concat('        "div": "<div xmlns=\\"http://www.w3.org/1999/xhtml\\">\\r\\n  <div>\\r\\n    <h4>OperationOutcome Issue: 1</h4>\\r\\n    <table>\\r\\n      <tr>\\r\\n        <td>\\r\\n          <span>\\r\\n            <b>Severity: </b>\\r\\n          </span>\\r\\n        </td>\\r\\n        <td>\\r\\n          <span>error</span>\\r\\n        </td>\\r\\n      </tr>\\r\\n      <tr>\\r\\n        <td>\\r\\n          <span>\\r\\n            <b>Type: </b>\\r\\n          </span>\\r\\n        </td>\\r\\n        <td>\\r\\n          <span>exception</span>\\r\\n        </td>\\r\\n      </tr>\\r\\n      <tr>\\r\\n        <td>\\r\\n          <span>\\r\\n            <b>Detail Text: </b>\\r\\n          </span>\\r\\n        </td>\\r\\n        <td>\\r\\n          <span>Some error message abount the problem</span>\\r\\n        </td>\\r\\n      </tr>\\r\\n    </table>\\r\\n  </div>\\r\\n</div>"\n');
-            codeString = codeString.concat('    },\n');
-            codeString = codeString.concat('    "issue": [\n');
-            codeString = codeString.concat('        {\n');
-            codeString = codeString.concat('            "severity": "error",\n');
-            codeString = codeString.concat('            "code": "exception",\n');
-            codeString = codeString.concat('            "details": {\n');
-            codeString = codeString.concat('                "text": "Some error message abount the problem"\n');
-            codeString = codeString.concat('            }\n');
-            codeString = codeString.concat('        }\n');
-            codeString = codeString.concat('    ]\n');
-            codeString = codeString.concat('}\n');
+           
             return codeString;
         }
 
