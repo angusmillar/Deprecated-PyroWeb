@@ -572,6 +572,8 @@ export default class PyroServerSearchComponent extends React.Component {
                         name={this.state.SearchElement.name}
                         isEditMode={false}
                         id={UuidSupport.createGUID()}
+                        resourceList={this.props.ConformanceStatmentResource.rest[0].resource}
+                        selectedResource={this.state.ResourceElement}
                     />
                 )
             }

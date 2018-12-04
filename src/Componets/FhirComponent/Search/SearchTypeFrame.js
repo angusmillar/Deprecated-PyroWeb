@@ -29,55 +29,57 @@ export default class SearchTypeFrame extends React.Component {
         onCancelClick: PropTypes.func,
         isEditMode: PropTypes.bool,
         modifier: PropTypes.string,
-        elementList: PropTypes.array
+        elementList: PropTypes.array,
+        resourceList: PropTypes.array,
+        selectedResource: PropTypes.object,
     }
 
     static defaultProps = {
         elementList: null,
-        searchTypeColor: 'black',
+        //searchTypeColor: 'black',
         modifier: 'none'
     }
 
     constructor(props) {
         super(props);
 
-        let list = this.props.elementList;        
+        let list = this.props.elementList;
         const NewGuid = UuidSupport.createGUID();
-        const typeColor = FhirConstant.getColorForSearchType(this.props.type);
+        //const typeColor = FhirConstant.getColorForSearchType(this.props.type);
         switch (this.props.type) {
-            case FhirConstant.searchType.quantity:                
+            case FhirConstant.searchType.quantity:
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, prefix: '', number: '', code: '', system: '' }];
                 }
                 break;
-            case FhirConstant.searchType.string:                
+            case FhirConstant.searchType.string:
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, string: '' }];
                 }
                 break;
-            case FhirConstant.searchType.token:                
+            case FhirConstant.searchType.token:
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, code: '', system: '' }];
                 }
                 break;
-            case FhirConstant.searchType.date:                
+            case FhirConstant.searchType.date:
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, prefix: 'none', dateString: '', timeString: '', zoneString: '' }];
                 }
                 break;
-            case FhirConstant.searchType.uri:                
+            case FhirConstant.searchType.uri:
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, uri: '' }];
                 }
                 break;
-            case FhirConstant.searchType.number:                
+            case FhirConstant.searchType.number:
                 if (isNil(this.props.elementList)) {
                     list = [{ id: NewGuid, prefix: 'none', number: '' }];
                 }
                 break;
-            case FhirConstant.searchType.reference:                
+            case FhirConstant.searchType.reference:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, prefix: 'none', resource: '', resourceId: '' }];
+                    list = [{ id: NewGuid, prefix: 'none', resource: '', resourceId: '', chainElementList: [] }];
                 }
                 break;
             default:
@@ -86,7 +88,7 @@ export default class SearchTypeFrame extends React.Component {
         this.state = {
             elementList: list,
             modifier: this.props.modifier,
-            searchTypeColor: typeColor
+            //searchTypeColor: typeColor
         };
 
     }
@@ -115,7 +117,7 @@ export default class SearchTypeFrame extends React.Component {
                     newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', number: '' });
                     break;
                 case FhirConstant.searchType.reference:
-                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', resource: '', resourceId: '' });
+                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', resource: '', resourceId: '', chainElementList: [] });
                     break;
                 default:
             }
@@ -263,10 +265,11 @@ export default class SearchTypeFrame extends React.Component {
                     id: e.submittedId,
                     resource: e.submittedResource,
                     resourceId: e.submittedResourceId,
+                    chainElementList: e.submittedChainElementList,
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', resource: '', resourceId: '' }]
+                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', resource: '', resourceId: '', chainElementList: [] }]
                 }
                 break;
             default:
@@ -290,11 +293,11 @@ export default class SearchTypeFrame extends React.Component {
     render() {
 
         const renderLabelName = () => {
-            return <Label color={this.state.searchTypeColor} attached='top left'>Parameter: {this.props.name}</Label>
+            return <Label color={FhirConstant.getColorForSearchType(this.props.type)} attached='top left'>Parameter: {this.props.name}</Label>
         };
 
         const renderLabelType = () => {
-            return <Label color={this.state.searchTypeColor} attached='top right'>Type: {this.props.type}</Label>
+            return <Label color={FhirConstant.getColorForSearchType(this.props.type)} attached='top right'>Type: {this.props.type}</Label>
         };
 
         const renderButton = () => {
@@ -410,8 +413,10 @@ export default class SearchTypeFrame extends React.Component {
                             addOrButton={addOrButton}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}
+                            name={this.props.name}
                             modifier={this.state.modifier}
-                            prefix={item.prefix}
+                            resourceList={this.props.resourceList}
+                            parentSelectedResource={this.props.selectedResource}
                             resource={item.resource}
                             resourceId={item.resourceId}
                             onEdit={this.onEdit}
@@ -480,7 +485,7 @@ export default class SearchTypeFrame extends React.Component {
         };
 
         return (
-            <Segment color={this.state.searchTypeColor} secondary={this.props.isEditMode}>
+            <Segment color={FhirConstant.getColorForSearchType(this.props.type)} secondary={this.props.isEditMode}>
                 {renderLabelName()}
                 {renderLabelType()}
                 <Grid>
