@@ -63,7 +63,7 @@ export default class Reference extends React.Component {
             const filteredIncludeList = filter(mappedIncludeList(), { 'searchParameterName': this.props.name });
 
             return (map(filteredIncludeList, function (item) {
-                return { key: item.resourceName, icon: 'tag', text: item.resource, value: item.resource };
+                return { key: item.resource, icon: 'tag', text: item.resource, value: item.resource };
             }))
         }
         const selectedResource = () => {
@@ -237,7 +237,7 @@ export default class Reference extends React.Component {
     render() {
 
         const renderRemoveOrButton = () => {
-            if (this.props.addOrButton && !this.props.isFirst) {
+            if (this.props.addOrButton && !this.props.isFirst && !this.state.isChainSearch) {
                 return <Button key='3' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
             }
         }
@@ -293,7 +293,7 @@ export default class Reference extends React.Component {
         }
         const renderModifierDropdown = () => {
             return (
-                <Form key={UuidSupport.createGUID()}>
+                <Form>
                     <Form.Group widths='equal'>
                         <Form.Select width={3} compact label='Modifier' disabled={disableDueToChildChain()} value={this.state.modifier} options={modifierOptions()} placeholder='Modifier' onChange={this.onModifierChange} />
                     </Form.Group>
@@ -341,7 +341,11 @@ export default class Reference extends React.Component {
 
         const searchList = () => {
             if (isNil(this.state.ResourceElement)) {
-                return [{ key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' }]
+                //Oddly if I return a list with a single entry on none as commented out below
+                //then I get an error that their is a duplicate in the list, has same key!
+                //However return an empty list [] sems to work fine here.
+                // return [{ key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' }]
+                return []
             } else {
                 return (map(this.state.ResourceElement.searchParam, function (item) {
                     return { key: item.name, icon: 'search', text: item.name, description: item.documentation, value: item.name };
@@ -361,31 +365,28 @@ export default class Reference extends React.Component {
                 }
             }
 
+            // const test = uniqBy(searchList(), 'key');
+            const test = searchList();
             if (this.state.isChainSearch) {
                 return (
-                    <React.Fragment key={UuidSupport.createGUID()}>
-                        <Form.Select
-                            key={UuidSupport.createGUID()}
-                            label='Search Parameter'
-                            fluid
-                            width={4}
-                            disabled={disabled()}
-                            options={searchList()}
-                            placeholder='Search Parameter'
-                            search
-                            closeOnChange
-                            onChange={this.onSearchFilterChange}
-                            value={this.state.selectedSearch}
-                        />
-                        {/* <Button key={UuidSupport.createGUID()} onClick={this.onChainToggle} disabled={disableControls()} size='small' icon color='red' ><Icon name='broken chain' /></Button> */}
-                    </React.Fragment>
+                    <Form.Select
+                        key='SearchSelect'
+                        label='Search Parameter'
+                        fluid
+                        width={4}
+                        disabled={disabled()}
+                        options={test}
+                        placeholder='Search Parameter'
+                        search
+                        closeOnChange
+                        onChange={this.onSearchFilterChange}
+                        value={this.state.selectedSearch}
+                    />
+
                 )
             } else {
                 return (
-                    <React.Fragment key={UuidSupport.createGUID()}>
-                        <Form.Field key={UuidSupport.createGUID()} label='Resource Id' width={4} name='resourceId' control='input' disabled={disableControls()} placeholder='12345' value={resourceId} onChange={this.onEdit} />
-                        {/* <Button onClick={this.onChainToggle} disabled={disableControls()} size='small' icon color='black' ><Icon name='chain' /></Button> */}
-                    </React.Fragment>
+                    <Form.Field key='ResId' label='Resource Id' width={4} name='resourceId' control='input' disabled={disableControls()} placeholder='12345' value={resourceId} onChange={this.onEdit} />
                 )
             }
         }
@@ -477,8 +478,7 @@ export default class Reference extends React.Component {
                     )
                 case FhirConstant.searchType.reference:
                     return (
-                        <Reference
-                            key={UuidSupport.createGUID()}
+                        <Reference                           
                             isFirst={isFirst}
                             addOrButton={addOrButton}
                             onOrAddRemoveClick={this.onOrButtonClick}
@@ -575,9 +575,9 @@ export default class Reference extends React.Component {
                 {renderModifierSelector()}
                 <Grid.Row columns={4}>
                     <Grid.Column width={14} >
-                        <Form key={UuidSupport.createGUID()}>
+                        <Form>
                             <Form.Group widths='equal'>
-                                <Form.Select
+                                <Form.Select                                    
                                     disabled={disableControls()}
                                     label='Resource Type'
                                     width={3}
