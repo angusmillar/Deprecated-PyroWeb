@@ -4,6 +4,7 @@ import { Grid, Form, Button, Icon } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
+import FhirConstant from '../../../Constants/FhirConstant';
 
 export default class Uri extends React.Component {
 
@@ -34,6 +35,17 @@ export default class Uri extends React.Component {
         };
     }
 
+    getSubmitted = () => {
+        return (
+            {
+                submittedId: this.props.id,
+                submittedType: FhirConstant.searchType.uri,
+                submittedUri: this.state.uri,
+                submittedModifier: this.state.modifier,
+            }
+        )
+    }
+
     onEdit = (e) => {
         e.preventDefault();
 
@@ -45,27 +57,19 @@ export default class Uri extends React.Component {
             [name]: value
         });
 
-        let UriEvent = this.state.uri;
+        const submitted = this.getSubmitted();        
         if (name == 'uri') {
-            UriEvent = value;
+            submitted.submittedUri = value;
         }
-
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedUri: UriEvent,
-            submittedModifier: this.state.modifier,
-        });
-
+        this.props.onEdit(submitted);         
     }
 
     onModifierChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedUri: this.state.uri,
-            submittedModifier: value,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedModifier = value
+        this.props.onEdit(submitted);       
 
         if (value == 'missing') {
             this.setState({
@@ -129,7 +133,7 @@ export default class Uri extends React.Component {
             } else {
                 return (
                     [
-                        { key: 'none', text: 'None', value: 'none' },                       
+                        { key: 'none', text: 'None', value: 'none' },
                         { key: 'contains', text: 'Contains', value: 'contains' },
                         { key: 'exact', text: 'Exact', value: 'exact' },
                         { key: 'above', text: 'Above', value: 'above' },
@@ -139,7 +143,7 @@ export default class Uri extends React.Component {
             }
         }
 
-       
+
         const disableDueToMissing = () => {
             if (this.state.modifier == 'missing') {
                 return true;

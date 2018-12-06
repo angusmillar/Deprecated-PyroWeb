@@ -4,6 +4,7 @@ import { Grid, Form, Button, Icon } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
+import FhirConstant from '../../../Constants/FhirConstant';
 
 export default class Token extends React.Component {
 
@@ -37,6 +38,18 @@ export default class Token extends React.Component {
         };
     }
 
+    getSubmitted = () => {
+        return (
+            {
+                submittedId: this.props.id,
+                submittedType: FhirConstant.searchType.token,                
+                submittedSystem: this.state.system,
+                submittedCode: this.state.code,
+                submittedModifier: this.state.modifier,
+            }
+        )
+    }
+
     onTokenEdit = (e) => {
         e.preventDefault();
 
@@ -48,32 +61,22 @@ export default class Token extends React.Component {
             [name]: value
         });
 
-        let SystemEvent = this.state.system;
-        let CodeEvent = this.state.code;
+        const submitted = this.getSubmitted();
         if (name == 'system') {
-            SystemEvent = value;
+            submitted.submittedSystem = value;
         } else if (name == 'code') {
-            CodeEvent = value;
+            submitted.submittedCode = value;
         }
-        this.props.onTokenEdit({
-            submittedId: this.props.id,
-            submittedSystem: SystemEvent,
-            submittedCode: CodeEvent,
-            submittedModifier: this.state.modifier,
-        });
-
+        this.props.onTokenEdit(submitted);            
     }
 
     onModifierChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onTokenEdit({
-            submittedId: this.props.id,
-            submittedSystem: this.state.system,
-            submittedCode: this.state.code,
-            submittedModifier: value,
-        });
-
+        const submitted = this.getSubmitted();
+        submitted.submittedModifier = value
+        this.props.onTokenEdit(submitted); 
+                
         this.setState({
             modifier: value
         });

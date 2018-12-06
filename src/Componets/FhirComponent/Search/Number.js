@@ -4,6 +4,7 @@ import { Grid, Form, Button, Icon } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
+import FhirConstant from '../../../Constants/FhirConstant';
 
 export default class Number extends React.Component {
 
@@ -37,6 +38,18 @@ export default class Number extends React.Component {
         };
     }
 
+    getSubmitted = () => {
+        return (
+            {
+                submittedId: this.props.id,
+                submittedType: FhirConstant.searchType.number,
+                submittedPrefix: this.state.prefix,
+                submittedNumber: this.state.number,
+                submittedModifier: this.state.modifier,
+            }
+        )
+    }
+
     onEdit = (e) => {
         e.preventDefault();
 
@@ -53,24 +66,17 @@ export default class Number extends React.Component {
             NumberEvent = value;
         }
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: this.state.prefix,
-            submittedNumber: NumberEvent,            
-            submittedModifier: this.state.modifier,
-        });
-
+        const submitted = this.getSubmitted();
+        submitted.submittedNumber = NumberEvent;
+        this.props.onEdit(submitted);    
     }
 
     onModifierChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: this.state.prefix,
-            submittedNumber: this.state.number,
-            submittedModifier: value,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedModifier = value;
+        this.props.onEdit(submitted);    
 
         if (value == 'missing') {
             this.setState({
@@ -88,12 +94,9 @@ export default class Number extends React.Component {
     onPrefixChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: value,
-            submittedNumber: this.state.number,
-            submittedModifier: this.state.modifier,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedPrefix = value;
+        this.props.onEdit(submitted);    
 
         this.setState({
             prefix: value

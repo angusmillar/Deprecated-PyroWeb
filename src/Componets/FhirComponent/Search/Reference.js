@@ -6,6 +6,7 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
 import isNil from 'lodash/isNil';
+import isEmpty from 'lodash/isEmpty';
 import split from 'lodash/split';
 import PropTypes from 'prop-types';
 import FhirConstant from '../../../Constants/FhirConstant';
@@ -17,6 +18,7 @@ import Quantity from './Quantity';
 import DateTime from './DateTime';
 import Uri from './Uri';
 import Number from './Number';
+//import code from 'react-syntax-highlighter/styles/hljs/xcode';
 
 
 export default class Reference extends React.Component {
@@ -31,7 +33,8 @@ export default class Reference extends React.Component {
         name: PropTypes.string,
         resource: PropTypes.string,
         resourceId: PropTypes.string,
-        chainElementList: PropTypes.array,
+        childChainElement: PropTypes.object,
+        // chainList: PropTypes.array,
         modifier: PropTypes.string,
         addOrButton: PropTypes.bool,
         isFirst: PropTypes.bool
@@ -44,7 +47,7 @@ export default class Reference extends React.Component {
         modifier: 'none',
         addOrButton: false,
         isFirst: false,
-        chainElementList: []
+        childChainElement: {}
     }
 
     constructor(props) {
@@ -88,55 +91,90 @@ export default class Reference extends React.Component {
             selectedSearch: 'none',
             SearchElement: null,
             savedSearchParameters: [],
-            chainElementList: this.props.chainElementList,
+            childChainElement: this.props.childChainElement,
             chainResourceList: chainResList(),
-
+            chainList: [],
             subName: ''
         };
     }
 
+    getSubmitted = () => {
+        return (
+            {
+                submittedId: this.props.id,
+                submittedType: FhirConstant.searchType.reference,
+                submittedResource: this.state.resource,
+                submittedResourceId: this.state.resourceId,
+                submittedModifier: this.state.modifier,
+                submittedChainList: this.state.chainList
+            }
+        )
+    }
+
+
+    //Not sure what to do here, we have events from the resourceID and Resource selector of Referance but then
+    //we also have events bubbling up from any type (number, String, Quantity) or even reference its self. These
+    //bubbled events are not synthetic and have no e.preventDefault() or e.target.
     onEdit = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
 
-        const target = e.target;
-        const value = target.value;
-        const name = target.name;
+        const submitted = this.getSubmitted();
+        const newArray = this.state.chainList.slice(0);
+        switch (e.submittedType) {
+            case FhirConstant.searchType.quantity:
+                newArray.push({ id: e.submittedId, prefix: e.submittedPrefix, number: e.submittedNumber, system: e.submittedSystem, code: e.submittedCode });
+                break;
+            case FhirConstant.searchType.string:
+                newArray.push({ id: e.submittedId, string: e.submittedString });
+                submitted.chainList = newArray;
+                break;
+            case FhirConstant.searchType.token:
 
-        this.setState({
-            [name]: value
-        });
+                break;
+            case FhirConstant.searchType.date:
 
-        let ResourceIdEvent = this.state.resourceId;
-        if (name == 'resourceId') {
-            ResourceIdEvent = value;
+                break;
+            case FhirConstant.searchType.uri:
+
+                break;
+            case FhirConstant.searchType.number:
+
+                break;
+            case FhirConstant.searchType.reference: {
+                const target = e.target;
+                const value = target.value;
+                const name = target.name;
+
+                this.setState({
+                    [name]: value
+                });
+
+                if (name == 'resourceId') {
+                    submitted.resourceId = value;
+                }
+            }
+                break;
+            default:
         }
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedResourceId: ResourceIdEvent,
-            submittedModifier: this.state.modifier,
-            chainElementList: this.state.chainElementList
-        });
 
+        this.props.onEdit(submitted);
     }
 
     onModifierChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedResource: this.state.resource,
-            submittedResourceId: this.state.resourceId,
-            chainElementList: this.state.chainElementList,
-            submittedModifier: value,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedModifier = value
+        this.props.onEdit(submitted);
 
         if (value == 'missing') {
             this.setState({
                 modifier: value,
                 resource: '',
                 resourceId: '',
-                chainElementList: []
+                childChainElement: {},
+                chainList: []
             });
         } else {
             this.setState({
@@ -183,7 +221,7 @@ export default class Reference extends React.Component {
         //of chains
         if (!isNil(e.eventRemove) && e.eventRemove) {
             this.setState(() => ({
-                chainElementList: [],
+                childChainElement: {},
                 selectedSearch: 'none',
                 SearchElement: null,
             }));
@@ -204,34 +242,44 @@ export default class Reference extends React.Component {
         const searchParameterType = SearchArray[0].type;
         const searchParameterName = SearchArray[0].name;
         const parentResource = this.state.ResourceElement;
-        const newArray = this.state.chainElementList.slice(0);
+
+        // const newArray = this.state.childChainElement.slice(0);
+
+        let newChildChainObject = {};
 
         switch (searchParameterType) {
             case FhirConstant.searchType.quantity:
-                newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, prefix: '', number: '', system: '', code: '' });
+                newChildChainObject = { id: UuidSupport.createGUID(), type: searchParameterType, prefix: '', number: '', system: '', code: '' };
+                // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, prefix: '', number: '', system: '', code: '' });
                 break;
             case FhirConstant.searchType.string:
-                newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, string: '' });
+                newChildChainObject = { id: UuidSupport.createGUID(), type: searchParameterType, string: '' };
+                // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, string: '' });
                 break;
             case FhirConstant.searchType.token:
-                newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, system: '', code: '' });
+                newChildChainObject = { id: UuidSupport.createGUID(), type: searchParameterType, system: '', code: '' };
+                // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, system: '', code: '' });
                 break;
             case FhirConstant.searchType.date:
-                newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, prefix: 'none', dateString: '', timeString: '', zoneString: '' });
+                newChildChainObject = { id: UuidSupport.createGUID(), type: searchParameterType, prefix: 'none', dateString: '', timeString: '', zoneString: '' };
+                // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, prefix: 'none', dateString: '', timeString: '', zoneString: '' });
                 break;
             case FhirConstant.searchType.uri:
-                newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, uri: '' });
+                newChildChainObject = { id: UuidSupport.createGUID(), type: searchParameterType, uri: '' };
+                // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, uri: '' });
                 break;
             case FhirConstant.searchType.number:
-                newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, prefix: 'none', number: '' });
+                newChildChainObject = { id: UuidSupport.createGUID(), type: searchParameterType, prefix: 'none', number: '' };
+                // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, prefix: 'none', number: '' });
                 break;
             case FhirConstant.searchType.reference:
-                newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, parentSelectedResource: parentResource, subName: searchParameterName, prefix: 'none', resource: '', resourceId: '', chainElementList: [] });
+                newChildChainObject = { id: UuidSupport.createGUID(), type: searchParameterType, parentSelectedResource: parentResource, subName: searchParameterName, prefix: 'none', resource: '', resourceId: '', childChainElement: {} };
+                // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, parentSelectedResource: parentResource, subName: searchParameterName, prefix: 'none', resource: '', resourceId: '', childChainElement: [] });
                 break;
             default:
         }
 
-        this.setState(() => ({ selectedSearch: value, SearchElement: SearchArray[0], chainElementList: newArray }));
+        this.setState(() => ({ selectedSearch: value, SearchElement: SearchArray[0], childChainElement: newChildChainObject }));
     }
 
     render() {
@@ -271,16 +319,25 @@ export default class Reference extends React.Component {
             }
         }
 
-        const disableDueToChildChain = () => {
-            if (isNil(this.state.chainElementList)) {
-                return false;
-            } else if (this.state.chainElementList.length > 0) {
-                return true;
-            } else {
-                return false;
-            }
+        // const disableDueToChildChain = () => {
+        //     if (isNil(this.state.childChainElement)) {
+        //         return false;
+        //     } else if (this.state.childChainElement.length > 0) {
+        //         return true;
+        //     } else {
+        //         return false;
+        //     }
 
+        // }
+
+        const disableDueToChildChain = () => {
+            if (isEmpty(this.state.childChainElement)) {
+                return false;
+            } else {
+                return true;
+            }
         }
+
 
         const disableControls = () => {
             if (disableDueToMissing()) {
@@ -478,7 +535,7 @@ export default class Reference extends React.Component {
                     )
                 case FhirConstant.searchType.reference:
                     return (
-                        <Reference                           
+                        <Reference
                             isFirst={isFirst}
                             addOrButton={addOrButton}
                             onOrAddRemoveClick={this.onOrButtonClick}
@@ -497,74 +554,25 @@ export default class Reference extends React.Component {
             }
         }
 
-        const renderChainedElementList = () => {
-            return (
-                <Grid>
-                    {map(this.state.chainElementList, (item, Index) => {
-                        if (this.state.chainElementList.length == 1) {
-                            return (
-                                <React.Fragment key={item.id}>
-                                    <Grid.Row verticalAlign='middle'>
-                                        <Grid.Column width={16} >
-                                            <Divider fitted horizontal>Chained</Divider>
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                    <Grid.Row columns={1}>
-                                        <Grid.Column width={16} >
-                                            {renderItemType(item, false, true)}
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                </React.Fragment>
-                            )
-                        } else if (Index == this.state.chainElementList.length - 1) {
-                            return (
-                                <React.Fragment key={item.id}>
-                                    <Grid.Row verticalAlign='middle'>
-                                        <Grid.Column width={16} >
-                                            <Divider fitted horizontal>Chained</Divider>
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                    <Grid.Row columns={1}>
-                                        <Grid.Column width={16} >
-                                            {renderItemType(item, false, true)}
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                </React.Fragment>
-                            )
-                        } else if (Index == 0) {
-                            return (
-                                <React.Fragment key={item.id}>
-                                    <Grid.Row verticalAlign='middle'>
-                                        <Grid.Column width={16} >
-                                            <Divider fitted horizontal>Chained</Divider>
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                    <Grid.Row columns={1}>
-                                        <Grid.Column width={16} >
-                                            {renderItemType(item, false, false)}
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                </React.Fragment>
-                            )
-                        } else {
-                            return (
-                                <React.Fragment key={item.id}>
-                                    <Grid.Row verticalAlign='middle'>
-                                        <Grid.Column width={16} >
-                                            <Divider fitted horizontal>Chained</Divider>
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                    <Grid.Row columns={1}>
-                                        <Grid.Column width={16} >
-                                            {renderItemType(item, false, false)}
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                </React.Fragment>
-                            )
-                        }
-                    })}
-                </Grid>
-            )
+        const renderChildChainedElement = () => {
+            if (isEmpty(this.state.childChainElement)) {
+                return null;
+            } else {
+                return (
+                    <Grid>
+                        <Grid.Row verticalAlign='middle'>
+                            <Grid.Column width={16} >
+                                <Divider fitted horizontal>Chained</Divider>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Grid.Row columns={1}>
+                            <Grid.Column width={16} >
+                                {renderItemType(this.state.childChainElement, false, true)}
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+                )
+            }
         }
 
         const { resourceId, chainResourceList, selectedResource } = this.state
@@ -577,7 +585,7 @@ export default class Reference extends React.Component {
                     <Grid.Column width={14} >
                         <Form>
                             <Form.Group widths='equal'>
-                                <Form.Select                                    
+                                <Form.Select
                                     disabled={disableControls()}
                                     label='Resource Type'
                                     width={3}
@@ -602,7 +610,7 @@ export default class Reference extends React.Component {
                 </Grid.Row>
                 <Grid.Row columns={1}>
                     <Grid.Column width={16} >
-                        {renderChainedElementList()}
+                        {renderChildChainedElement()}
                     </Grid.Column>
                 </Grid.Row>
 

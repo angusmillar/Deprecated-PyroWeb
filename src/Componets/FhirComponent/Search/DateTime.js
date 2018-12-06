@@ -8,7 +8,7 @@ import UuidSupport from '../../../SupportTools/UuidSupport';
 import isNil from 'lodash/isNil';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-//import 'react-datepicker/dist/react-datepicker.css';
+import FhirConstant from '../../../Constants/FhirConstant';
 import '../../../CustomCss/react-datepicker.css';
 
 
@@ -56,14 +56,13 @@ export default class DateTime extends React.Component {
         if (this.props.timeString != '' && moment(this.props.timeString, this.props.timeFormatMask).isValid()) {
             momemntTime = moment(this.props.timeString, this.props.timeFormatMask);
         } else {
-            // momemntTime = momemntDate.clone();
             momemntTime = null;
         }
 
         let momemntZone = null;
         if (this.props.zoneString == '') {
             //default to users timezone
-            momemntZone = this.zoneNow()            
+            momemntZone = this.zoneNow()
         } else {
             momemntZone = this.props.zoneString;
         }
@@ -77,19 +76,27 @@ export default class DateTime extends React.Component {
         };
     }
 
+    getSubmitted = () => {
+        return (
+            {
+                submittedId: this.props.id,
+                submittedType: FhirConstant.searchType.date,
+                submittedPrefix: this.state.prefix,
+                submittedDate: this.stringFormatDate(this.state.dateType),
+                submittedTime: this.stringFormatTime(this.state.timeType),
+                submittedZone: this.state.zoneType,
+                submittedModifier: this.state.modifier
+            }
+        )
+    }
 
     onPrefixChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: value,
-            submittedDate: this.stringFormatDate(this.state.dateType),
-            submittedTime: this.stringFormatTime(this.state.timeType),
-            submittedZone: this.state.zoneType,
-            submittedModifier: this.state.modifier,
-        });
-
+        const submitted = this.getSubmitted();
+        submitted.submittedPrefix = value;
+        this.props.onEdit(submitted);
+    
         this.setState({
             prefix: value
         });
@@ -98,14 +105,9 @@ export default class DateTime extends React.Component {
     onModifierChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: this.state.prefix,
-            submittedDate: this.stringFormatDate(this.state.dateType),
-            submittedTime: this.stringFormatTime(this.state.timeType),
-            submittedZone: this.state.zoneType,
-            submittedModifier: value,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedModifier = value;
+        this.props.onEdit(submitted);       
 
         if (value == 'missing') {
             this.setState({
@@ -140,15 +142,15 @@ export default class DateTime extends React.Component {
 
     zoneNow = () => {
         const zoneHours = moment().utcOffset() / 60;
-            if (zoneHours > 9) {
-                return `+${zoneHours}:00`
-            } else if (zoneHours < 9 && zoneHours > 0) {
-                return `+0${zoneHours}:00`
-            } else if (zoneHours < 1 && zoneHours < -9) {
-                return `-0${zoneHours}:00`
-            } else if (zoneHours < -9) {
-                return `-${zoneHours}:00`
-        }        
+        if (zoneHours > 9) {
+            return `+${zoneHours}:00`
+        } else if (zoneHours < 9 && zoneHours > 0) {
+            return `+0${zoneHours}:00`
+        } else if (zoneHours < 1 && zoneHours < -9) {
+            return `-0${zoneHours}:00`
+        } else if (zoneHours < -9) {
+            return `-${zoneHours}:00`
+        }
     }
 
     onDateEdit = (date) => {
@@ -157,14 +159,9 @@ export default class DateTime extends React.Component {
             dateType: date
         });
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: this.state.prefix,
-            submittedDate: this.stringFormatDate(date),
-            submittedTime: this.stringFormatTime(this.state.timeType),
-            submittedZone: this.state.zoneType,
-            submittedModifier: this.state.modifier,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedDate = this.stringFormatDate(date);
+        this.props.onEdit(submitted);            
     }
 
     onTimeEdit = (time) => {
@@ -173,14 +170,9 @@ export default class DateTime extends React.Component {
             timeType: time
         });
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: this.state.prefix,
-            submittedDate: this.stringFormatDate(this.state.dateType),
-            submittedTime: this.stringFormatTime(time),
-            submittedZone: this.state.zoneType,
-            submittedModifier: this.state.modifier,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedTime = this.stringFormatTime(time);
+        this.props.onEdit(submitted);            
     }
 
     onZoneChange = (e, { value }) => {
@@ -190,14 +182,9 @@ export default class DateTime extends React.Component {
             zoneType: value
         });
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: this.state.prefix,
-            submittedDate: this.stringFormatDate(this.state.dateType),
-            submittedTime: this.stringFormatTime(this.state.timeType),
-            submittedZone: value,
-            submittedModifier: this.state.modifier,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedZone = value;
+        this.props.onEdit(submitted);            
     }
 
     onDateTimeNow = (e) => {
@@ -205,26 +192,20 @@ export default class DateTime extends React.Component {
 
         const now = moment();
 
-        this.setState ({
+        this.setState({
             prefix: this.props.prefix,
+            submittedType: FhirConstant.searchType.date,
             dateType: now.clone(),
             timeType: now.clone(),
             modifier: this.props.modifier,
             zoneType: this.zoneNow()
         });
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: this.state.prefix,
-            submittedDate: this.stringFormatDate(now),
-            submittedTime: this.stringFormatTime(now),
-            submittedZone: this.zoneNow(),
-            submittedModifier: this.state.modifier,
-        });
-
-        
-        
-       
+        const submitted = this.getSubmitted();
+        submitted.submittedDate = this.stringFormatDate(now);
+        submitted.submittedTime = this.stringFormatTime(now);
+        submitted.submittedZone = this.zoneNow();
+        this.props.onEdit(submitted);         
     }
 
     onOrAddButtonClick = (e) => {
@@ -371,7 +352,7 @@ export default class DateTime extends React.Component {
             <Grid>
                 {renderModifierSelector()}
                 <Grid.Row columns={3}>
-                    <Grid.Column width={12} >                    
+                    <Grid.Column width={12} >
                         <Form>
                             <Form.Group widths='equal'>
                                 <Form.Select width={2} compact
@@ -419,15 +400,15 @@ export default class DateTime extends React.Component {
                                     value={zoneType}
                                     options={zoneOptions()}
                                     placeholder='Modifier'
-                                    onChange={this.onZoneChange} 
+                                    onChange={this.onZoneChange}
                                     disabled={isDisableOnModifierMissing()}
-                                />                                
-                            </Form.Group>                           
-                        </Form>                        
+                                />
+                            </Form.Group>
+                        </Form>
                     </Grid.Column>
                     <Grid.Column width={1} floated='left' verticalAlign='middle'>
                         <Button key='3' onClick={this.onDateTimeNow} size='mini' icon color='grey' type='submit'><Icon name='clock' />{' '}Now</Button>
-                        </Grid.Column>
+                    </Grid.Column>
                     <Grid.Column width={1} floated='left' verticalAlign='middle' >
                         <Button.Group size='mini' >
                             {renderRemoveOrButton()}

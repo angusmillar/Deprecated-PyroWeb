@@ -4,6 +4,7 @@ import { Grid, Form, Button, Icon } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
+import FhirConstant from '../../../Constants/FhirConstant';
 
 export default class Quantity extends React.Component {
 
@@ -43,6 +44,20 @@ export default class Quantity extends React.Component {
         };
     }
 
+    getSubmitted = () => {
+        return (
+            {
+                submittedId: this.props.id,
+                submittedType: FhirConstant.searchType.quantity,
+                submittedPrefix: this.state.prefix,
+                submittedNumber: this.state.number,
+                submittedSystem: this.state.system,
+                submittedCode: this.state.code,
+                submittedModifier: this.state.modifier,
+            }
+        )
+    }
+
     onEdit = (e) => {
         e.preventDefault();
 
@@ -54,42 +69,26 @@ export default class Quantity extends React.Component {
             [name]: value
         });
 
-        let PrefixEvent = this.state.prefix;
-        let NumberEvent = this.state.number;
-        let SystemEvent = this.state.system;
-        let CodeEvent = this.state.code;
+        const submitted = this.getSubmitted();       
         if (name == 'prefix') {
-            PrefixEvent = value;
+            submitted.submittedPrefix = value;
         } else if (name == 'number') {
-            NumberEvent = value;
+            submitted.submittedNumber = value;            
         } else if (name == 'system') {
-            SystemEvent = value;
+            submitted.submittedSystem = value;            
         } else if (name == 'code') {
-            CodeEvent = value;
+            submitted.submittedCode = value;            
         }
-
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: PrefixEvent,
-            submittedNumber: NumberEvent,
-            submittedSystem: SystemEvent,
-            submittedCode: CodeEvent,
-            submittedModifier: this.state.modifier,
-        });
-
+       
+        this.props.onEdit(submitted);           
     }
 
     onModifierChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: this.state.prefix,
-            submittedNumber: this.state.number,
-            submittedSystem: this.state.system,
-            submittedCode: this.state.code,
-            submittedModifier: value,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedModifier = value;
+        this.props.onEdit(submitted);    
 
         this.setState({
             modifier: value
@@ -99,14 +98,9 @@ export default class Quantity extends React.Component {
     onPrefixChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onEdit({
-            submittedId: this.props.id,
-            submittedPrefix: value,
-            submittedNumber: this.state.number,
-            submittedSystem: this.state.system,
-            submittedCode: this.state.code,
-            submittedModifier: this.state.modifier,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedPrefix = value;
+        this.props.onEdit(submitted);    
 
         this.setState({
             prefix: value

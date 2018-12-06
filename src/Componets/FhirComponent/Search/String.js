@@ -4,6 +4,7 @@ import { Grid, Form, Button, Icon } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
+import FhirConstant from '../../../Constants/FhirConstant';
 
 export default class String extends React.Component {
 
@@ -34,6 +35,17 @@ export default class String extends React.Component {
         };
     }
 
+    getSubmitted = () => {
+        return (
+            {
+                submittedId: this.props.id,
+                submittedType: FhirConstant.searchType.string,
+                submittedString: this.state.string,
+                submittedModifier: this.state.modifier,
+            }
+        )
+    }
+
     onStringEdit = (e) => {
         e.preventDefault();
 
@@ -45,27 +57,20 @@ export default class String extends React.Component {
             [name]: value
         });
 
-        let StringEvent = this.state.string;
+        const submitted = this.getSubmitted();                            
         if (name == 'string') {
-            StringEvent = value;
+            submitted.submittedString = value;
         }
-
-        this.props.onStringEdit({
-            submittedId: this.props.id,
-            submittedString: StringEvent,
-            submittedModifier: this.state.modifier,
-        });
+        this.props.onStringEdit(submitted);
 
     }
 
     onModifierChange = (e, { value }) => {
         e.preventDefault();
 
-        this.props.onStringEdit({
-            submittedId: this.props.id,
-            submittedString: this.state.string,
-            submittedModifier: value,
-        });
+        const submitted = this.getSubmitted();
+        submitted.submittedModifier = value;
+        this.props.onStringEdit(submitted);    
 
         if (value == 'missing') {
             this.setState({
@@ -135,7 +140,7 @@ export default class String extends React.Component {
             }
         }
 
-       
+
         const disableDueToMissing = () => {
             if (this.state.modifier == 'missing') {
                 return true;
