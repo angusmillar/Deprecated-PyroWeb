@@ -49,37 +49,37 @@ export default class SearchTypeFrame extends React.Component {
         switch (this.props.type) {
             case FhirConstant.searchType.quantity:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, prefix: '', number: '', code: '', system: '' }];
+                    list = [{ id: NewGuid, type: this.props.type, prefix: '', number: '', code: '', system: '' }];
                 }
                 break;
             case FhirConstant.searchType.string:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, string: '' }];
+                    list = [{ id: NewGuid, type: this.props.type, string: '' }];
                 }
                 break;
             case FhirConstant.searchType.token:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, code: '', system: '' }];
+                    list = [{ id: NewGuid, type: this.props.type, code: '', system: '' }];
                 }
                 break;
             case FhirConstant.searchType.date:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, prefix: 'none', dateString: '', timeString: '', zoneString: '' }];
+                    list = [{ id: NewGuid, type: this.props.type, prefix: 'none', dateString: '', timeString: '', zoneString: '' }];
                 }
                 break;
             case FhirConstant.searchType.uri:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, uri: '' }];
+                    list = [{ id: NewGuid, type: this.props.type, uri: '' }];
                 }
                 break;
             case FhirConstant.searchType.number:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, prefix: 'none', number: '' }];
+                    list = [{ id: NewGuid, type: this.props.type, prefix: 'none', number: '' }];
                 }
                 break;
             case FhirConstant.searchType.reference:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, prefix: 'none', resource: '', resourceId: '', chainElementList: [] }];
+                    list = [{ id: NewGuid, type: this.props.type, prefix: 'none', resource: '', resourceId: '', chainElementList: [] }];
                 }
                 break;
             default:
@@ -99,25 +99,25 @@ export default class SearchTypeFrame extends React.Component {
             const newArray = this.state.elementList.slice(0);
             switch (this.props.type) {
                 case FhirConstant.searchType.quantity:
-                    newArray.push({ id: UuidSupport.createGUID(), prefix: '', number: '', system: '', code: '' });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type ,  prefix: '', number: '', system: '', code: '' });
                     break;
                 case FhirConstant.searchType.string:
-                    newArray.push({ id: UuidSupport.createGUID(), string: '' });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, string: '' });
                     break;
                 case FhirConstant.searchType.token:
-                    newArray.push({ id: UuidSupport.createGUID(), system: '', code: '' });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, system: '', code: '' });
                     break;
                 case FhirConstant.searchType.date:
-                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', dateString: '', timeString: '', zoneString: '' });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', dateString: '', timeString: '', zoneString: '' });
                     break;
                 case FhirConstant.searchType.uri:
-                    newArray.push({ id: UuidSupport.createGUID(), uri: '' });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, uri: '' });
                     break;
                 case FhirConstant.searchType.number:
-                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', number: '' });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', number: '' });
                     break;
                 case FhirConstant.searchType.reference:
-                    newArray.push({ id: UuidSupport.createGUID(), prefix: 'none', resource: '', resourceId: '', chainElementList: [] });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', resource: '', resourceId: '', selectedSearch: '', chainElementList: [] });
                     break;
                 default:
             }
@@ -184,6 +184,7 @@ export default class SearchTypeFrame extends React.Component {
 
                 newArray.splice(Index, 1, {
                     id: e.submittedId,
+                    type: e.submittedType,
                     prefix: e.submittedPrefix,
                     number: e.submittedNumber,
                     system: e.submittedSystem,
@@ -191,7 +192,7 @@ export default class SearchTypeFrame extends React.Component {
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), prefix: '', number: '', system: '', code: '' }]
+                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, prefix: '', number: '', system: '', code: '' }]
                 }
 
                 break;
@@ -199,11 +200,12 @@ export default class SearchTypeFrame extends React.Component {
 
                 newArray.splice(Index, 1, {
                     id: e.submittedId,
+                    type: e.submittedType,
                     string: e.submittedString
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), string: '' }]
+                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, string: '' }]
                 }
 
                 break;
@@ -211,12 +213,13 @@ export default class SearchTypeFrame extends React.Component {
 
                 newArray.splice(Index, 1, {
                     id: e.submittedId,
+                    type: e.submittedType,
                     system: e.submittedSystem,
                     code: e.submittedCode,
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), system: '', code: '' }]
+                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, system: '', code: '' }]
                 }
 
                 break;
@@ -224,6 +227,7 @@ export default class SearchTypeFrame extends React.Component {
 
                 newArray.splice(Index, 1, {
                     id: e.submittedId,
+                    type: e.submittedType,
                     dateString: e.submittedDate,
                     timeString: e.submittedTime,
                     zoneString: e.submittedZone,
@@ -231,7 +235,7 @@ export default class SearchTypeFrame extends React.Component {
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', dateString: '', timeString: '', zoneString: '' }]
+                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', dateString: '', timeString: '', zoneString: '' }]
                 }
 
                 break;
@@ -239,11 +243,12 @@ export default class SearchTypeFrame extends React.Component {
 
                 newArray.splice(Index, 1, {
                     id: e.submittedId,
+                    type: e.submittedType,
                     uri: e.submittedUri,
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), uri: '' }]
+                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, uri: '' }]
                 }
 
                 break;
@@ -251,27 +256,31 @@ export default class SearchTypeFrame extends React.Component {
 
                 newArray.splice(Index, 1, {
                     id: e.submittedId,
+                    type: e.submittedType,
                     prefix: e.submittedPrefix,
                     number: e.submittedNumber,
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', number: '' }]
+                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', number: '' }]
                 }
                 break;
-            case FhirConstant.searchType.reference:
-
+            case FhirConstant.searchType.reference: {
+                                            
                 newArray.splice(Index, 1, {
                     id: e.submittedId,
+                    type: e.submittedType,
                     resource: e.submittedResource,
                     resourceId: e.submittedResourceId,
-                    chainElementList: e.submittedChainElementList,
+                    selectedSearch: e.submittedSelectedSearch,
+                    chainList: e.submittedChainList,
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), prefix: 'none', resource: '', resourceId: '', chainElementList: [] }]
+                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, resource: '', resourceId: '', selectedSearch: '', chainList: [] }]
                 }
                 break;
+            }
             default:
         }
 
@@ -413,13 +422,16 @@ export default class SearchTypeFrame extends React.Component {
                             addOrButton={addOrButton}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}
-                            name={this.props.name}
+                            // name={this.props.name}
                             modifier={this.state.modifier}
                             resourceList={this.props.resourceList}
-                            parentSelectedResource={this.props.selectedResource}
+                            resourceSelectOptions={Reference.getChainSearchResourceOptions(this.props.selectedResource.searchInclude, this.props.name)}
+                            // parentResourceElement={this.props.selectedResource}
                             resource={item.resource}
                             resourceId={item.resourceId}
+                            selectedSearch={item.selectedSearch}
                             onEdit={this.onEdit}
+                            childChainElement={item.chainList}
                         />
                     )
                 default:

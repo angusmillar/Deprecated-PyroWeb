@@ -68,7 +68,7 @@ export default class Number extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedNumber = NumberEvent;
-        this.props.onEdit(submitted);    
+        this.props.onEdit(submitted);
     }
 
     onModifierChange = (e, { value }) => {
@@ -76,7 +76,7 @@ export default class Number extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedModifier = value;
-        this.props.onEdit(submitted);    
+        this.props.onEdit(submitted);
 
         if (value == 'missing') {
             this.setState({
@@ -96,7 +96,7 @@ export default class Number extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedPrefix = value;
-        this.props.onEdit(submitted);    
+        this.props.onEdit(submitted);
 
         this.setState({
             prefix: value
@@ -138,21 +138,12 @@ export default class Number extends React.Component {
         }
 
         const modifierOptions = () => {
-            if (this.props.isFirst) {
-                return (
-                    [
-                        { key: 'none', text: 'None', value: 'none' },
-                        { key: 'missing', text: 'Missing', value: 'missing' },
-
-                    ]
-                )
-            } else {
-                return (
-                    [
-                        { key: 'none', text: 'None', value: 'none' },
-                    ]
-                )
-            }
+            return (
+                [
+                    { key: 'none', text: 'None', value: 'none' },
+                    { key: 'missing', text: 'Missing', value: 'missing' },
+                ]
+            )
         }
 
         const prefixOptions = () => {

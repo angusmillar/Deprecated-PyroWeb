@@ -26,15 +26,14 @@ export default class Reference extends React.Component {
     static propTypes = {
         onEdit: PropTypes.func.isRequired,
         resourceList: PropTypes.array.isRequired,
-        parentSelectedResource: PropTypes.object.isRequired,
+        resourceSelectOptions: PropTypes.array.isRequired,        
         onOrAddRemoveClick: PropTypes.func,
         onRemoveChainClick: PropTypes.func,
-        id: PropTypes.string,
-        name: PropTypes.string,
+        id: PropTypes.string,        
         resource: PropTypes.string,
         resourceId: PropTypes.string,
-        childChainElement: PropTypes.object,
-        // chainList: PropTypes.array,
+        selectedSearch: PropTypes.string,
+        childChainElement: PropTypes.object,        
         modifier: PropTypes.string,
         addOrButton: PropTypes.bool,
         isFirst: PropTypes.bool
@@ -44,6 +43,7 @@ export default class Reference extends React.Component {
         id: UuidSupport.createGUID(),
         resource: '',
         resourceId: '',
+        selectedSearch: '',
         modifier: 'none',
         addOrButton: false,
         isFirst: false,
@@ -52,50 +52,53 @@ export default class Reference extends React.Component {
 
     constructor(props) {
         super(props);
-
-
-        const chainResList = () => {
-            const mappedIncludeList = () => {
-                return (map(this.props.parentSelectedResource.searchInclude, function (item) {
-                    const itemSplit = split(item, ':');
-                    const paramName = itemSplit[1];
-                    const resourceName = itemSplit[2];
-                    return { searchParameterName: paramName, resource: resourceName };
-                }))
-            }
-            const filteredIncludeList = filter(mappedIncludeList(), { 'searchParameterName': this.props.name });
-
-            return (map(filteredIncludeList, function (item) {
-                return { key: item.resource, icon: 'tag', text: item.resource, value: item.resource };
-            }))
-        }
-        const selectedResource = () => {
-            const list = chainResList();
-            if (list.length == 1) {
-                return list[0].value;
+        
+        const selectedResourceName = () => {
+            const ResourceName = this.props.resource;
+            const ResourceSelectOptions = this.props.resourceSelectOptions;
+            if (ResourceName != '') {
+                return this.props.resource;
             } else {
-                return 'none';
+                const list = ResourceSelectOptions;
+                if (list.length == 1) {
+                    return ResourceSelectOptions[0].value;
+                } else {
+                    return 'none';
+                }
             }
         }
 
-        const resourceElement = find(this.props.resourceList, { 'type': selectedResource() });
+        const ResourceElement = find(this.props.resourceList, { 'type': selectedResourceName() });
 
         this.state = {
-            resource: this.props.resource,
+            resource: selectedResourceName(),
             resourceId: this.props.resourceId,
             modifier: this.props.modifier,
-            isChainSearch: false,
-
-            selectedResource: selectedResource(),
-            ResourceElement: resourceElement,
-            selectedSearch: 'none',
+            isChainSearch: (this.props.selectedSearch != ''),            
+            selectedResourceElement: ResourceElement,
+            selectedSearch: this.props.selectedSearch,
             SearchElement: null,
             savedSearchParameters: [],
             childChainElement: this.props.childChainElement,
-            chainResourceList: chainResList(),
-            chainList: [],
-            subName: ''
+            resourceSelectOptions: this.props.resourceSelectOptions,
+            chainList: {},            
         };
+    }
+
+    static getChainSearchResourceOptions(SearchIncludeList, SearchParameterName) {
+        const mappedIncludeList = () => {
+            return (map(SearchIncludeList, function (item) {
+                const itemSplit = split(item, ':');
+                const paramName = itemSplit[1];
+                const resourceName = itemSplit[2];
+                return { searchParameterName: paramName, resource: resourceName };
+            }))
+        }
+        const filteredIncludeList = filter(mappedIncludeList(), { 'searchParameterName': SearchParameterName });
+
+        return (map(filteredIncludeList, function (item) {
+            return { key: item.resource, icon: 'tag', text: item.resource, value: item.resource };
+        }))
     }
 
     getSubmitted = () => {
@@ -103,9 +106,12 @@ export default class Reference extends React.Component {
             {
                 submittedId: this.props.id,
                 submittedType: FhirConstant.searchType.reference,
-                submittedResource: this.state.resource,
+                submittedResourceSelectOptions : this.props.resourceSelectOptions,                
+                submittedParentResourceElement: this.state.selectedResourceElement,
                 submittedResourceId: this.state.resourceId,
-                submittedModifier: this.state.modifier,
+                submittedResource: this.state.resource,
+                submittedSelectedSearch: this.state.selectedSearch,
+                submittedModifier: this.state.modifier,                
                 submittedChainList: this.state.chainList
             }
         )
@@ -116,49 +122,70 @@ export default class Reference extends React.Component {
     //we also have events bubbling up from any type (number, String, Quantity) or even reference its self. These
     //bubbled events are not synthetic and have no e.preventDefault() or e.target.
     onEdit = (e) => {
-        // e.preventDefault();
-
         const submitted = this.getSubmitted();
-        const newArray = this.state.chainList.slice(0);
-        switch (e.submittedType) {
-            case FhirConstant.searchType.quantity:
-                newArray.push({ id: e.submittedId, prefix: e.submittedPrefix, number: e.submittedNumber, system: e.submittedSystem, code: e.submittedCode });
-                break;
-            case FhirConstant.searchType.string:
-                newArray.push({ id: e.submittedId, string: e.submittedString });
-                submitted.chainList = newArray;
-                break;
-            case FhirConstant.searchType.token:
 
-                break;
-            case FhirConstant.searchType.date:
+        if (!isNil(e.target)) {
+            e.preventDefault()
+            const target = e.target;
+            const value = target.value;
+            const name = target.name;
 
-                break;
-            case FhirConstant.searchType.uri:
+            this.setState({
+                [name]: value
+            });
 
-                break;
-            case FhirConstant.searchType.number:
-
-                break;
-            case FhirConstant.searchType.reference: {
-                const target = e.target;
-                const value = target.value;
-                const name = target.name;
-
-                this.setState({
-                    [name]: value
-                });
-
-                if (name == 'resourceId') {
-                    submitted.resourceId = value;
-                }
+            if (name == 'resourceId') {
+                submitted.resourceId = value;
             }
-                break;
-            default:
+
+            this.props.onEdit(submitted);
+
+
+        } else {
+            let newChainList = {};
+            // const newArray = this.state.chainList.slice(0);
+            switch (e.submittedType) {
+                case FhirConstant.searchType.quantity:
+                    // newChainList.push({ id: e.submittedId, type: e.submittedType, prefix: e.submittedPrefix, number: e.submittedNumber, system: e.submittedSystem, code: e.submittedCode });
+                    break;
+                case FhirConstant.searchType.string:
+                    // newChainList.push({ id: e.submittedId, type: e.submittedType, string: e.submittedString });
+                    newChainList = { id: e.submittedId, type: e.submittedType, string: e.submittedString };
+                    break;
+                case FhirConstant.searchType.token:
+
+                    break;
+                case FhirConstant.searchType.date:
+
+                    break;
+                case FhirConstant.searchType.uri:
+
+                    break;
+                case FhirConstant.searchType.number:
+
+                    break;
+                case FhirConstant.searchType.reference: {
+                    // const newArray = e.submittedChainList.slice(0);
+                    // newArray.push({ id: e.submittedId, type: e.submittedType, modifier: e.submittedModifier, resource: e.submittedResource, resourceId: e.submittedResourceId, searchName: e.submittedSearchName, chainList: e.submittedChainList });
+                    // newChainList = newArray;
+                    newChainList = {
+                        id: e.submittedId,
+                        type: e.submittedType,          
+                        selectedResourceElement: e.submittedParentResourceElement,                        
+                        resourceSelectOptions: e.submittedResourceSelectOptions,
+                        modifier: e.submittedModifier,
+                        resource: e.submittedResource,
+                        resourceId: e.submittedResourceId,
+                        selectedSearch: e.submittedSelectedSearch,                        
+                        chainList: e.submittedChainList
+                    };
+                    break;
+                }
+                default:
+            }
+            submitted.submittedChainList = newChainList;
+            this.props.onEdit(submitted);
         }
-
-
-        this.props.onEdit(submitted);
     }
 
     onModifierChange = (e, { value }) => {
@@ -173,14 +200,25 @@ export default class Reference extends React.Component {
                 modifier: value,
                 resource: '',
                 resourceId: '',
+                selectedSearch: '',
                 childChainElement: {},
-                chainList: []
+                chainList: {}
             });
         } else {
             this.setState({
                 modifier: value
             });
         }
+    }
+
+    onResourceFilterChange = (e, { value }) => {
+        e.preventDefault();
+        const submitted = this.getSubmitted();
+        submitted.submittedResource = value
+        this.props.onEdit(submitted);
+
+        const ResourceElement = find(this.props.resourceList, { 'type': value });
+        this.setState(() => ({ resource: value, selectedResourceElement: ResourceElement }));
     }
 
     onOrAddButtonClick = (e) => {
@@ -199,12 +237,6 @@ export default class Reference extends React.Component {
             eventId: this.props.id,
             eventIsAdd: false
         })
-    }
-
-    onResourceFilterChange = (e, { value }) => {
-        e.preventDefault();
-        const ResourceArray = find(this.props.resourceList, { 'type': value });
-        this.setState(() => ({ selectedResource: value, ResourceElement: ResourceArray }));
     }
 
     onChainToggle = (e) => {
@@ -238,12 +270,10 @@ export default class Reference extends React.Component {
     onSearchFilterChange = (e, { value }) => {
         e.preventDefault();
 
-        const SearchArray = filter(this.state.ResourceElement.searchParam, { 'name': value });
+        const SearchArray = filter(this.state.selectedResourceElement.searchParam, { 'name': value });
         const searchParameterType = SearchArray[0].type;
         const searchParameterName = SearchArray[0].name;
-        const parentResource = this.state.ResourceElement;
-
-        // const newArray = this.state.childChainElement.slice(0);
+        const SelectedResourceElement = this.state.selectedResourceElement;        
 
         let newChildChainObject = {};
 
@@ -273,8 +303,18 @@ export default class Reference extends React.Component {
                 // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, prefix: 'none', number: '' });
                 break;
             case FhirConstant.searchType.reference:
-                newChildChainObject = { id: UuidSupport.createGUID(), type: searchParameterType, parentSelectedResource: parentResource, subName: searchParameterName, prefix: 'none', resource: '', resourceId: '', childChainElement: {} };
-                // newArray.push({ id: UuidSupport.createGUID(), type: searchParameterType, parentSelectedResource: parentResource, subName: searchParameterName, prefix: 'none', resource: '', resourceId: '', childChainElement: [] });
+                newChildChainObject = {
+                    id: UuidSupport.createGUID(),
+                    type: searchParameterType,
+                    // selectedResourceName: e.submittedParentResourceName,                    
+                    resourceSelectOptions: Reference.getChainSearchResourceOptions(SelectedResourceElement.searchInclude, searchParameterName),
+                    modifier: 'none',                    
+                    resource: '',
+                    resourceId: '',
+                    selectedSearch: '',
+                    searchName: '',
+                    chainList: {}                
+                };                
                 break;
             default:
         }
@@ -318,18 +358,7 @@ export default class Reference extends React.Component {
                 return false;
             }
         }
-
-        // const disableDueToChildChain = () => {
-        //     if (isNil(this.state.childChainElement)) {
-        //         return false;
-        //     } else if (this.state.childChainElement.length > 0) {
-        //         return true;
-        //     } else {
-        //         return false;
-        //     }
-
-        // }
-
+    
         const disableDueToChildChain = () => {
             if (isEmpty(this.state.childChainElement)) {
                 return false;
@@ -337,7 +366,6 @@ export default class Reference extends React.Component {
                 return true;
             }
         }
-
 
         const disableControls = () => {
             if (disableDueToMissing()) {
@@ -397,14 +425,14 @@ export default class Reference extends React.Component {
         }
 
         const searchList = () => {
-            if (isNil(this.state.ResourceElement)) {
+            if (isNil(this.state.selectedResourceElement)) {
                 //Oddly if I return a list with a single entry on none as commented out below
                 //then I get an error that their is a duplicate in the list, has same key!
                 //However return an empty list [] sems to work fine here.
                 // return [{ key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' }]
                 return []
             } else {
-                return (map(this.state.ResourceElement.searchParam, function (item) {
+                return (map(this.state.selectedResourceElement.searchParam, function (item) {
                     return { key: item.name, icon: 'search', text: item.name, description: item.documentation, value: item.name };
                 }))
             }
@@ -413,7 +441,7 @@ export default class Reference extends React.Component {
         const renderChainSwitch = () => {
 
             const disabled = () => {
-                if (isNil(this.state.ResourceElement)) {
+                if (isNil(this.state.selectedResourceElement)) {
                     return true;
                 } else if (disableControls()) {
                     return true;
@@ -534,20 +562,22 @@ export default class Reference extends React.Component {
                         />
                     )
                 case FhirConstant.searchType.reference:
+            
                     return (
                         <Reference
                             isFirst={isFirst}
                             addOrButton={addOrButton}
                             onOrAddRemoveClick={this.onOrButtonClick}
-                            id={item.id}
-                            name={item.subName}
+                            id={item.id}                            
                             modifier={this.state.modifier}
                             resourceList={this.props.resourceList}
-                            parentSelectedResource={item.parentSelectedResource}
+                            resourceSelectOptions={item.resourceSelectOptions}                                                        
                             resource={item.resource}
                             resourceId={item.resourceId}
+                            selectedSearch={item.selectedSearch}
                             onEdit={this.onEdit}
                             onRemoveChainClick={this.onRemoveChainClick}
+                            childChainElement={item.chainList}
                         />
                     )
                 default:
@@ -575,7 +605,7 @@ export default class Reference extends React.Component {
             }
         }
 
-        const { resourceId, chainResourceList, selectedResource } = this.state
+        const { resourceId, resourceSelectOptions, resource } = this.state
 
 
         return (
@@ -590,8 +620,8 @@ export default class Reference extends React.Component {
                                     label='Resource Type'
                                     width={3}
                                     fluid
-                                    value={selectedResource}
-                                    options={chainResourceList}
+                                    value={resource}
+                                    options={resourceSelectOptions}
                                     placeholder='Resource'
                                     search
                                     closeOnChange
