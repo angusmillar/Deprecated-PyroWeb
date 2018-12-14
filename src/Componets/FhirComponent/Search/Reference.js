@@ -31,8 +31,7 @@ export default class Reference extends React.Component {
         resource: PropTypes.string,
         resourceId: PropTypes.string,
         selectedSearch: PropTypes.string,
-        childReferenceElement: PropTypes.object,        
-        searchElementList: PropTypes.array,
+        childReferenceElement: PropTypes.object,                
         modifier: PropTypes.string,
         addOrButton: PropTypes.bool,
         isFirst: PropTypes.bool
@@ -46,7 +45,6 @@ export default class Reference extends React.Component {
         modifier: 'none',
         addOrButton: false,
         isFirst: false,
-        searchElementList: [],
         childReferenceElement: {}
     }
 
@@ -78,8 +76,7 @@ export default class Reference extends React.Component {
             selectedResourceElement: ResourceElement,
             selectedSearch: this.props.selectedSearch,
             SearchElement: null,
-            savedSearchParameters: [],
-            searchElementList: this.props.searchElementList,
+            savedSearchParameters: [],            
             childReferenceElement: this.props.childReferenceElement,
             resourceSelectOptions: this.props.resourceSelectOptions,            
         };
