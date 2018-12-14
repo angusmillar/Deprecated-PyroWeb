@@ -7,6 +7,7 @@ import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
 import reverse from 'lodash/reverse';
 import isNil from 'lodash/isNil';
+import isEmpty from 'lodash/isEmpty';
 import endsWith from 'lodash/endsWith';
 import noop from 'lodash/noop';
 
@@ -310,27 +311,31 @@ export default class PyroServerSearchComponent extends React.Component {
                     modifier = item.modifier
                 }
 
-                if (i > 0) {                    
-                        theQuery = theQuery.concat(`,${SearchUrlFormat.reference(item.valueList[i])}`)                    
+                if (i > 0) {
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.reference(item.valueList[i])}`)
                 } else {
                     if (modifier == 'missing') {
                         theQuery = SearchUrlFormat.missingModifier(item.name);
-                    } else if (modifier != '') {                        
-                            theQuery = `${item.name}:${modifier}=${SearchUrlFormat.reference(item.valueList[i])}`;                    
+                    } else if (modifier != '') {
+                        theQuery = `${item.name}:${modifier}=${SearchUrlFormat.reference(item.valueList[i])}`;
                     } else {
                         if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].resourceId) && item.valueList[i].resourceId != '') {
                             theQuery = `${item.name}=${SearchUrlFormat.reference(item.valueList[i])}`;
                         }
                         if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].resource) && item.valueList[i].resource != '') {
                             theQuery = `${item.name}`;
-                            let currectItem = item.valueList[i];
-                            while (!isNil(currectItem)) {    
+                            let currectItem = item.valueList[i];                           
+                            while (!isEmpty(currectItem)) {
                                 if (currectItem.type == FhirConstant.searchType.reference) {
-                                    theQuery = `${theQuery}${SearchUrlFormat.anyType(currectItem)}`;    
+                                    if (currectItem.isChainSearch) {
+                                        theQuery = `${theQuery}:${SearchUrlFormat.anyType(currectItem)}`;                                                                            
+                                    } else {
+                                        theQuery = `${theQuery}=${SearchUrlFormat.anyType(currectItem)}`;                                                                            
+                                    }                                    
                                 } else {
                                     theQuery = `${theQuery}=${SearchUrlFormat.anyType(currectItem)}`;
-                                }                                
-                                currectItem = currectItem.chainList;
+                                }
+                                currectItem = currectItem.childReferenceElement;
                             }
                         }
                     }

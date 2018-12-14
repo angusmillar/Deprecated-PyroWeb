@@ -79,7 +79,7 @@ export default class SearchTypeFrame extends React.Component {
                 break;
             case FhirConstant.searchType.reference:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, type: this.props.type, prefix: 'none', resource: '', resourceId: '', chainElementList: [] }];
+                    list = [{ id: NewGuid, type: this.props.type, prefix: 'none', resource: '', resourceId: '', childReferenceElement: {} }];
                 }
                 break;
             default:
@@ -117,7 +117,7 @@ export default class SearchTypeFrame extends React.Component {
                     newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', number: '' });
                     break;
                 case FhirConstant.searchType.reference:
-                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', resource: '', resourceId: '', selectedSearch: '', chainElementList: [] });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', resource: '', resourceId: '', selectedSearch: '', childReferenceElement: {} });
                     break;
                 default:
             }
@@ -273,11 +273,13 @@ export default class SearchTypeFrame extends React.Component {
                     resource: e.submittedResource,
                     resourceId: e.submittedResourceId,
                     selectedSearch: e.submittedSelectedSearch,
-                    chainList: e.submittedChainList,
+                    isChainSearch: e.submittedIsChainSearch,
+                    childReferenceElement: e.submittedChildReferenceElement,
+                    
                 });
 
                 if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, resource: '', resourceId: '', selectedSearch: '', chainList: [] }]
+                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, resource: '', resourceId: '', selectedSearch: '', isChainSearch: false, childReferenceElement: {} }]
                 }
                 break;
             }
@@ -421,17 +423,15 @@ export default class SearchTypeFrame extends React.Component {
                             isFirst={isFirst}
                             addOrButton={addOrButton}
                             onOrAddRemoveClick={this.onOrButtonClick}
-                            id={item.id}
-                            // name={this.props.name}
+                            id={item.id}                            
                             modifier={this.state.modifier}
                             resourceList={this.props.resourceList}
                             resourceSelectOptions={Reference.getChainSearchResourceOptions(this.props.selectedResource.searchInclude, this.props.name)}
-                            // parentResourceElement={this.props.selectedResource}
                             resource={item.resource}
                             resourceId={item.resourceId}
                             selectedSearch={item.selectedSearch}
                             onEdit={this.onEdit}
-                            childChainElement={item.chainList}
+                            childReferenceElement={item.childReferenceElement}
                         />
                     )
                 default:

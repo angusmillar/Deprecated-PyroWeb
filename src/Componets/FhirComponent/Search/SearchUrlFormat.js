@@ -90,10 +90,10 @@ export default class SearchUrlFormat {
     }
 
     static reference(item) {
-        if (item.selectedSearch != '') {
-            return `:${item.resource}.${item.selectedSearch}`
+        if (item.isChainSearch) {
+            return `${item.resource}.${item.selectedSearch}`            
         } else {
-            return `:${item.resource}/${item.resourceId}`
+            return `${item.resource}/${item.resourceId}`            
         }
     }
 

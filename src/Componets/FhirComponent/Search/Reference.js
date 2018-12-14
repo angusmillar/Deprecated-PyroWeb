@@ -18,8 +18,6 @@ import Quantity from './Quantity';
 import DateTime from './DateTime';
 import Uri from './Uri';
 import Number from './Number';
-//import code from 'react-syntax-highlighter/styles/hljs/xcode';
-
 
 export default class Reference extends React.Component {
 
@@ -33,7 +31,8 @@ export default class Reference extends React.Component {
         resource: PropTypes.string,
         resourceId: PropTypes.string,
         selectedSearch: PropTypes.string,
-        childChainElement: PropTypes.object,        
+        childReferenceElement: PropTypes.object,        
+        searchElementList: PropTypes.array,
         modifier: PropTypes.string,
         addOrButton: PropTypes.bool,
         isFirst: PropTypes.bool
@@ -47,7 +46,8 @@ export default class Reference extends React.Component {
         modifier: 'none',
         addOrButton: false,
         isFirst: false,
-        childChainElement: {}
+        searchElementList: [],
+        childReferenceElement: {}
     }
 
     constructor(props) {
@@ -79,9 +79,9 @@ export default class Reference extends React.Component {
             selectedSearch: this.props.selectedSearch,
             SearchElement: null,
             savedSearchParameters: [],
-            childChainElement: this.props.childChainElement,
-            resourceSelectOptions: this.props.resourceSelectOptions,
-            chainList: {},            
+            searchElementList: this.props.searchElementList,
+            childReferenceElement: this.props.childReferenceElement,
+            resourceSelectOptions: this.props.resourceSelectOptions,            
         };
     }
 
@@ -112,13 +112,14 @@ export default class Reference extends React.Component {
                 submittedResource: this.state.resource,
                 submittedSelectedSearch: this.state.selectedSearch,
                 submittedModifier: this.state.modifier,                
-                submittedChainList: this.state.chainList
+                submittedIsChainSearch : this.state.isChainSearch,
+                submittedChildReferenceElement: this.state.childReferenceElement
             }
         )
     }
 
 
-    //Not sure what to do here, we have events from the resourceID and Resource selector of Referance but then
+    //We have events from the resourceID and Resource selector of Referance but then
     //we also have events bubbling up from any type (number, String, Quantity) or even reference its self. These
     //bubbled events are not synthetic and have no e.preventDefault() or e.target.
     onEdit = (e) => {
@@ -135,22 +136,22 @@ export default class Reference extends React.Component {
             });
 
             if (name == 'resourceId') {
-                submitted.resourceId = value;
+                submitted.submittedResourceId = value;
             }
 
             this.props.onEdit(submitted);
 
 
-        } else {
-            let newChainList = {};
-            // const newArray = this.state.chainList.slice(0);
+        } else {            
+            
+            let newChildReferenceElement = {};            
             switch (e.submittedType) {
                 case FhirConstant.searchType.quantity:
                     // newChainList.push({ id: e.submittedId, type: e.submittedType, prefix: e.submittedPrefix, number: e.submittedNumber, system: e.submittedSystem, code: e.submittedCode });
                     break;
                 case FhirConstant.searchType.string:
                     // newChainList.push({ id: e.submittedId, type: e.submittedType, string: e.submittedString });
-                    newChainList = { id: e.submittedId, type: e.submittedType, string: e.submittedString };
+                    newChildReferenceElement = { id: e.submittedId, type: e.submittedType, string: e.submittedString };
                     break;
                 case FhirConstant.searchType.token:
 
@@ -165,10 +166,8 @@ export default class Reference extends React.Component {
 
                     break;
                 case FhirConstant.searchType.reference: {
-                    // const newArray = e.submittedChainList.slice(0);
-                    // newArray.push({ id: e.submittedId, type: e.submittedType, modifier: e.submittedModifier, resource: e.submittedResource, resourceId: e.submittedResourceId, searchName: e.submittedSearchName, chainList: e.submittedChainList });
-                    // newChainList = newArray;
-                    newChainList = {
+                    
+                    newChildReferenceElement = {
                         id: e.submittedId,
                         type: e.submittedType,          
                         selectedResourceElement: e.submittedParentResourceElement,                        
@@ -176,14 +175,15 @@ export default class Reference extends React.Component {
                         modifier: e.submittedModifier,
                         resource: e.submittedResource,
                         resourceId: e.submittedResourceId,
-                        selectedSearch: e.submittedSelectedSearch,                        
-                        chainList: e.submittedChainList
+                        selectedSearch: e.submittedSelectedSearch,   
+                        isChainSearch: e.submittedIsChainSearch,
+                        childReferenceElement: e.submittedChildReferenceElement
                     };
                     break;
                 }
                 default:
             }
-            submitted.submittedChainList = newChainList;
+            submitted.submittedChildReferenceElement = newChildReferenceElement;
             this.props.onEdit(submitted);
         }
     }
@@ -201,8 +201,8 @@ export default class Reference extends React.Component {
                 resource: '',
                 resourceId: '',
                 selectedSearch: '',
-                childChainElement: {},
-                chainList: {}
+                childReferenceElement: {},
+                //chainList: {}
             });
         } else {
             this.setState({
@@ -241,7 +241,19 @@ export default class Reference extends React.Component {
 
     onChainToggle = (e) => {
         e.preventDefault();
-        this.setState(() => ({ isChainSearch: !this.state.isChainSearch }));
+        
+        if (this.state.isChainSearch) {
+            this.setState(() => ({ isChainSearch: !this.state.isChainSearch, resourceId: '' }));    
+        } else {
+            this.setState(() => ({ isChainSearch: !this.state.isChainSearch, resourceId: ''}));
+        }
+
+        const submitted = this.getSubmitted();
+        submitted.submittedResourceId = '';
+        submitted.submittedIsChainSearch = !this.state.isChainSearch;
+        this.props.onEdit(submitted);
+
+        //this.setState(() => ({ isChainSearch: !this.state.isChainSearch }));
     }
 
     onRemoveChainClick = (e) => {
@@ -253,7 +265,7 @@ export default class Reference extends React.Component {
         //of chains
         if (!isNil(e.eventRemove) && e.eventRemove) {
             this.setState(() => ({
-                childChainElement: {},
+                childReferenceElement: {},
                 selectedSearch: 'none',
                 SearchElement: null,
             }));
@@ -313,13 +325,14 @@ export default class Reference extends React.Component {
                     resourceId: '',
                     selectedSearch: '',
                     searchName: '',
-                    chainList: {}                
+                    childReferenceElement: {}
+                    //chainList: {}                
                 };                
                 break;
             default:
         }
 
-        this.setState(() => ({ selectedSearch: value, SearchElement: SearchArray[0], childChainElement: newChildChainObject }));
+        this.setState(() => ({ selectedSearch: value, SearchElement: SearchArray[0], childReferenceElement: newChildChainObject }));
     }
 
     render() {
@@ -360,7 +373,7 @@ export default class Reference extends React.Component {
         }
     
         const disableDueToChildChain = () => {
-            if (isEmpty(this.state.childChainElement)) {
+            if (isEmpty(this.state.childReferenceElement)) {
                 return false;
             } else {
                 return true;
@@ -449,8 +462,7 @@ export default class Reference extends React.Component {
                     return false;
                 }
             }
-
-            // const test = uniqBy(searchList(), 'key');
+            
             const test = searchList();
             if (this.state.isChainSearch) {
                 return (
@@ -467,7 +479,6 @@ export default class Reference extends React.Component {
                         onChange={this.onSearchFilterChange}
                         value={this.state.selectedSearch}
                     />
-
                 )
             } else {
                 return (
@@ -577,15 +588,15 @@ export default class Reference extends React.Component {
                             selectedSearch={item.selectedSearch}
                             onEdit={this.onEdit}
                             onRemoveChainClick={this.onRemoveChainClick}
-                            childChainElement={item.chainList}
+                            childReferenceElement={item.childReferenceElement}
                         />
                     )
                 default:
             }
         }
 
-        const renderChildChainedElement = () => {
-            if (isEmpty(this.state.childChainElement)) {
+        const renderChildReferenceElement = () => {
+            if (isEmpty(this.state.childReferenceElement)) {
                 return null;
             } else {
                 return (
@@ -597,7 +608,7 @@ export default class Reference extends React.Component {
                         </Grid.Row>
                         <Grid.Row columns={1}>
                             <Grid.Column width={16} >
-                                {renderItemType(this.state.childChainElement, false, true)}
+                                {renderItemType(this.state.childReferenceElement, false, true)}
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
@@ -640,7 +651,7 @@ export default class Reference extends React.Component {
                 </Grid.Row>
                 <Grid.Row columns={1}>
                     <Grid.Column width={16} >
-                        {renderChildChainedElement()}
+                        {renderChildReferenceElement()}
                     </Grid.Column>
                 </Grid.Row>
 
