@@ -467,8 +467,7 @@ export default class SearchTypeFrame extends React.Component {
             }
         }
 
-        const renderItem = () => {
-            const testElementList = this.state.elementList;
+        const renderItem = () => {            
             return (                
                 <Grid>
                     {map(this.state.elementList, (item, Index) => {
