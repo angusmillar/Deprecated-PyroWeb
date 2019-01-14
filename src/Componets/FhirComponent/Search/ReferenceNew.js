@@ -81,7 +81,6 @@ export default class ReferenceNew extends React.Component {
 
         const resourceElement = find(this.props.resourceList, { 'type': selectedResourceName });
 
-        const testEndValueElement = this.props.endValueElement;
 
         this.state = {
             resource: selectedResourceName,
@@ -100,7 +99,6 @@ export default class ReferenceNew extends React.Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        const test1 = props.endValueElement;
         state.endValueElement = props.endValueElement;
         return state;
     } 
@@ -772,8 +770,6 @@ export default class ReferenceNew extends React.Component {
         // }
 
         const renderChildReferenceElement = () => {
-            const testChild = this.state.childReferenceElement;
-            const testElement = this.state.endValueElement;
             if (isEmpty(this.state.childReferenceElement) && isNil(this.state.endValueElement)) {
                 return null;
             } else if (isEmpty(this.state.childReferenceElement) && !isNil(this.state.endValueElement)) {
