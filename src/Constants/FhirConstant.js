@@ -118,6 +118,12 @@ export default class FhirConstant {
         special: 'special'
     };
 
+    static referenceType = {
+        relative: 'relative',
+        absolute: 'absolute',
+        chained: 'chained'
+    }
+
     static getColorForSearchType(searchType) {
         switch (searchType) {
             case this.searchType.token:

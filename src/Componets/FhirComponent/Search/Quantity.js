@@ -4,6 +4,7 @@ import { Grid, Form, Button, Icon } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
+import SearchOrButton from './SearchOrButton';
 import FhirConstant from '../../../Constants/FhirConstant';
 
 export default class Quantity extends React.Component {
@@ -17,7 +18,7 @@ export default class Quantity extends React.Component {
         system: PropTypes.string,
         code: PropTypes.string,
         modifier: PropTypes.string,
-        addOrButton: PropTypes.bool,
+        isLast: PropTypes.bool,
         isFirst: PropTypes.bool
     }
 
@@ -28,7 +29,7 @@ export default class Quantity extends React.Component {
         system: '',
         code: '',
         modifier: 'none',
-        addOrButton: false,
+        isLast: false,
         isFirst: false
     }
 
@@ -69,18 +70,18 @@ export default class Quantity extends React.Component {
             [name]: value
         });
 
-        const submitted = this.getSubmitted();       
+        const submitted = this.getSubmitted();
         if (name == 'prefix') {
             submitted.submittedPrefix = value;
         } else if (name == 'number') {
-            submitted.submittedNumber = value;            
+            submitted.submittedNumber = value;
         } else if (name == 'system') {
-            submitted.submittedSystem = value;            
+            submitted.submittedSystem = value;
         } else if (name == 'code') {
-            submitted.submittedCode = value;            
+            submitted.submittedCode = value;
         }
-       
-        this.props.onEdit(submitted);           
+
+        this.props.onEdit(submitted);
     }
 
     onModifierChange = (e, { value }) => {
@@ -88,7 +89,7 @@ export default class Quantity extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedModifier = value;
-        this.props.onEdit(submitted);    
+        this.props.onEdit(submitted);
 
         this.setState({
             modifier: value
@@ -100,25 +101,21 @@ export default class Quantity extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedPrefix = value;
-        this.props.onEdit(submitted);    
+        this.props.onEdit(submitted);
 
         this.setState({
             prefix: value
         });
     }
 
-    onOrAddButtonClick = (e) => {
-        e.preventDefault();
-
+    onOrAdd = () => {     
         this.props.onOrAddRemoveClick({
             eventId: this.props.id,
             eventIsAdd: true
         })
     }
 
-    onOrRemoveButtonClick = (e) => {
-        e.preventDefault();
-
+    onOrRemove = () => {
         this.props.onOrAddRemoveClick({
             eventId: this.props.id,
             eventIsAdd: false
@@ -127,20 +124,27 @@ export default class Quantity extends React.Component {
 
     render() {
 
-        const renderRemoveOrButton = () => {
-            if (this.props.addOrButton && !this.props.isFirst) {
-                return <Button key='3' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
-            }
-        }
-
-        const renderOrButton = () => {
-            if (this.props.addOrButton) {
-                return <Button key='1' disabled={disableCodeAndSystem()} onClick={this.onOrAddButtonClick} size='mini' icon color='green' type='submit'><Icon name='add' />{' '}OR</Button>
+        const renderSearchOrButton = () => {
+            if (this.props.isLast) {
+                return (
+                    <SearchOrButton
+                        isDisable={false}
+                        id={this.state.id}
+                        onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
             } else {
-                return <Button key='2' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
+                return (
+                    <SearchOrButton
+                        isDisable={false}
+                        id={this.state.id}
+                        //onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
             }
         }
-
 
         const modifierOptions = () => {
             return (
@@ -207,10 +211,7 @@ export default class Quantity extends React.Component {
                         </Form>
                     </Grid.Column>
                     <Grid.Column width={1} floated='left' verticalAlign='middle' >
-                        <Button.Group size='mini' >
-                            {renderRemoveOrButton()}
-                            {renderOrButton()}
-                        </Button.Group>
+                        {renderSearchOrButton()}
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

@@ -8,6 +8,7 @@ import UuidSupport from '../../../SupportTools/UuidSupport';
 import isNil from 'lodash/isNil';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import SearchOrButton from './SearchOrButton';
 import FhirConstant from '../../../Constants/FhirConstant';
 import '../../../CustomCss/react-datepicker.css';
 
@@ -23,7 +24,7 @@ export default class DateTime extends React.Component {
         timeString: PropTypes.string,
         zoneString: PropTypes.string,
         modifier: PropTypes.string,
-        addOrButton: PropTypes.bool,
+        isLast: PropTypes.bool,
         isFirst: PropTypes.bool,
         timeFormatMask: PropTypes.string,
         dateFormatMask: PropTypes.string,
@@ -36,7 +37,7 @@ export default class DateTime extends React.Component {
         timeString: '',
         zoneString: '',
         modifier: 'none',
-        addOrButton: false,
+        isLast: false,
         isFirst: false,
         timeFormatMask: 'h:mm a',
         dateFormatMask: 'YYYY-MM-DD'
@@ -96,7 +97,7 @@ export default class DateTime extends React.Component {
         const submitted = this.getSubmitted();
         submitted.submittedPrefix = value;
         this.props.onEdit(submitted);
-    
+
         this.setState({
             prefix: value
         });
@@ -107,7 +108,7 @@ export default class DateTime extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedModifier = value;
-        this.props.onEdit(submitted);       
+        this.props.onEdit(submitted);
 
         if (value == 'missing') {
             this.setState({
@@ -161,7 +162,7 @@ export default class DateTime extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedDate = this.stringFormatDate(date);
-        this.props.onEdit(submitted);            
+        this.props.onEdit(submitted);
     }
 
     onTimeEdit = (time) => {
@@ -172,7 +173,7 @@ export default class DateTime extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedTime = this.stringFormatTime(time);
-        this.props.onEdit(submitted);            
+        this.props.onEdit(submitted);
     }
 
     onZoneChange = (e, { value }) => {
@@ -184,7 +185,7 @@ export default class DateTime extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedZone = value;
-        this.props.onEdit(submitted);            
+        this.props.onEdit(submitted);
     }
 
     onDateTimeNow = (e) => {
@@ -205,40 +206,45 @@ export default class DateTime extends React.Component {
         submitted.submittedDate = this.stringFormatDate(now);
         submitted.submittedTime = this.stringFormatTime(now);
         submitted.submittedZone = this.zoneNow();
-        this.props.onEdit(submitted);         
+        this.props.onEdit(submitted);
     }
 
-    onOrAddButtonClick = (e) => {
-        e.preventDefault();
-
+    onOrAdd = () => {     
         this.props.onOrAddRemoveClick({
             eventId: this.props.id,
             eventIsAdd: true
         })
     }
 
-    onOrRemoveButtonClick = (e) => {
-        e.preventDefault();
-
+    onOrRemove = () => {
         this.props.onOrAddRemoveClick({
             eventId: this.props.id,
             eventIsAdd: false
         })
     }
 
+
     render() {
 
-        const renderRemoveOrButton = () => {
-            if (this.props.addOrButton && !this.props.isFirst) {
-                return <Button key='3' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
-            }
-        }
-
-        const renderOrButton = () => {
-            if (this.props.addOrButton) {
-                return <Button key='1' disabled={isDisableOnModifierMissing()} onClick={this.onOrAddButtonClick} size='mini' icon color='green' type='submit'><Icon name='add' />{' '}OR</Button>
+        const renderSearchOrButton = () => {
+            if (this.props.isLast) {
+                return (
+                    <SearchOrButton
+                        isDisable={false}
+                        id={this.state.id}
+                        onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
             } else {
-                return <Button key='2' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
+                return (
+                    <SearchOrButton
+                        isDisable={false}
+                        id={this.state.id}
+                        //onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
             }
         }
 
@@ -410,10 +416,7 @@ export default class DateTime extends React.Component {
                         <Button key='3' onClick={this.onDateTimeNow} size='mini' icon color='grey' type='submit'><Icon name='clock' />{' '}Now</Button>
                     </Grid.Column>
                     <Grid.Column width={1} floated='left' verticalAlign='middle' >
-                        <Button.Group size='mini' >
-                            {renderRemoveOrButton()}
-                            {renderOrButton()}
-                        </Button.Group>
+                        {renderSearchOrButton()}
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

@@ -10,7 +10,8 @@ import Quantity from './Quantity';
 import DateTime from './DateTime';
 import Uri from './Uri';
 import Number from './Number';
-import Reference from './Reference';
+// import Reference from './Reference';
+import ReferenceNew from './ReferenceNew';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
@@ -79,7 +80,11 @@ export default class SearchTypeFrame extends React.Component {
                 break;
             case FhirConstant.searchType.reference:
                 if (isNil(this.props.elementList)) {
-                    list = [{ id: NewGuid, type: this.props.type, prefix: 'none', resource: '', resourceId: '', childReferenceElement: {} }];
+                    list = [{
+                        id: NewGuid, type: this.props.type,
+                        prefix: 'none', resource: '', resourceId: '',
+                        referenceType: FhirConstant.referenceType.relative, childReferenceElement: {}, endValueElement: null
+                    }];
                 }
                 break;
             default:
@@ -117,7 +122,7 @@ export default class SearchTypeFrame extends React.Component {
                     newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', number: '' });
                     break;
                 case FhirConstant.searchType.reference:
-                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', resource: '', resourceId: '', selectedSearch: '', childReferenceElement: {} });
+                    newArray.push({ id: UuidSupport.createGUID(), type: this.props.type, prefix: 'none', resource: '', resourceId: '', selectedSearch: '', referenceType: FhirConstant.referenceType.relative ,childReferenceElement: {} });
                     break;
                 default:
             }
@@ -273,14 +278,15 @@ export default class SearchTypeFrame extends React.Component {
                     resource: e.submittedResource,
                     resourceId: e.submittedResourceId,
                     selectedSearch: e.submittedSelectedSearch,
-                    isChainSearch: e.submittedIsChainSearch,
+                    // isChainSearch: e.submittedIsChainSearch,
+                    referenceType: e.submittedReferenceType,
                     childReferenceElement: e.submittedChildReferenceElement,
-                    
-                });
-
-                if (e.submittedModifier == 'missing') {
-                    newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, resource: '', resourceId: '', selectedSearch: '', isChainSearch: false, childReferenceElement: {} }]
-                }
+                    endValueElement: e.submittedEndValueElement                    
+                });                      
+                
+                // if (e.submittedModifier == 'missing') {
+                //     newArray = [{ id: UuidSupport.createGUID(), type: this.props.type, resource: '', resourceId: '', selectedSearch: '', isChainSearch: false, childReferenceElement: {} }]
+                // }
                 break;
             }
             default:
@@ -334,14 +340,15 @@ export default class SearchTypeFrame extends React.Component {
             }
         };
 
-        const renderItemType = (item, isFirst, addOrButton) => {
+        const renderItemType = (item, isFirst, isLast) => {
 
             switch (this.props.type) {
                 case FhirConstant.searchType.quantity:
                     return (
                         <Quantity
+                            key={item.id}
                             isFirst={isFirst}
-                            addOrButton={addOrButton}
+                            isLast={isLast}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}
                             modifier={this.state.modifier}
@@ -355,8 +362,9 @@ export default class SearchTypeFrame extends React.Component {
                 case FhirConstant.searchType.string:
                     return (
                         <String
+                            key={item.id}
                             isFirstString={isFirst}
-                            addOrButton={addOrButton}
+                            isLast={isLast}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}
                             string={item.string}
@@ -367,8 +375,9 @@ export default class SearchTypeFrame extends React.Component {
                 case FhirConstant.searchType.token:
                     return (
                         <Token
+                        key={item.id}
                             isFirstToken={isFirst}
-                            addOrButton={addOrButton}
+                            isLast={isLast}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}
                             modifier={this.state.modifier}
@@ -380,8 +389,9 @@ export default class SearchTypeFrame extends React.Component {
                 case FhirConstant.searchType.date:
                     return (
                         <DateTime
+                        key={item.id}
                             isFirst={isFirst}
-                            addOrButton={addOrButton}
+                            isLast={isLast}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}
                             modifier={this.state.modifier}
@@ -395,8 +405,9 @@ export default class SearchTypeFrame extends React.Component {
                 case FhirConstant.searchType.uri:
                     return (
                         <Uri
+                        key={item.id}
                             isFirst={isFirst}
-                            addOrButton={addOrButton}
+                            isLast={isLast}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}
                             modifier={this.state.modifier}
@@ -407,8 +418,9 @@ export default class SearchTypeFrame extends React.Component {
                 case FhirConstant.searchType.number:
                     return (
                         <Number
+                        key={item.id}
                             isFirst={isFirst}
-                            addOrButton={addOrButton}
+                            isLast={isLast}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}
                             modifier={this.state.modifier}
@@ -419,19 +431,36 @@ export default class SearchTypeFrame extends React.Component {
                     )
                 case FhirConstant.searchType.reference:
                     return (
-                        <Reference
+                        // <Reference
+                        //     isFirst={isFirst}
+                        //     addOrButton={addOrButton}
+                        //     onOrAddRemoveClick={this.onOrButtonClick}
+                        //     id={item.id}                            
+                        //     modifier={this.state.modifier}
+                        //     resourceList={this.props.resourceList}
+                        //     resourceSelectOptions={Reference.getChainSearchResourceOptions(this.props.selectedResource.searchInclude, this.props.name)}
+                        //     resource={item.resource}
+                        //     resourceId={item.resourceId}
+                        //     selectedSearch={item.selectedSearch}
+                        //     onEdit={this.onEdit}
+                        //     childReferenceElement={item.childReferenceElement}
+                        // />
+                        <ReferenceNew
+                            key={item.id}
                             isFirst={isFirst}
-                            addOrButton={addOrButton}
+                            isLast={isLast}
                             onOrAddRemoveClick={this.onOrButtonClick}
                             id={item.id}                            
                             modifier={this.state.modifier}
                             resourceList={this.props.resourceList}
-                            resourceSelectOptions={Reference.getChainSearchResourceOptions(this.props.selectedResource.searchInclude, this.props.name)}
+                            resourceSelectOptions={ReferenceNew.getChainSearchResourceOptions(this.props.selectedResource.searchInclude, this.props.name)}
                             resource={item.resource}
                             resourceId={item.resourceId}
                             selectedSearch={item.selectedSearch}
                             onEdit={this.onEdit}
+                            referenceType={item.referenceType}
                             childReferenceElement={item.childReferenceElement}
+                            endValueElement={item.endValueElement}
                         />
                     )
                 default:
@@ -439,7 +468,8 @@ export default class SearchTypeFrame extends React.Component {
         }
 
         const renderItem = () => {
-            return (
+            const testElementList = this.state.elementList;
+            return (                
                 <Grid>
                     {map(this.state.elementList, (item, Index) => {
                         if (this.state.elementList.length == 1) {

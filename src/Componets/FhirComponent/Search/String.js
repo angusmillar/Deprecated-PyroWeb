@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Grid, Form, Button, Icon } from 'semantic-ui-react'
+import { Grid, Form } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
+import SearchOrButton from './SearchOrButton';
 import FhirConstant from '../../../Constants/FhirConstant';
 
 export default class String extends React.Component {
@@ -14,7 +15,7 @@ export default class String extends React.Component {
         id: PropTypes.string,
         string: PropTypes.string,
         modifier: PropTypes.string,
-        addOrButton: PropTypes.bool,
+        isLast: PropTypes.bool,
         isFirstString: PropTypes.bool
     }
 
@@ -22,7 +23,7 @@ export default class String extends React.Component {
         id: UuidSupport.createGUID(),
         string: '',
         modifier: 'none',
-        addOrButton: false,
+        isLast: false,
         isFirstString: false
     }
 
@@ -57,7 +58,7 @@ export default class String extends React.Component {
             [name]: value
         });
 
-        const submitted = this.getSubmitted();                            
+        const submitted = this.getSubmitted();
         if (name == 'string') {
             submitted.submittedString = value;
         }
@@ -70,7 +71,7 @@ export default class String extends React.Component {
 
         const submitted = this.getSubmitted();
         submitted.submittedModifier = value;
-        this.props.onStringEdit(submitted);    
+        this.props.onStringEdit(submitted);
 
         if (value == 'missing') {
             this.setState({
@@ -84,9 +85,8 @@ export default class String extends React.Component {
         }
     }
 
-
-    onOrAddButtonClick = (e) => {
-        e.preventDefault();
+    onOrAdd = () => {
+        // e.preventDefault();
 
         this.props.onOrAddRemoveClick({
             eventId: this.props.id,
@@ -94,8 +94,8 @@ export default class String extends React.Component {
         })
     }
 
-    onOrRemoveButtonClick = (e) => {
-        e.preventDefault();
+    onOrRemove = () => {
+        // e.preventDefault();
 
         this.props.onOrAddRemoveClick({
             eventId: this.props.id,
@@ -105,19 +105,29 @@ export default class String extends React.Component {
 
     render() {
 
-        const renderRemoveOrButton = () => {
-            if (this.props.addOrButton && !this.props.isFirstString) {
-                return <Button key='3' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
+
+        const renderSearchOrButton = () => {            
+            if (this.props.isLast) {
+                return (
+                    <SearchOrButton
+                        isDisable={false}
+                        id={this.state.id}
+                        onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
+            } else {
+                return (
+                    <SearchOrButton
+                        isDisable={false}
+                        id={this.state.id}
+                        //onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
             }
         }
 
-        const renderOrButton = () => {
-            if (this.props.addOrButton) {
-                return <Button key='1' disabled={disableDueToMissing()} onClick={this.onOrAddButtonClick} size='mini' icon color='green' type='submit'><Icon name='add' />{' '}OR</Button>
-            } else {
-                return <Button key='2' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
-            }
-        }
 
         const modifierOptions = () => {
             if (this.props.isFirstString) {
@@ -181,10 +191,7 @@ export default class String extends React.Component {
                         </Form>
                     </Grid.Column>
                     <Grid.Column width={1} floated='left' verticalAlign='middle' >
-                        <Button.Group size='mini' >
-                            {renderRemoveOrButton()}
-                            {renderOrButton()}
-                        </Button.Group>
+                        {renderSearchOrButton()}
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

@@ -4,6 +4,7 @@ import { Grid, Form, Button, Icon } from 'semantic-ui-react'
 
 import PropTypes from 'prop-types';
 import UuidSupport from '../../../SupportTools/UuidSupport';
+import SearchOrButton from './SearchOrButton';
 import FhirConstant from '../../../Constants/FhirConstant';
 
 export default class Number extends React.Component {
@@ -15,7 +16,7 @@ export default class Number extends React.Component {
         prefix: PropTypes.string,
         number: PropTypes.string,
         modifier: PropTypes.string,
-        addOrButton: PropTypes.bool,
+        isLast: PropTypes.bool,
         isFirst: PropTypes.bool
     }
 
@@ -24,7 +25,7 @@ export default class Number extends React.Component {
         prefix: '',
         number: '',
         modifier: 'none',
-        addOrButton: false,
+        isLast: false,
         isFirst: false
     }
 
@@ -103,18 +104,14 @@ export default class Number extends React.Component {
         });
     }
 
-    onOrAddButtonClick = (e) => {
-        e.preventDefault();
-
+    onOrAdd = () => {     
         this.props.onOrAddRemoveClick({
             eventId: this.props.id,
             eventIsAdd: true
         })
     }
 
-    onOrRemoveButtonClick = (e) => {
-        e.preventDefault();
-
+    onOrRemove = () => {
         this.props.onOrAddRemoveClick({
             eventId: this.props.id,
             eventIsAdd: false
@@ -123,19 +120,28 @@ export default class Number extends React.Component {
 
     render() {
 
-        const renderRemoveOrButton = () => {
-            if (this.props.addOrButton && !this.props.isFirst) {
-                return <Button key='3' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
+        const renderSearchOrButton = () => {
+            if (this.props.isLast) {
+                return (
+                    <SearchOrButton
+                        isDisable={false}
+                        id={this.state.id}
+                        onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
+            } else {
+                return (
+                    <SearchOrButton
+                        isDisable={false}
+                        id={this.state.id}
+                        //onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
             }
         }
 
-        const renderOrButton = () => {
-            if (this.props.addOrButton) {
-                return <Button key='1' disabled={disableDueToMissing()} onClick={this.onOrAddButtonClick} size='mini' icon color='green' type='submit'><Icon name='add' />{' '}OR</Button>
-            } else {
-                return <Button key='2' onClick={this.onOrRemoveButtonClick} size='mini' icon color='red' type='submit'><Icon name='remove' />{' '}OR</Button>
-            }
-        }
 
         const modifierOptions = () => {
             return (
@@ -207,10 +213,7 @@ export default class Number extends React.Component {
                         </Form>
                     </Grid.Column>
                     <Grid.Column width={1} floated='left' verticalAlign='middle' >
-                        <Button.Group size='mini' >
-                            {renderRemoveOrButton()}
-                            {renderOrButton()}
-                        </Button.Group>
+                        {renderSearchOrButton()}
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
