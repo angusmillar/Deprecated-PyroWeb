@@ -11,7 +11,6 @@ import ResponseComponent from './ResponseComponent'
 import RequestComponent from './RequestComponent'
 import RestHttpHeadersComponent from './RestHttpHeadersComponent'
 import RestBodyComponent from './RestBodyComponent'
-import RestParametersComponent from './RestParametersComponent'
 
 import FhirConstant from '../../Constants/FhirConstant';
 import HttpConstant from '../../Constants/HttpConstant';

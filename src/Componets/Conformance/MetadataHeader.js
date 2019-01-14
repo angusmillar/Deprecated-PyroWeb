@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DateTimeSupport from '../../SupportTools/DateTimeSupport'
-import { Table, Label, Flag } from 'semantic-ui-react'
+import { Table, Flag } from 'semantic-ui-react'
 import map from 'lodash/map';
 import isNil from 'lodash/isNil';
 //import filter from 'lodash/filter'
