@@ -8,7 +8,8 @@ import startCase from 'lodash/startCase';
 //import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import 'react-datepicker/dist/react-datepicker.css';
+// import 'react-datepicker/dist/react-datepicker.css';
+import '../../CustomCss/react-datepicker.css';
 
 
 export default class SearchResultSegment extends Component {
