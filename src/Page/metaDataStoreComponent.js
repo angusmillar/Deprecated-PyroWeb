@@ -6,7 +6,8 @@ import { Icon, Grid, Header, Message } from 'semantic-ui-react'
 import AjaxConstant from 'Constants/AjaxConstant';
 import PyroServerApi from '../Componets/PyroFhirApi/PyroServerApi';
 import PyroServerConformanceStatmentComponent from '../Componets/Conformance/PyroServerConformanceStatmentComponent'
-import PyroServerSearchComponent from '../Componets/ServerSearch/PyroServerSearchComponent'
+//import PyroServerSearchComponent from '../Componets/ServerSearch/PyroServerSearchComponent'
+import PyroServerSearchComponentTwo from '../Componets/ServerSearch/PyroServerSearchComponentTwo'
 import PageDimmer from '../Componets/Reusable/PageDimmer/PageDimmer';
 import FhirServerConstant from '../Constants/FhirServerConstant';
 
@@ -48,7 +49,7 @@ export default class MetaDataStoreComponent extends React.Component {
                 } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerConformanceStatment) {
                     return <PyroServerConformanceStatmentComponent ConformanceStatmentResource={Metadata.AjaxOutcome.FhirResource} FhirServerName={Metadata.FhirServerName} />
                 } else if (this.props.renderType === MetaDataStoreComponent.RenderType.ServerSearch) {
-                    return <PyroServerSearchComponent ConformanceStatmentResource={Metadata.AjaxOutcome.FhirResource} FhirServerName={Metadata.FhirServerName} />
+                    return <PyroServerSearchComponentTwo ConformanceStatmentResource={Metadata.AjaxOutcome.FhirResource} FhirServerName={Metadata.FhirServerName} />
                 } else {
                     return (
                         <Message negative>
