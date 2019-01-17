@@ -11,7 +11,6 @@ import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
 import endsWith from 'lodash/endsWith';
 import noop from 'lodash/noop';
-import arrayPush from 'lodash/_arrayPush';
 
 import PropTypes from 'prop-types';
 
@@ -123,8 +122,10 @@ export default class PyroServerSearchComponentTwo extends React.Component {
     onEditSearchParameter = (e) => {
         const newSearchParameter = {
             id: e.submittedId,
+            searchParameterName: e.submittedSearchParameterName,
             type: e.submittedType,
             modifier: e.submittedModifier,
+            isVisable: e.submittedIsVisable,
             orList: e.submittedOrList,
         }
         const newSearchParameterList = this.state.savedSearchParameterList.slice(0);
@@ -195,14 +196,14 @@ export default class PyroServerSearchComponentTwo extends React.Component {
     queryElementArray = () => map(this.state.savedSearchParameterList, (item) => {
         if (item.type == FhirConstant.searchType.token) {
             let theQuery = '';
-            for (let i = 0; i < item.valueList.length; i++) {
+            for (let i = 0; i < item.orList.length; i++) {
                 if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.token(item.valueList[i])}`)
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.token(item.orList[i])}`)
                 } else {
                     if (item.modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.name);
+                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
                     } else {
-                        theQuery = `${item.name}=${SearchUrlFormat.token(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.token(item.orList[i])}`;
                     }
                 }
             }
@@ -211,18 +212,18 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         } else if (item.type == FhirConstant.searchType.string) {
 
             let theQuery = '';
-            for (let i = 0; i < item.valueList.length; i++) {
+            for (let i = 0; i < item.orList.length; i++) {
                 if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.string(item.valueList[i])}`)
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.string(item.orList[i])}`)
                 } else {
                     if (item.modifier != 'none') {
                         if (item.modifier == 'missing') {
-                            theQuery = SearchUrlFormat.missingModifier(item.name);
+                            theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
                         } else {
-                            theQuery = `${item.name}:${item.modifier}=${SearchUrlFormat.string(item.valueList[i])}`;
+                            theQuery = `${item.searchParameterName}:${item.modifier}=${SearchUrlFormat.string(item.orList[i])}`;
                         }
                     } else {
-                        theQuery = `${item.name}=${SearchUrlFormat.string(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.string(item.orList[i])}`;
                     }
                 }
             }
@@ -231,7 +232,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         } else if (item.type == FhirConstant.searchType.quantity) {
 
             let theQuery = '';
-            for (let i = 0; i < item.valueList.length; i++) {
+            for (let i = 0; i < item.orList.length; i++) {
 
                 let modifier = '';
                 if (item.modifier != 'none') {
@@ -239,14 +240,14 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                 }
 
                 if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.quantity(item.valueList[i])}`)
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.quantity(item.orList[i])}`)
                 } else {
                     if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.name);
+                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
                     } else if (modifier != '') {
-                        theQuery = `${item.name}:${modifier}=${SearchUrlFormat.quantity(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.quantity(item.orList[i])}`;
                     } else {
-                        theQuery = `${item.name}=${SearchUrlFormat.quantity(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.quantity(item.orList[i])}`;
                     }
                 }
             }
@@ -255,7 +256,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         } else if (item.type == FhirConstant.searchType.date) {
 
             let theQuery = '';
-            for (let i = 0; i < item.valueList.length; i++) {
+            for (let i = 0; i < item.orList.length; i++) {
 
                 let modifier = '';
                 if (item.modifier != 'none') {
@@ -263,14 +264,14 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                 }
 
                 if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.date(item.valueList[i])}`)
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.date(item.orList[i])}`)
                 } else {
                     if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.name);
+                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
                     } else if (modifier != '') {
-                        theQuery = `${item.name}:${modifier}=${SearchUrlFormat.date(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.date(item.orList[i])}`;
                     } else {
-                        theQuery = `${item.name}=${SearchUrlFormat.date(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.date(item.orList[i])}`;
                     }
                 }
             }
@@ -279,7 +280,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         } else if (item.type == FhirConstant.searchType.uri) {
 
             let theQuery = '';
-            for (let i = 0; i < item.valueList.length; i++) {
+            for (let i = 0; i < item.orList.length; i++) {
 
                 let modifier = '';
                 if (item.modifier != 'none') {
@@ -287,14 +288,14 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                 }
 
                 if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.uri(item.valueList[i])}`)
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.uri(item.orList[i])}`)
                 } else {
                     if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.name);
+                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
                     } else if (modifier != '') {
-                        theQuery = `${item.name}:${modifier}=${SearchUrlFormat.uri(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.uri(item.orList[i])}`;
                     } else {
-                        theQuery = `${item.name}=${SearchUrlFormat.uri(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.uri(item.orList[i])}`;
                     }
                 }
             }
@@ -303,7 +304,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         } else if (item.type == FhirConstant.searchType.number) {
 
             let theQuery = '';
-            for (let i = 0; i < item.valueList.length; i++) {
+            for (let i = 0; i < item.orList.length; i++) {
 
                 let modifier = '';
                 if (item.modifier != 'none') {
@@ -311,14 +312,14 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                 }
 
                 if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.number(item.valueList[i])}`)
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.number(item.orList[i])}`)
                 } else {
                     if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.name);
+                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
                     } else if (modifier != '') {
-                        theQuery = `${item.name}:${modifier}=${SearchUrlFormat.number(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.number(item.orList[i])}`;
                     } else {
-                        theQuery = `${item.name}=${SearchUrlFormat.number(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.number(item.orList[i])}`;
                     }
                 }
             }
@@ -327,7 +328,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         } else if (item.type == FhirConstant.searchType.reference) {
 
             let theQuery = '';
-            for (let i = 0; i < item.valueList.length; i++) {
+            for (let i = 0; i < item.orList.length; i++) {
 
                 let modifier = '';
                 if (item.modifier != 'none') {
@@ -335,19 +336,19 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                 }
 
                 if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.reference(item.valueList[i])}`)
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.reference(item.orList[i])}`)
                 } else {
                     if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.name);
+                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
                     } else if (modifier != '') {
-                        theQuery = `${item.name}:${modifier}=${SearchUrlFormat.reference(item.valueList[i])}`;
+                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.reference(item.orList[i])}`;
                     } else {
-                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].resourceId) && item.valueList[i].resourceId != '') {
-                            theQuery = `${item.name}=${SearchUrlFormat.reference(item.valueList[i])}`;
+                        if (!isNil(item.orList[i]) && !isNil(item.orList[i].resourceId) && item.orList[i].resourceId != '') {
+                            theQuery = `${item.searchParameterName}=${SearchUrlFormat.reference(item.orList[i])}`;
                         }
-                        if (!isNil(item.valueList[i]) && !isNil(item.valueList[i].resource) && item.valueList[i].resource != '') {
-                            theQuery = `${item.name}`;
-                            let currectItem = item.valueList[i];
+                        if (!isNil(item.orList[i]) && !isNil(item.orList[i].resource) && item.orList[i].resource != '') {
+                            theQuery = `${item.searchParameterName}`;
+                            let currectItem = item.orList[i];
                             while (!isEmpty(currectItem)) {
                                 if (currectItem.type == FhirConstant.searchType.reference) {
                                     if (currectItem.isChainSearch) {
@@ -581,8 +582,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                     return <Divider horizontal>And</Divider>
                 }
             }
-
-            const test = this.state.savedSearchParameterList;
+            
             const revList = this.state.savedSearchParameterList.slice(0);
             reverse(revList);
             let CurrectCounter = 0;

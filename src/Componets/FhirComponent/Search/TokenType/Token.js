@@ -49,7 +49,7 @@ export default class Token extends React.Component {
     render() {
         return (
             <Form>
-                <Form.Group widths='equal'>                    
+                <Form.Group widths='equal'>                                                                
                     <Form.Field label='System' width={5} name='system' control='input'
                         disabled={this.props.isDisabled}
                         placeholder='System'
