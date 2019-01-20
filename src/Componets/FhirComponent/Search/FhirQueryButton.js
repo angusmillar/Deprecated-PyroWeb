@@ -28,7 +28,6 @@ export default class FhirQueryButton extends React.Component {
 
     onClick = (e) => {
         e.preventDefault();
-
         this.props.onClick({
             eventId: this.props.id,
         })
@@ -36,10 +35,7 @@ export default class FhirQueryButton extends React.Component {
 
     onRemoveClick  = (e) => {
         e.preventDefault();
-
-        this.props.onRemoveClick({
-            eventId: this.props.id,
-        })
+        this.props.onRemoveClick(this.props.id)
     }
 
     render() {

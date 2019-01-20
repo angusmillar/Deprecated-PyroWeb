@@ -1,6 +1,7 @@
 import DateTimeSupport from '../SupportTools/DateTimeSupport'
 import isNil from 'lodash/isNil'
 
+
 export default class FhirConstant {
 
     static FhirSpecReleasesWebsiteUrl = 'http://hl7.org/fhir/directory.html';
@@ -130,23 +131,23 @@ export default class FhirConstant {
                 return 'teal'
             case this.searchType.number:
                 return 'brown'
-                case this.searchType.date:
+            case this.searchType.date:
                 return 'purple'
-                case this.searchType.string:
+            case this.searchType.string:
                 return 'blue'
-                case this.searchType.composite:
+            case this.searchType.composite:
                 return 'black'
-                case this.searchType.quantity:
+            case this.searchType.quantity:
                 return 'violet'
-                case this.searchType.uri:
+            case this.searchType.uri:
                 return 'pink'
-                case this.searchType.reference:
+            case this.searchType.reference:
                 return 'orange'
-                case this.searchType.special:
+            case this.searchType.special:
                 return 'black'
             default:
                 return 'black'
-        }            
+        }
     }
 
 
@@ -156,8 +157,17 @@ export default class FhirConstant {
         true: 'true',
         text: 'text',
         data: 'data',
-        count: 'count',       
+        count: 'count',
     };
 
+    //SearchModifierValues
+    static searchModifierOptions = {
+        none: { key: 'none', text: 'None', value: 'none' },
+        missing: { key: 'missing', text: 'Missing', value: 'missing' }
+    }
+
+    
+
+    
 
 }

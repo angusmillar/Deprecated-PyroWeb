@@ -6,7 +6,50 @@ export default class SearchUrlFormat {
 
 
     static missingModifier(SearchParameterName) {
-        return `${SearchParameterName}:missing=true`;
+        return `${SearchParameterName}:${FhirConstant.searchModifierOptions.missing.value}=true`;
+    }
+
+    static anyParameter = (parameter) => {
+        let query = '';
+        for (let i = 0; i < parameter.orList.length; i++) {
+            if (i == 0) {
+                if (parameter.modifier == FhirConstant.searchModifierOptions.none.value) {
+                    query = `${parameter.searchParameterName}=${SearchUrlFormat.anyOrType(parameter.orList[i], parameter.type)}`;                   
+                } else {
+                    if (parameter.modifier == FhirConstant.searchModifierOptions.missing.value) {
+                        query = SearchUrlFormat.missingModifier(parameter.searchParameterName);
+                    } else {
+                        query = `${parameter.searchParameterName}:${parameter.modifier}=${SearchUrlFormat.anyOrType(parameter.orList[i], parameter.type)}`;
+                    }
+                }
+            } else {
+                query = query.concat(`,${SearchUrlFormat.anyOrType(parameter.orList[i], parameter.type)}`)
+            }
+        }
+        return { id: parameter.id, queryString: query, searchType: parameter.type }
+    }
+
+   
+   
+    static anyOrType(orItem, type) {
+        switch (type) {
+            case FhirConstant.searchType.quantity:
+                return this.quantity(orItem);
+            case FhirConstant.searchType.string:
+                return this.string(orItem);
+            case FhirConstant.searchType.token:
+                return this.token(orItem);
+            case FhirConstant.searchType.date:
+                return this.date(orItem);
+            case FhirConstant.searchType.uri:
+                return this.uri(orItem);
+            case FhirConstant.searchType.number:
+                return this.number(orItem);
+            case FhirConstant.searchType.reference:
+                return this.reference(orItem);
+            default:
+                return '';
+        }
     }
 
     static token(item) {
@@ -65,10 +108,6 @@ export default class SearchUrlFormat {
         return result;
     }
 
-    // static composite(item) {
-    //     let result = '';
-    //     return result;   
-    // }
 
     static quantity(item) {
         let result = '';
@@ -91,31 +130,12 @@ export default class SearchUrlFormat {
 
     static reference(item) {
         if (item.isChainSearch) {
-            return `${item.resource}.${item.selectedSearch}`            
+            return `${item.resource}.${item.selectedSearch}`
         } else {
-            return `${item.resource}/${item.resourceId}`            
+            return `${item.resource}/${item.resourceId}`
         }
     }
 
-    static anyType(item) {
-        switch (item.type) {
-            case FhirConstant.searchType.quantity:
-                return this.quantity(item);
-            case FhirConstant.searchType.string:
-                return this.string(item);
-            case FhirConstant.searchType.token:
-                return this.token(item);
-            case FhirConstant.searchType.date:
-                return this.date(item);
-            case FhirConstant.searchType.uri:
-                return this.uri(item);
-            case FhirConstant.searchType.number:
-                return this.number(item);
-            case FhirConstant.searchType.reference:
-                return this.reference(item);
-            default:
-                return '';
-        }
-    }
+   
 
 }

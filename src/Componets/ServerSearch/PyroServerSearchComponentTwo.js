@@ -6,7 +6,6 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
 import findIndex from 'lodash/findIndex';
-import reverse from 'lodash/reverse';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
 import endsWith from 'lodash/endsWith';
@@ -17,15 +16,13 @@ import PropTypes from 'prop-types';
 import FhirQueryButton from '../FhirComponent/Search/FhirQueryButton';
 import EncodingButton from '../FhirComponent/Search/EncodingButton';
 import SummaryButton from '../FhirComponent/Search/SummaryButton';
-//import SearchTypeFrame from '../FhirComponent/Search/SearchTypeFrame';
 import ResponseRender from '../FhirComponent/Search/ResponseRender';
 import PublicServerResetMessage from '../../Componets/PublicServer/Messages/PublicServerResetMessage';
 import DeviceConstants from '../../Constants/DeviceConstants';
 import SearchUrlFormat from '../FhirComponent/Search/SearchUrlFormat';
 
-import uniqueId from 'lodash/uniqueId'
-// import UuidSupport from '../../SupportTools/UuidSupport'
 import FhirConstant from '../../Constants/FhirConstant';
+import FhirSearchParameterFactory from '../../Constants/FhirSearchParameterFactory';
 import FhirServerConstant from '../../Constants/FhirServerConstant';
 import TokenParameter from '../FhirComponent/Search/TokenType/TokenParameter';
 
@@ -65,52 +62,19 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         e.preventDefault();
         const searchName = value;
         const fhirSearchParameter = find(this.state.ResourceElement.searchParam, { 'name': value });
-
-        let newSearchParameter = null;
-        switch (fhirSearchParameter.type) {
-            case FhirConstant.searchType.quantity:
-                return null;
-            case FhirConstant.searchType.string:
-                return null;
-            case FhirConstant.searchType.token:
-                {
-                    newSearchParameter = {
-                        id: uniqueId('token_'),
-                        searchParameterName: searchName,
-                        type: fhirSearchParameter.type,
-                        modifier: 'none',
-                        orList: [{
-                            id: uniqueId('tokenOr_'),
-                            system: '',
-                            code: '',
-                        }],
-                        isVisable: true,
-                        isDisabled: false,
-                    }
-                }
-                break;
-            case FhirConstant.searchType.date:
-                return null;
-            case FhirConstant.searchType.uri:
-                return null;
-            case FhirConstant.searchType.number:
-                return null;
-            case FhirConstant.searchType.reference:
-                return null;
-            default:
-        }
+        const newSearchParameter = FhirSearchParameterFactory.create(fhirSearchParameter.type, searchName);
         
-        this.setState(() => ({
+        this.setState(() => ({            
             selectedSearch: value,
             SearchElement: fhirSearchParameter,
-            savedSearchParameterList: [...this.state.savedSearchParameterList, newSearchParameter] 
+            savedSearchParameterList: [...this.state.savedSearchParameterList, newSearchParameter]
         }));
     }
-    
+
     onEncodeingClick = (e) => {
         this.setState({ encodingType: e.encodingType })
     }
-    
+
     onSummaryClick = (e) => {
         this.setState({ summaryType: e.summaryType })
     }
@@ -134,7 +98,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         this.setState({ savedSearchParameterList: newSearchParameterList })
     };
 
-    onAddSearchParameter = (InstanceId) => {                
+    onAddSearchParameter = (InstanceId) => {
         //We only need to find the instance with the id and set the isVisable to false
         //as the instance is already added to the saved list
         const newSearchParameterList = this.state.savedSearchParameterList.slice(0);
@@ -146,10 +110,8 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         // this.setState({ savedSearchParameters: newArray, SearchElement: null, selectedSearch: 'none' })
     };
 
-    onRemoveSearchParameter = (InstanceId) => {
-        const newSearchParameterList = filter(this.state.savedSearchParameterList, function (currentObject) {
-            return currentObject.id != InstanceId;
-        });
+    onRemoveSearchParameter = (id) => {
+        const newSearchParameterList = filter(this.state.savedSearchParameterList, (x) => x.id != id);
         this.setState({ savedSearchParameterList: newSearchParameterList })
     };
 
@@ -161,7 +123,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         const newArray = this.state.savedSearchParameterList.slice(0);
         const Index = findIndex(newArray, { id: e.eventId })
         //toggel bolean
-        newArray[Index].showEdit = !newArray[Index].showEdit;
+        newArray[Index].isVisable = !newArray[Index].isVisable;
         this.setState({ savedSearchParameterList: newArray })
 
     };
@@ -193,162 +155,43 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         return MainQuery;
     }
 
-    queryElementArray = () => map(this.state.savedSearchParameterList, (item) => {
-        if (item.type == FhirConstant.searchType.token) {
+    queryElementArray = () => map(this.state.savedSearchParameterList, (parameter) => {
+        if (parameter.type == FhirConstant.searchType.token) {
+            return SearchUrlFormat.anyParameter(parameter);
+        } else if (parameter.type == FhirConstant.searchType.string) {
+            return SearchUrlFormat.anyParameter(parameter);
+        } else if (parameter.type == FhirConstant.searchType.quantity) {
+            return SearchUrlFormat.anyParameter(parameter);
+        } else if (parameter.type == FhirConstant.searchType.date) {
+            return SearchUrlFormat.anyParameter(parameter);
+        } else if (parameter.type == FhirConstant.searchType.uri) {
+            return SearchUrlFormat.anyParameter(parameter);
+        } else if (parameter.type == FhirConstant.searchType.number) {
+            return SearchUrlFormat.anyParameter(parameter);
+        } else if (parameter.type == FhirConstant.searchType.reference) {
+
             let theQuery = '';
-            for (let i = 0; i < item.orList.length; i++) {
-                if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.token(item.orList[i])}`)
-                } else {
-                    if (item.modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
-                    } else {
-                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.token(item.orList[i])}`;
-                    }
+            for (let i = 0; i < parameter.orList.length; i++) {
+
+                let modifier = '';
+                if (parameter.modifier != 'none') {
+                    modifier = parameter.modifier
                 }
-            }
-            return { id: item.id, queryString: theQuery, searchType: item.type }
 
-        } else if (item.type == FhirConstant.searchType.string) {
-
-            let theQuery = '';
-            for (let i = 0; i < item.orList.length; i++) {
                 if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.string(item.orList[i])}`)
+                    theQuery = theQuery.concat(`,${SearchUrlFormat.reference(parameter.orList[i])}`)
                 } else {
-                    if (item.modifier != 'none') {
-                        if (item.modifier == 'missing') {
-                            theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
-                        } else {
-                            theQuery = `${item.searchParameterName}:${item.modifier}=${SearchUrlFormat.string(item.orList[i])}`;
+                    if (modifier == 'missing') {
+                        theQuery = SearchUrlFormat.missingModifier(parameter.searchParameterName);
+                    } else if (modifier != '') {
+                        theQuery = `${parameter.searchParameterName}:${modifier}=${SearchUrlFormat.reference(parameter.orList[i])}`;
+                    } else {
+                        if (!isNil(parameter.orList[i]) && !isNil(parameter.orList[i].resourceId) && parameter.orList[i].resourceId != '') {
+                            theQuery = `${parameter.searchParameterName}=${SearchUrlFormat.reference(parameter.orList[i])}`;
                         }
-                    } else {
-                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.string(item.orList[i])}`;
-                    }
-                }
-            }
-            return { id: item.id, queryString: theQuery, searchType: item.type }
-
-        } else if (item.type == FhirConstant.searchType.quantity) {
-
-            let theQuery = '';
-            for (let i = 0; i < item.orList.length; i++) {
-
-                let modifier = '';
-                if (item.modifier != 'none') {
-                    modifier = item.modifier
-                }
-
-                if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.quantity(item.orList[i])}`)
-                } else {
-                    if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
-                    } else if (modifier != '') {
-                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.quantity(item.orList[i])}`;
-                    } else {
-                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.quantity(item.orList[i])}`;
-                    }
-                }
-            }
-            return { id: item.id, queryString: theQuery, searchType: item.type }
-
-        } else if (item.type == FhirConstant.searchType.date) {
-
-            let theQuery = '';
-            for (let i = 0; i < item.orList.length; i++) {
-
-                let modifier = '';
-                if (item.modifier != 'none') {
-                    modifier = item.modifier
-                }
-
-                if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.date(item.orList[i])}`)
-                } else {
-                    if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
-                    } else if (modifier != '') {
-                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.date(item.orList[i])}`;
-                    } else {
-                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.date(item.orList[i])}`;
-                    }
-                }
-            }
-            return { id: item.id, queryString: theQuery, searchType: item.type }
-
-        } else if (item.type == FhirConstant.searchType.uri) {
-
-            let theQuery = '';
-            for (let i = 0; i < item.orList.length; i++) {
-
-                let modifier = '';
-                if (item.modifier != 'none') {
-                    modifier = item.modifier
-                }
-
-                if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.uri(item.orList[i])}`)
-                } else {
-                    if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
-                    } else if (modifier != '') {
-                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.uri(item.orList[i])}`;
-                    } else {
-                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.uri(item.orList[i])}`;
-                    }
-                }
-            }
-            return { id: item.id, queryString: theQuery, searchType: item.type }
-
-        } else if (item.type == FhirConstant.searchType.number) {
-
-            let theQuery = '';
-            for (let i = 0; i < item.orList.length; i++) {
-
-                let modifier = '';
-                if (item.modifier != 'none') {
-                    modifier = item.modifier
-                }
-
-                if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.number(item.orList[i])}`)
-                } else {
-                    if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
-                    } else if (modifier != '') {
-                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.number(item.orList[i])}`;
-                    } else {
-                        theQuery = `${item.searchParameterName}=${SearchUrlFormat.number(item.orList[i])}`;
-                    }
-                }
-            }
-            return { id: item.id, queryString: theQuery, searchType: item.type }
-
-        } else if (item.type == FhirConstant.searchType.reference) {
-
-            let theQuery = '';
-            for (let i = 0; i < item.orList.length; i++) {
-
-                let modifier = '';
-                if (item.modifier != 'none') {
-                    modifier = item.modifier
-                }
-
-                if (i > 0) {
-                    theQuery = theQuery.concat(`,${SearchUrlFormat.reference(item.orList[i])}`)
-                } else {
-                    if (modifier == 'missing') {
-                        theQuery = SearchUrlFormat.missingModifier(item.searchParameterName);
-                    } else if (modifier != '') {
-                        theQuery = `${item.searchParameterName}:${modifier}=${SearchUrlFormat.reference(item.orList[i])}`;
-                    } else {
-                        if (!isNil(item.orList[i]) && !isNil(item.orList[i].resourceId) && item.orList[i].resourceId != '') {
-                            theQuery = `${item.searchParameterName}=${SearchUrlFormat.reference(item.orList[i])}`;
-                        }
-                        if (!isNil(item.orList[i]) && !isNil(item.orList[i].resource) && item.orList[i].resource != '') {
-                            theQuery = `${item.searchParameterName}`;
-                            let currectItem = item.orList[i];
+                        if (!isNil(parameter.orList[i]) && !isNil(parameter.orList[i].resource) && parameter.orList[i].resource != '') {
+                            theQuery = `${parameter.searchParameterName}`;
+                            let currectItem = parameter.orList[i];
                             while (!isEmpty(currectItem)) {
                                 if (currectItem.type == FhirConstant.searchType.reference) {
                                     if (currectItem.isChainSearch) {
@@ -365,7 +208,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                     }
                 }
             }
-            return { id: item.id, queryString: theQuery, searchType: item.type }
+            return { id: parameter.id, queryString: theQuery, searchType: parameter.type }
 
         } else {
             return 'notdone!!';
@@ -397,7 +240,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                 <Grid>
                     <Grid.Row columns={16} only='computer'>
                         <Grid.Column width={16}>
-                            <Header size='tiny'>FHIR Query</Header>
+                            {/* <Header size='tiny'>FHIR Query</Header> */}
                             <Segment>
                                 <Grid doubling>
                                     <Grid.Row columns={16}>
@@ -451,10 +294,10 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                                     <List.Item>
                                         <Image avatar src={this.props.FhirIcon} />
                                         <List.Content>
-                                            <List.Header>[Base] FHIR R4 Endpoint</List.Header>
+                                            <List.Header>FHIR R4 Endpoint</List.Header>
                                             <List.Description>
-                                                <code>{FhirServerConstant.PyroR4FhirServerEndpoint}</code>
-                                            </List.Description>
+                                                <Button basic compact size='small' color='black'>[Base]: <code>{FhirServerConstant.PyroR4FhirServerEndpoint}</code></Button>
+                                            </List.Description>                                            
                                         </List.Content>
                                     </List.Item>
                                 </List>
@@ -480,8 +323,8 @@ export default class PyroServerSearchComponentTwo extends React.Component {
             return (
                 <Segment raised >
                     <PublicServerResetMessage deviceType={DeviceConstants.deviceType.computer} plural={false} />
-                    {renderFhirQuery()}
                     {renderServerInfo()}
+                    {renderFhirQuery()}
                     <Segment>
                         <Grid>
                             <Grid.Row columns={16}>
@@ -540,7 +383,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
             }
         }
 
-        
+
         const renderSearchParameter = (searchParameter) => {
             switch (searchParameter.type) {
                 case FhirConstant.searchType.quantity:
@@ -582,14 +425,14 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                     return <Divider horizontal>And</Divider>
                 }
             }
-            
-            const revList = this.state.savedSearchParameterList.slice(0);
-            reverse(revList);
+
+            //const revList = this.state.savedSearchParameterList.slice(0);
+            //reverse(revList);
             let CurrectCounter = 0;
             return (
                 <Grid.Row columns={16}>
                     <Grid.Column width={16}>
-                        {map(revList, (item) => {
+                        {map(this.state.savedSearchParameterList, (item) => {
                             if (!item.isVisable) {
                                 return null;
                             }
@@ -598,7 +441,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                             return (
                                 <React.Fragment key={item.id}>
                                     {renderAndDivider(CurrectCounter)}
-                                    {renderSearchParameter(item)}                    
+                                    {renderSearchParameter(item)}
                                 </React.Fragment>
                             )
                         })}

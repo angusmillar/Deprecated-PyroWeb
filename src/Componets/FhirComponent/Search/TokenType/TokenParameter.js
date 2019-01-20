@@ -4,12 +4,11 @@ import { Divider, Grid, Segment, Label, Button, Icon } from 'semantic-ui-react'
 
 import map from 'lodash/map';
 import findIndex from 'lodash/findIndex';
-//import filter from 'lodash/filter';
+import filter from 'lodash/filter';
 import uniqueId from 'lodash/uniqueId';
-//import remove from 'lodash/remove';
-import without from 'lodash/without';
 import PropTypes from 'prop-types';
 import FhirConstant from '../../../../Constants/FhirConstant';
+import FhirSearchParameterFactory from '../../../../Constants/FhirSearchParameterFactory';
 import ModifierSelector from '../ModifierSelector';
 import SearchOrButton from '../SearchOrButton';
 import Token from '../TokenType/Token';
@@ -54,6 +53,9 @@ export default class TokenParameter extends React.Component {
     onModifierSelectorChange = (modifier) => {
         const submitted = this.getSubmitted();
         submitted.submittedModifier = modifier;
+        if (modifier == FhirConstant.searchModifierOptions.missing.value) {
+            submitted.submittedOrList = [FhirSearchParameterFactory.tokenOr()];
+        }
         this.props.onTokenOrEdit(submitted);
     }
 
@@ -90,60 +92,72 @@ export default class TokenParameter extends React.Component {
         this.props.onTokenOrEdit(submitted);
     }
 
-    onOrRemove = (e) => {        
+    onOrRemove = (e) => {
         const submitted = this.getSubmitted();
-        submitted.submittedOrList = without(submitted.submittedOrList, { 'id': e.eventId });
+        submitted.submittedOrList = filter(submitted.submittedOrList, (x) => x.id != e.eventId)
         this.props.onTokenOrEdit(submitted);
     }
 
 
     render() {
 
-        const modifierOptions = () => {
-            return (
-                [
-                    { key: 'none', text: 'None', value: 'none' },
-                    { key: 'missing', text: 'Missing', value: 'missing' },
-                ]
-            )
-        }
+        const isModifierMissing = (this.props.modifier == FhirConstant.searchModifierOptions.missing.value);
 
-        const renderLabelName = () => {
-            return <Label color={FhirConstant.getColorForSearchType(this.searchParameterType)} attached='top left'>Parameter: {this.searchParameterName}</Label>
-        };
+        const modifierOptions = [
+            FhirConstant.searchModifierOptions.none,
+            FhirConstant.searchModifierOptions.missing,
+        ]
 
-        const renderLabelType = () => {
-            return <Label color={FhirConstant.getColorForSearchType(this.searchParameterType)} attached='top right'>Type: {this.searchParameterType}</Label>
-        };
+        const renderLabelName = <Label color={FhirConstant.getColorForSearchType(this.searchParameterType)} attached='top left'>Parameter: {this.props.searchParameterName}</Label>;
+        const renderLabelType = <Label color={FhirConstant.getColorForSearchType(this.searchParameterType)} attached='top right'>Type: {this.searchParameterType}</Label>
 
-        const renderButton = () => {
-            return (
-                <Grid>
-                    <Grid.Row columns={16}>
-                        <Button onClick={this.onAddParameter} size='small' icon color='green'><Icon name='add' /></Button>
-                    </Grid.Row>
-                    <Grid.Row columns={16}>
-                        <Button onClick={this.onRemoveParameter} size='small' icon color='red'><Icon name='remove' /></Button>
-                    </Grid.Row>
-                </Grid>
-            )
-        };
+        const renderButton = (
+            <Grid>
+                <Grid.Row columns={16}>
+                    <Button onClick={this.onAddParameter} size='small' icon color='green'><Icon name='add' /></Button>
+                </Grid.Row>
+                <Grid.Row columns={16}>
+                    <Button onClick={this.onRemoveParameter} size='small' icon color='red'><Icon name='remove' /></Button>
+                </Grid.Row>
+            </Grid>
+        );
 
-        const renderSearchOrButton = (index, id) => {
-            if (index == 0) {
+
+        const renderSearchOrButton = (index, maxIndex, id) => {
+            //first one, when only one 
+            if (index == 0 && (maxIndex - 1) == 0) {
                 return (
                     <SearchOrButton
-                        isDisable={false}
+                        isDisable={isModifierMissing}
                         id={id}
                         onOrAdd={this.onOrAdd}
                     />
                 )
+                //First one , when many
+            } else if (index == 0 && (maxIndex - 1) > 0) {
+                return (
+                    <SearchOrButton
+                        isDisable={isModifierMissing}
+                        id={id}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
+                //Last one
+            } else if (index == (maxIndex - 1)) {
+                return (
+                    <SearchOrButton
+                        isDisable={isModifierMissing}
+                        id={id}
+                        onOrAdd={this.onOrAdd}
+                        onOrRemove={this.onOrRemove}
+                    />
+                )
+                //Middel
             } else {
                 return (
                     <SearchOrButton
-                        isDisable={false}
+                        isDisable={isModifierMissing}
                         id={id}
-                        onOrAdd={this.onOrAdd}
                         onOrRemove={this.onOrRemove}
                     />
                 )
@@ -154,8 +168,8 @@ export default class TokenParameter extends React.Component {
         return (
 
             <Segment color={FhirConstant.getColorForSearchType(this.searchParameterType)} >
-                {renderLabelName()}
-                {renderLabelType()}
+                {renderLabelName}
+                {renderLabelType}
                 <Grid>
                     <Grid.Row columns={16}>
                         <Grid.Column width={15} >
@@ -166,7 +180,7 @@ export default class TokenParameter extends React.Component {
                                         <Grid.Column width={3} >
                                             <ModifierSelector
                                                 onChange={this.onModifierSelectorChange}
-                                                options={modifierOptions()}
+                                                options={modifierOptions}
                                                 selected={this.props.modifier}
                                                 isDisabled={false}
                                             />
@@ -191,18 +205,18 @@ export default class TokenParameter extends React.Component {
                                         return (
                                             <React.Fragment key={item.id}>
                                                 {renderOrDivider(index)}
-                                                <Grid.Row columns={1}>
-                                                    <Grid.Column width={16} >
+                                                <Grid.Row columns={1} divided>
+                                                    <Grid.Column width={14} >
                                                         <Token
                                                             onTokenEdit={this.onTokenEdit}
                                                             id={item.id}
                                                             system={item.system}
                                                             code={item.code}
-                                                            isDisabled={false}
+                                                            isDisabled={isModifierMissing}
                                                         />
                                                     </Grid.Column>
-                                                    <Grid.Column width={1} floated='left' verticalAlign='middle' >
-                                                        {renderSearchOrButton(index, item.id)}
+                                                    <Grid.Column width={2} floated='left' verticalAlign='middle' >
+                                                        {renderSearchOrButton(index, this.props.orList.length, item.id)}
                                                     </Grid.Column>
                                                 </Grid.Row>
                                             </React.Fragment>
@@ -213,7 +227,7 @@ export default class TokenParameter extends React.Component {
                         </Grid.Column>
                         <Grid.Column width={1} verticalAlign='top' >
                             <Divider horizontal hidden></Divider>
-                            {renderButton()}
+                            {renderButton}
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
