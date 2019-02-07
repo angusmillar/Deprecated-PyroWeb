@@ -19,9 +19,41 @@ export default class FhirSearchParameterFactory {
             case FhirConstant.searchType.number:
                 return null;
             case FhirConstant.searchType.reference:
-                return null;
+            return FhirSearchParameterFactory.reference(searchName);                                                      
             default:
         }
+    }
+
+    static referenceOr = () => {
+        return (
+            {
+                id: uniqueId(`${FhirConstant.searchType.reference}Or_`),
+                resourceList: [],
+                resourceSelectOptions: [],
+                resource: '',
+                resourceId: '',
+                url: '',
+                selectedSearch: '',
+                childReferenceElement: null,
+                modifier: FhirConstant.searchModifierOptions.none.value,
+                isFirst: true,
+                referenceType: FhirConstant.referenceType.relative,
+                endValueElement: []
+            })
+    }
+
+    static reference = (parameterName) => {
+        return (
+            {
+                id: uniqueId(`${FhirConstant.searchType.reference}_`),
+                searchParameterName: parameterName,
+                type: FhirConstant.searchType.token,
+                referenceType: FhirConstant.referenceType.relative,
+                modifier: FhirConstant.searchModifierOptions.none.value,
+                orList: [FhirSearchParameterFactory.referenceOr()],
+                isVisable: true,
+                isDisabled: false,
+            })
     }
 
     static tokenOr = () => {

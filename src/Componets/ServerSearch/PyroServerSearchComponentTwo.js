@@ -100,7 +100,8 @@ export default class PyroServerSearchComponentTwo extends React.Component {
 
     onAddSearchParameter = (InstanceId) => {
         //We only need to find the instance with the id and set the isVisable to false
-        //as the instance is already added to the saved list
+        //as the instance is already added to the saved list from the dropdown select, this 
+        //just hides the instance from the user as commited/added.
         const newSearchParameterList = this.state.savedSearchParameterList.slice(0);
         const targetIndex = findIndex(newSearchParameterList, { id: InstanceId })
         //toggel bolean
@@ -393,7 +394,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                 case FhirConstant.searchType.token:
                     return (
                         <TokenParameter
-                            onTokenOrEdit={this.onEditSearchParameter}
+                            onOrEdit={this.onEditSearchParameter}
                             onAddParameter={this.onAddSearchParameter}
                             onRemoveParameter={this.onRemoveSearchParameter}
                             id={searchParameter.id}

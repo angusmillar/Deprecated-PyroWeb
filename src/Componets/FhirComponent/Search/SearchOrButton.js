@@ -5,7 +5,7 @@ import { Button, Icon } from 'semantic-ui-react'
 import isNil from 'lodash/isNil';
 import PropTypes from 'prop-types';
 
-export default class ReferenceRelative extends React.Component {
+export default class SearchOrButton extends React.Component {
 
     static propTypes = {
         isDisable: PropTypes.bool,
