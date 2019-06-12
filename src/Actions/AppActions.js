@@ -5,9 +5,11 @@ import AppConstants from '../Constants/AppConstants';
 
 const AppActions = {
 
-  //View Actions -----------------------------------------------------
-
-
+  //#######################################################################
+  //#### View Actions #####################################################
+  //#######################################################################
+  
+  // HI Service -----------------------------------------
   getHiService() {
     AppDispatcher.handleViewAction({
       actionType: AppConstants.App_GetHiService,      
@@ -21,8 +23,70 @@ const AppActions = {
     })
   },
   
-  // Api Actions -----------------------------------------------------
+  // Fhir Search Store ----------------------------------
+
+  onResourceFilterChange(item) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.App_SearchResourceChange,
+      data: item
+    })
+  },
+
+  onSearchFilterChange(item) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.App_SearchFilterChange,
+      data: item
+    })
+  },
+
+  onEditSearchParameter(item) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.App_EditSearchParameter,
+      data: item
+    })
+  },
+
+  onAddSearchParameter(item) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.App_AddSearchParameter,
+      data: item
+    })
+  },
+
+  onRemoveSearchParameter(item) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.App_RemoveSearchParameter,
+      data: item
+    })
+  },
+
+  onShowSearchParameterEdit(item) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.App_ShowSearchParameterEdit,
+      data: item
+    })
+  },
+
+  onHideSearchParameterEdit(item) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.App_HideSearchParameterEdit,
+      data: item
+    })
+  },
+
+  //#######################################################################
+  //#### Api Actions ######################################################
+  //#######################################################################
   
+  // HI Service -----------------------------------------
+  setHiService(item) {
+    AppDispatcher.handleApiAction({
+      actionType: AppConstants.App_SetHiService,
+      data: item
+    })
+  },
+
+  // MetaData -------------------------------------------
   setMetadata(item) {
     AppDispatcher.handleApiAction({
       actionType: AppConstants.App_SetMetadata,
@@ -30,20 +94,19 @@ const AppActions = {
     })
   },
 
-  setHiService(item) {
-    AppDispatcher.handleApiAction({
-      actionType: AppConstants.App_SetHiService,
-      data: item
-    })
-  },
-  //App Actions -----------------------------------------------------
+
+  //#######################################################################
+  //#### App Actions ######################################################
+  //#######################################################################
   
+  // HI Service ------------------------------------------
   initialiseHiServiceStore() {
     AppDispatcher.handleAppAction({
       actionType: AppConstants.App_InitialiseHiServiceStore
     })
   },
 
+  // MetaData --------------------------------------------
   initialiseMetadataStore() {
     AppDispatcher.handleAppAction({
       actionType: AppConstants.App_InitialiseMetadataStore
@@ -55,6 +118,16 @@ const AppActions = {
       actionType: AppConstants.App_GetMetadata,      
     })
   },
+
+  // Fhir Search Store -----------------------------------
+  initialiseFhirSearchStore(item) {
+    AppDispatcher.handleAppAction({
+      actionType: AppConstants.App_InitialiseFhirSearchStore,
+      data: item
+    })
+  },
+
+  
 
 };
 

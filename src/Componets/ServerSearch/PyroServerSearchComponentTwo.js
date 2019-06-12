@@ -4,8 +4,8 @@ import { Grid, Button, Form, Label, Divider, Header, Popup, Segment, List, Image
 
 import map from 'lodash/map';
 import filter from 'lodash/filter';
-import find from 'lodash/find';
-import findIndex from 'lodash/findIndex';
+//import find from 'lodash/find';
+//import findIndex from 'lodash/findIndex';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
 import endsWith from 'lodash/endsWith';
@@ -22,10 +22,16 @@ import DeviceConstants from '../../Constants/DeviceConstants';
 import SearchUrlFormat from '../FhirComponent/Search/SearchUrlFormat';
 
 import FhirConstant from '../../Constants/FhirConstant';
-import FhirSearchParameterFactory from '../../Constants/FhirSearchParameterFactory';
+//import FhirSearchParameterFactory from '../../Constants/FhirSearchParameterFactory';
 import FhirServerConstant from '../../Constants/FhirServerConstant';
 import TokenParameter from '../FhirComponent/Search/TokenType/TokenParameter';
+import AppStoreFhirSearch from '../../Store/AppStoreFhirSearch';
+import AppActions from 'Actions/AppActions';
 
+
+function getItemState() {
+    return AppStoreFhirSearch.getState();       
+}
 
 export default class PyroServerSearchComponentTwo extends React.Component {
 
@@ -41,34 +47,61 @@ export default class PyroServerSearchComponentTwo extends React.Component {
 
     constructor(props) {
         super(props);
+        this.initialise(this.props.ConformanceStatmentResource);
 
         this.state = {
-            selectedResource: [{ key: 'none', icon: 'tag', text: 'none', value: 'none' }],
-            selectedSearch: 'none',
-            SearchElement: null,
-            savedSearchParameterList: [],
+            store: getItemState(),
             encodingType: FhirConstant.DefaultFhirJsonFormat,
             summaryType: FhirConstant.searchSummaryType.none,
         };
+        this._onChange = this._onChange.bind(this);
+        // this.state = {
+        //     selectedResource: [{ key: 'none', icon: 'tag', text: 'none', value: 'none' }],
+        //     selectedSearch: 'none',
+        //     SearchElement: null,
+        //     savedSearchParameterList: [],
+        //     encodingType: FhirConstant.DefaultFhirJsonFormat,
+        //     summaryType: FhirConstant.searchSummaryType.none,
+        // };
     }
+
+    componentDidMount() {
+        AppStoreFhirSearch.addChangeListener(this._onChange);
+    }
+
+    componentWillUnmount() {
+        AppStoreFhirSearch.removeChangeListener(this._onChange);
+    }
+
+    initialise(conformanceStatmentResource) {
+        AppActions.initialiseFhirSearchStore(conformanceStatmentResource);
+    }
+
+    _onChange() {
+        this.setState(() => ({ store: getItemState() }));
+    }
+    
 
     onResourceFilterChange = (e, { value }) => {
         e.preventDefault();
-        const ResourceArray = filter(this.props.ConformanceStatmentResource.rest[0].resource, { 'type': value });
-        this.setState(() => ({ selectedResource: value, ResourceElement: ResourceArray[0] }));
+//        const ResourceArray = filter(this.props.ConformanceStatmentResource.rest[0].resource, { 'type': value });
+//        this.setState(() => ({ selectedResource: value, resourceElement: ResourceArray[0] }));
+        AppActions.onResourceFilterChange(value)
     }
 
     onSearchFilterChange = (e, { value }) => {
         e.preventDefault();
-        const searchName = value;
-        const fhirSearchParameter = find(this.state.ResourceElement.searchParam, { 'name': value });
-        const newSearchParameter = FhirSearchParameterFactory.create(fhirSearchParameter.type, searchName);
+        AppActions.onSearchFilterChange(value);
         
-        this.setState(() => ({            
-            selectedSearch: value,
-            SearchElement: fhirSearchParameter,
-            savedSearchParameterList: [...this.state.savedSearchParameterList, newSearchParameter]
-        }));
+        // const searchName = value;
+        // const fhirSearchParameter = find(this.state.store.resourceElement.searchParam, { 'name': value });
+        // const newSearchParameter = FhirSearchParameterFactory.create(fhirSearchParameter.type, searchName);
+        
+        // this.setState(() => ({            
+        //     selectedSearch: value,
+        //     SearchElement: fhirSearchParameter,
+        //     savedSearchParameterList: [...this.state.store.searchParameterList, newSearchParameter]
+        // }));
     }
 
     onEncodeingClick = (e) => {
@@ -79,41 +112,20 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         this.setState({ summaryType: e.summaryType })
     }
 
-    onCancelClick = () => {
-        this.setState({ SearchElement: null, selectedSearch: 'none' })
-    }
+    // onCancelClick = () => {
+    //     this.setState({ SearchElement: null, selectedSearch: 'none' })
+    // }
 
-    onEditSearchParameter = (e) => {
-        const newSearchParameter = {
-            id: e.submittedId,
-            searchParameterName: e.submittedSearchParameterName,
-            type: e.submittedType,
-            modifier: e.submittedModifier,
-            isVisable: e.submittedIsVisable,
-            orList: e.submittedOrList,
-        }
-        const newSearchParameterList = this.state.savedSearchParameterList.slice(0);
-        const targetIndex = findIndex(newSearchParameterList, { id: newSearchParameter.id })
-        newSearchParameterList.splice(targetIndex, 1, newSearchParameter);
-        this.setState({ savedSearchParameterList: newSearchParameterList })
+    onEditSearchParameter = (submittedParameter) => {
+        AppActions.onEditSearchParameter(submittedParameter);
     };
 
     onAddSearchParameter = (InstanceId) => {
-        //We only need to find the instance with the id and set the isVisable to false
-        //as the instance is already added to the saved list from the dropdown select, this 
-        //just hides the instance from the user as commited/added.
-        const newSearchParameterList = this.state.savedSearchParameterList.slice(0);
-        const targetIndex = findIndex(newSearchParameterList, { id: InstanceId })
-        //toggel bolean
-        newSearchParameterList[targetIndex].isVisable = false;
-        this.setState({ savedSearchParameterList: newSearchParameterList })
-
-        // this.setState({ savedSearchParameters: newArray, SearchElement: null, selectedSearch: 'none' })
+        AppActions.onAddSearchParameter(InstanceId);        
     };
 
-    onRemoveSearchParameter = (id) => {
-        const newSearchParameterList = filter(this.state.savedSearchParameterList, (x) => x.id != id);
-        this.setState({ savedSearchParameterList: newSearchParameterList })
+    onRemoveSearchParameter = (InstanceId) => {
+        AppActions.onRemoveSearchParameter(InstanceId);       
     };
 
     onSendClick = () => {
@@ -121,25 +133,17 @@ export default class PyroServerSearchComponentTwo extends React.Component {
     };
 
     onShowEdit = (e) => {
-        const newArray = this.state.savedSearchParameterList.slice(0);
-        const Index = findIndex(newArray, { id: e.eventId })
-        //toggel bolean
-        newArray[Index].isVisable = !newArray[Index].isVisable;
-        this.setState({ savedSearchParameterList: newArray })
-
+        AppActions.onShowSearchParameterEdit(e.eventId);    
     };
 
     onHideEdit = (e) => {
-        const newArray = this.state.savedSearchParameterList.slice(0);
-        const Index = findIndex(newArray, { id: e.eventId })
-        newArray[Index].showEdit = false;
-        this.setState({ savedSearchParameterList: newArray })
+        AppActions.onHideSearchParameterEdit(e.eventId);       
     };
 
     generateSendQuery = () => {
         let counter = 0;
         const ServerEndpoint = FhirServerConstant.getEndpointForServerName(this.props.FhirServerName);
-        const ResourceName = this.state.selectedResource;
+        const ResourceName = this.state.store.selectedResource;
         let MainQuery = `${ServerEndpoint}/${ResourceName}`;
         const TempArray = this.queryElementArray();
         for (let i = 0; i < TempArray.length; i++) {
@@ -156,7 +160,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         return MainQuery;
     }
 
-    queryElementArray = () => map(this.state.savedSearchParameterList, (parameter) => {
+    queryElementArray = () => map(this.state.store.searchParameterList, (parameter) => {
         if (parameter.type == FhirConstant.searchType.token) {
             return SearchUrlFormat.anyParameter(parameter);
         } else if (parameter.type == FhirConstant.searchType.string) {
@@ -226,10 +230,10 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         });
 
         const searchList = () => {
-            if (isNil(this.state.ResourceElement)) {
+            if (isNil(this.state.store.resourceElement)) {
                 return [{ key: 'none', icon: 'search', text: 'none', description: 'none', value: 'none' }]
             } else {
-                return (map(this.state.ResourceElement.searchParam, function (item) {
+                return (map(this.state.store.resourceElement.searchParam, function (item) {
                     return { key: item.name, icon: 'search', text: item.name, description: item.documentation, value: item.name };
                 }))
             }
@@ -313,12 +317,12 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         const renderResourceSelector = () => {
 
             let ResourcePopupMessage = 'Select a resource to search on';
-            if (this.state.savedSearchParameterList.length > 0) {
+            if (this.state.store.searchParameterList.length > 0) {
                 ResourcePopupMessage = 'You must clear all search parameters to modify the currect resource type';
             }
 
             let LockResourceSelector = false;
-            if (this.state.savedSearchParameterList.length > 0) {
+            if (this.state.store.searchParameterList.length > 0) {
                 LockResourceSelector = true;
             }
             return (
@@ -363,7 +367,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         }
 
         const renderSearch = () => {
-            if (isNil(this.state.ResourceElement)) {
+            if (isNil(this.state.store.resourceElement)) {
                 return null;
             } else {
                 return (
@@ -377,7 +381,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                                 search
                                 closeOnChange
                                 onChange={this.onSearchFilterChange}
-                                value={this.state.selectedSearch} />
+                                value={this.state.store.selectedSearch} />
                         </Form.Group>
                     </Form>
                 )
@@ -419,7 +423,7 @@ export default class PyroServerSearchComponentTwo extends React.Component {
 
         const renderSavedSearchPatrameterList = () => {
 
-            const ShowEditCount = filter(this.state.savedSearchParameterList, { 'isVisable': true }).length;
+            const ShowEditCount = filter(this.state.store.searchParameterList, { 'isVisable': true }).length;
 
             const renderAndDivider = (CurrectCounter) => {
                 if (ShowEditCount > 1 && CurrectCounter > 1) {
@@ -427,13 +431,13 @@ export default class PyroServerSearchComponentTwo extends React.Component {
                 }
             }
 
-            //const revList = this.state.savedSearchParameterList.slice(0);
+            //const revList = this.state.store.searchParameterList.slice(0);
             //reverse(revList);
             let CurrectCounter = 0;
             return (
                 <Grid.Row columns={16}>
                     <Grid.Column width={16}>
-                        {map(this.state.savedSearchParameterList, (item) => {
+                        {map(this.state.store.searchParameterList, (item) => {
                             if (!item.isVisable) {
                                 return null;
                             }
@@ -481,12 +485,12 @@ export default class PyroServerSearchComponentTwo extends React.Component {
         }
 
         const renderFhirUrl = (ButtonSize) => {
-            if (!isNil(this.state.ResourceElement)) {
+            if (!isNil(this.state.store.resourceElement)) {
                 return (
                     <Label.Group >
                         <Button basic compact size={ButtonSize} color='black'>[Base]</Button>
                         <Button basic compact size={ButtonSize} color='grey'>/</Button>
-                        <Button basic compact size={ButtonSize} color='green'>{this.state.selectedResource}</Button>
+                        <Button basic compact size={ButtonSize} color='green'>{this.state.store.selectedResource}</Button>
                         {renderQueryLabels(ButtonSize)}
                     </Label.Group>
 

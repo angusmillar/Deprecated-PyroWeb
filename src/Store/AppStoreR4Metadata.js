@@ -36,7 +36,7 @@ function completeCall(item) {
 
 
 
-class AppStoreMetadata extends FluxStore {
+class FluxStoreMetadataR4 extends FluxStore {
     constructor() {
         super();
     }
@@ -45,9 +45,9 @@ class AppStoreMetadata extends FluxStore {
     }
 }
 
-const AppStoreInstance = new AppStoreMetadata();
+const AppStoreR4Metadata = new FluxStoreMetadataR4();
 
-AppStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
+AppStoreR4Metadata.dispatchToken = AppDispatcher.register((payload) => {
     const action = payload.action;   
     const source = payload.source;
     if (source == AppConstants.SOURCE_VIEW_ACTION) {
@@ -78,8 +78,8 @@ AppStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
         return;
     }
 
-    AppStoreInstance.emitChange();
+    AppStoreR4Metadata.emitChange();
 
 });
 
-export default AppStoreInstance;
+export default AppStoreR4Metadata;

@@ -35,7 +35,7 @@ function searchCall(item) {
 }
 
 
-class AppStoreHiService extends FluxStore {
+class FluxStoreHiService extends FluxStore {
     constructor() {
         super();
     }
@@ -44,7 +44,7 @@ class AppStoreHiService extends FluxStore {
     }
 }
 
-const HiStoreInstance = new AppStoreHiService();
+const HiStoreInstance = new FluxStoreHiService();
 
 HiStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
     const action = payload.action;
